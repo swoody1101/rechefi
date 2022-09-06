@@ -1,35 +1,40 @@
 import React from "react";
 import {
   Card,
+  CardMedia,
   CardContent,
   CardActionArea,
   Typography,
 } from "@mui/material";
 
-import { CardImageStyle } from "../styles/recipe_list_item_style";
+function RecipeListItem(props) {
+  const { data } = props;
 
-import { css } from "@emotion/react";
-
-function RecipeListItem() {
   return (
     <Card
       sx={{
-        display: "flex",
-        flexDirection: "column",
         margin: "2rem",
-        maxHeight: "30%",
+        height: "32%",
       }}
     >
-      <CardActionArea>
-        <img
-          src={require("../../../assets/img/food_example_1.jpg")}
-          alt="asdf"
-          css={css`
-            padding: 100px;
-          `}
+      <CardActionArea
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          height: "100%",
+        }}
+      >
+        <CardMedia
+          component="img"
+          image={require("../../../assets/img/food_example_1.jpg")}
+          alt="food"
+          sx={{ height: "64%", objectFit: "cover" }}
         />
         <CardContent>
-          <Typography>asdf</Typography>
+          <Typography sx={{}}>
+            자취생도 만들 수 있는 탕수육
+          </Typography>
         </CardContent>
       </CardActionArea>
     </Card>
