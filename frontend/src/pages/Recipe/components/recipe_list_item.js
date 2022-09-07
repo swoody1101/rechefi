@@ -1,11 +1,12 @@
 import React from "react";
 import {
+  Avatar,
+  Box,
   Card,
   CardMedia,
   CardContent,
   CardActionArea,
   Typography,
-  Box,
 } from "@mui/material";
 import RecipeListItemLikeBtn from "./recipe_list_item_like_btn";
 
@@ -15,7 +16,7 @@ function RecipeListItem({ recipe }) {
       sx={{
         display: "flex",
         // height: "32%",
-        mt: 1,
+        mt: 1.5,
       }}
     >
       <CardActionArea
@@ -59,9 +60,21 @@ function RecipeListItem({ recipe }) {
             >
               {recipe.title}
             </Typography>
-            <Typography varaint="h6">
-              {recipe.author}
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {/* <Avatar
+                alt="P"
+                src="/assets/img/food_example_2.jpg"
+                sx={{ width: 24, height: 24, mr: 1 }}
+              /> */}
+              <Typography varaint="h6">
+                {recipe.author}
+              </Typography>
+            </Box>
           </Box>
 
           <Box
