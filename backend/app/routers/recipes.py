@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from typing import Union
 from app.models.recipes import Recipe
 from app.schemas.recipes import RecipeCreateForm
-from app.schemas.common import CommonResponse
+from app.schemas.common import CommonResponse, ObjectResponse, SingleResponse
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
 
@@ -21,18 +21,23 @@ async def create_recipe(req: RecipeCreateForm):
     return CommonResponse()
 
 
-@router.post("/detail/{recipe_id}", description="레시피 상세", response_model=CommonResponse)
+@router.post("/detail/{recipe_id}", description="레시피 상세", response_model=ObjectResponse)
 async def recipe_detail(recipe_id: int):
     recipe = await Recipe.get(id=recipe_id)
     like_users = recipe.like_users.all()
     comments = recipe.comments.all()
-    return [recipe, like_users, comments]
+    context = {
+        'recipe': recipe,
+        'like_users': like_users,
+        'comments': comments,
+    }
+    return ObjectResponse(context)
 
 
-@router.put("/{recipe_id}", description="레시피 수정", response_model=CommonResponse)
+@router.put("/{recipe_id}", description="레시피 수정", response_model=SingleResponse)
 async def edit_recipe(recipe_id: int, req: RecipeCreateForm):
     await Recipe.filter(id=recipe_id).update(**req.dict())
-    return CommonResponse()
+    return SingleResponse(id=recipe_id)
 
 
 @router.post("/{recipe_id}", description="레시피 삭제", response_model=CommonResponse)
