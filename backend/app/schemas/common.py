@@ -7,3 +7,11 @@ class CommonResponse(BaseModel):
 
 class LoginResponse(CommonResponse):
     user_id: int = Field(nullable=True)
+
+
+class SingleResponse(CommonResponse):
+    id: int = Field(nullable=True)
+
+
+class ObjectResponse(CommonResponse):
+    data: dict = Field(nullable=True)
