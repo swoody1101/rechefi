@@ -6,19 +6,30 @@ import {
   SearchSelect,
   SearchWrapperDiv,
 } from "../styles/search-bar-styles";
+import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
-  const [searchWord, setSearchWord] = useState("");
+  // const [searchWord, setSearchWord] = useState("");
   const [selectMenu, setSelectMenu] = useState("제목");
   const searchBarRef = useRef(null);
+  const navigate = useNavigate();
   const onClick = (e) => {
     e.preventDefault();
-    setSearchWord(searchBarRef.current.value);
+    const searchWord = searchBarRef.current.value;
+
+    // setSearchWord(searchBarRef.current.value);
     searchBarRef.current.value = null;
+    navigate("/recipe", {
+      state: {
+        searchTag: selectMenu,
+        keyword: searchWord,
+      },
+    });
   };
   const onChange = (e) => {
     setSelectMenu(e.target.value);
   };
+
   return (
     <div>
       <SearchWrapperDiv>
@@ -33,8 +44,8 @@ const SearchBar = () => {
           <SearchIcon />
         </SearchButton>
       </SearchWrapperDiv>
-      <div> 검색어 {searchWord}</div>
-      <div>선택된 값 {selectMenu}</div>
+      {/* <div> 검색어 {searchWord}</div> */}
+      {/* <div>선택된 값 {selectMenu}</div> */}
     </div>
   );
 };

@@ -4,20 +4,22 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainPage from "./pages/Main/main_page";
 import Layout from "./common/components/layout";
 import Test from "./pages/test";
+import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail";
 
 function App() {
   return (
     <div className="App">
       <Global styles={Reset} />
-      <Layout>
-        <BrowserRouter>
+      <BrowserRouter>
+        <Layout>
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/recipe" element={<Test />} />
             <Route path="/account" element={<MainPage />} />
+            <Route path="/recipe/detail" element={<RecipeDetail />} />
           </Routes>
-        </BrowserRouter>
-      </Layout>
+        </Layout>
+      </BrowserRouter>
     </div>
   );
 }

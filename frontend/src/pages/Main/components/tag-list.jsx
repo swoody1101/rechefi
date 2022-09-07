@@ -1,8 +1,10 @@
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { TagElementButton, TagListDiv } from "../styles/tag-list-styles";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const TagList = () => {
+  const navigate = useNavigate();
   const [selectTag, setSelectTag] = useState("");
   const tags = [
     { cookName: "치킨" },
@@ -30,6 +32,12 @@ const TagList = () => {
           key={i}
           onClick={() => {
             setSelectTag(tags[el].cookName);
+            navigate("/recipe", {
+              state: {
+                keyword: "",
+                searchTag: tags[el].cookName,
+              },
+            });
           }}
         >
           <div>
