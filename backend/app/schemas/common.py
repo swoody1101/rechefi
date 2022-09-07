@@ -15,3 +15,7 @@ class SingleResponse(CommonResponse):
 
 class ObjectResponse(CommonResponse):
     data: dict = Field(nullable=True)
+
+
+class MultipleObjectResponse(CommonResponse):
+    data: list = Field(nullable=True)
