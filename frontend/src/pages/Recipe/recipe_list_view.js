@@ -1,6 +1,7 @@
 import { Container } from "@mui/material";
 import React from "react";
 import RecipeListItem from "./components/recipe_list_item";
+import RecipeListFab from "./components/recipe_list_fab";
 
 function RecipeListView({ recipes }) {
   const recipeItems = recipes.map((recipe) => (
@@ -17,6 +18,7 @@ function RecipeListView({ recipes }) {
       >
         {recipeItems}
       </Container>
+      <RecipeListFab />
     </>
   );
 }
