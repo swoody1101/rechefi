@@ -5,36 +5,78 @@ import {
   CardContent,
   CardActionArea,
   Typography,
+  Box,
 } from "@mui/material";
+import RecipeListItemLikeBtn from "./recipe_list_item_like_btn";
 
-function RecipeListItem(props) {
-  const { data } = props;
-
+function RecipeListItem({ recipe }) {
   return (
     <Card
       sx={{
-        margin: "2rem",
-        height: "32%",
+        display: "flex",
+        // height: "32%",
+        mt: 1,
       }}
     >
       <CardActionArea
         sx={{
           display: "flex",
+          height: "100%",
           flexDirection: "column",
           justifyContent: "flex-start",
-          height: "100%",
         }}
       >
         <CardMedia
           component="img"
-          image={require("../../../assets/img/food_example_1.jpg")}
-          alt="food"
-          sx={{ height: "64%", objectFit: "cover" }}
+          image={require("../../../assets/img/food_example_2.jpg")}
+          alt={recipe.title + "_img"}
+          sx={{
+            maxHeight: "120px",
+            objectFit: "cover",
+            alignSelf: "center",
+          }}
         />
-        <CardContent>
-          <Typography sx={{}}>
-            자취생도 만들 수 있는 탕수육
-          </Typography>
+        <CardContent
+          sx={{
+            width: "100%",
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+            p: 1.5,
+          }}
+        >
+          <Box
+            sx={{
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "bold",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {recipe.title}
+            </Typography>
+            <Typography varaint="h6">
+              {recipe.author}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="caption">
+              조회수 :
+              {" " + recipe.views.toLocaleString(undefined)}
+            </Typography>
+            <RecipeListItemLikeBtn likes={recipe.likes} />
+          </Box>
         </CardContent>
       </CardActionArea>
     </Card>
