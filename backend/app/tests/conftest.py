@@ -12,8 +12,10 @@ from app.main import app
 TEST_BASE_URL = "http://test"
 
 
+
 @pytest.fixture(autouse=True)
 def initialize():
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     loop = asyncio.get_event_loop()
 
     try:
