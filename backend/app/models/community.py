@@ -9,6 +9,7 @@ class Article(Model):
     updated_at = fields.DatetimeField(auto_now=True)
     category = fields.IntField(default=0, description='글 분류, 0 = .., 1 = .., 2 = ..')
     img_url = fields.CharField(max_length=200, null=True, description='썸네일 이미지')
+    views = fields.IntField(default=0)
     recipe = fields.ForeignKeyField('b303.Recipe', related_name='articles', db_constraint=False, description='해당 게시물에 참조된 레시피')
     like_users = fields.ManyToManyField('b303.User', through='likearticle', related_name='like_articles')
 
