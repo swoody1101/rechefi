@@ -1,14 +1,14 @@
 import { Global } from "@emotion/react";
 import { Reset } from "./common/styles/global";
-import RecipeListItem from "./pages/Recipe/components/recipe_list_item";
 
 // DEBUG
+import RecipeListView from "./pages/Recipe/List/recipe_list_view";
 
 function App() {
   return (
     <div className="App">
       <Global styles={Reset} />
-      <RecipeListItem></RecipeListItem>
+      <RecipeListView></RecipeListView>
     </div>
   );
 }
