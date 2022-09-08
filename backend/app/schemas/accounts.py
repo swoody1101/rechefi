@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Union
 
 """
     User
@@ -21,3 +22,12 @@ class UserSignupForm(BaseModel):
 class UserLoginForm(BaseModel):
     email: str
     password: str
+
+
+class CurrentUser(BaseModel):
+    email: str
+    nickname: str
+    about_me: Union[str, None]
+    is_active: bool
+    is_admin: bool
+
