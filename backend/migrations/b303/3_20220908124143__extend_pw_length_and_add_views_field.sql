@@ -1,0 +1,8 @@
+-- upgrade --
+ALTER TABLE `user` ALTER COLUMN `is_active` SET DEFAULT 1;
+ALTER TABLE `user` MODIFY COLUMN `password` VARCHAR(100) NOT NULL;
+ALTER TABLE `article` ADD `views` INT NOT NULL  DEFAULT 0;
+-- downgrade --
+ALTER TABLE `user` ALTER COLUMN `is_active` SET DEFAULT 0;
+ALTER TABLE `user` MODIFY COLUMN `password` VARCHAR(20) NOT NULL;
+ALTER TABLE `article` DROP COLUMN `views`;
