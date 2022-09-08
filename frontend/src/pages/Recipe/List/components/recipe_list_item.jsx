@@ -16,7 +16,7 @@ function RecipeListItem({ recipe }) {
       sx={{
         display: "flex",
         // height: "32%",
-        mt: 1.5,
+        mb: 1.5,
       }}
     >
       <CardActionArea
@@ -29,7 +29,7 @@ function RecipeListItem({ recipe }) {
       >
         <CardMedia
           component="img"
-          image={require("../../../assets/img/food_example_2.jpg")}
+          image={require("../../../../assets/img/food_example_2.jpg")}
           alt={recipe.title + "_img"}
           sx={{
             maxHeight: "120px",
