@@ -2,7 +2,8 @@ export const dummyDetail = {
   member_id: "1",
   member_nickname: "안녕하세요",
   title: "중학생도 만들 수 있는 쉬운",
-  content: "먼저 근처 짜장면집에 전화를 걸어서 탕수육 大자를 시킵니다.",
+  content:
+    "```<p>먼저 근처 짜장면집에 전화를 걸어서 탕수육 大자를 시킵니다.</p>```<img></img>```<p>배달이 오면 맛있게 먹습니다.</p>",
   ingredients: [
     {
       name: "양파",

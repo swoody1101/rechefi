@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { RecipeDetailTitleWrapperDiv } from "../recipe_detail_styles";
+import {
+  RecipeDetailContentWrapper,
+  RecipeDetailIngredinetsContentDiv,
+  RecipeDetailIngredinetsDiv,
+  RecipeDetailTitleWrapperDiv,
+} from "../recipe_detail_styles";
+import RecipeDetailContent from "./recipe_detail_content";
 import { dummyDetail } from "./recipe_detail_dummy";
 import RecipeDetailIngredients from "./recipe_detail_ingredients";
 import RecipedetailTitleArea from "./recipe_detail_title_area";
@@ -43,10 +49,14 @@ const RecipeDetail = () => {
       <RecipeDetailTitleWrapperDiv>
         <RecipedetailTitleArea post={post} />
       </RecipeDetailTitleWrapperDiv>
-      <div>
+      <RecipeDetailIngredinetsContentDiv>
         <RecipeDetailIngredients ingredients={ingredients} />
-      </div>
-      <div></div>
+      </RecipeDetailIngredinetsContentDiv>
+      <RecipeDetailIngredinetsContentDiv>
+        <RecipeDetailContentWrapper>
+          <RecipeDetailContent content={content} />
+        </RecipeDetailContentWrapper>
+      </RecipeDetailIngredinetsContentDiv>
     </div>
   );
 };
