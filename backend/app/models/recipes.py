@@ -8,9 +8,10 @@ class Recipe(Model):
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
     img_url = fields.CharField(max_length=200, null=True, description='썸네일 이미지')
+    views = fields.IntField(default=0)
     like_users = fields.ManyToManyField('b303.User', through='likerecipe', related_name='like_recipes')
-    tags = fields.ManyToManyField('b303.Tag', related_name='tagged_recipes', on_delete='CASCADE', description='레시피 관련 태그')
-    ingredients = fields.ManyToManyField('b303.Ingredient', related_name='using_recipes', through='recipeingredient', description='레시피 사용 재료ㅋ')
+    tags = fields.ManyToManyField('b303.Tag', related_name='recipe_tag', through='recipetag', on_delete='CASCADE', description='레시피 관련 태그')
+    ingredients = fields.ManyToManyField('b303.Ingredient', related_name='recipe_ingredient', through='recipeingredient', description='레시피 사용 재료ㅋ')
 
 
 class LikeRecipe(Model):
@@ -22,7 +23,7 @@ class LikeRecipe(Model):
 class RecipeIngredient(Model):
     recipe = fields.ForeignKeyField('b303.Recipe',on_delete='CASCADE')
     ingredient = fields.ForeignKeyField('b303.Ingredient', on_delete='CASCADE')
-    amount = fields.IntField(null=True)
+    amount = fields.CharField(max_length=20, null=True)
 
 
 class Tag(Model):

@@ -9,13 +9,13 @@ router = APIRouter(prefix="/recipe", tags=["recipe"])
 
 @router.post("/tag", description="레시피 태그 생성", response_model=CommonResponse)
 async def create_tag(req: TagForm):
-    await Tag.create(**req.dict())
+    new_tag = await Tag.get_or_create(**req.dict())
     return CommonResponse()
 
 
 @router.post("/ingredient", description="레시피 재료 생성", response_model=CommonResponse)
 async def create_ingredient(req: IngredientForm):
-    await Ingredient.create(**req.dict())
+    await Ingredient.get_or_create(**req.dict())
     return CommonResponse()
 
 
@@ -24,7 +24,7 @@ async def create_recipe(req: RecipeCreateForm):
     recipe = await Recipe.create(user_id=req.user_id, title=req.title, content=req.content, img_url=req.img_url)
     for ingredient in req.ingredients:
         new_ingredient = await Ingredient.get_or_create(name=ingredient.name)
-        await RecipeIngredient.create(recipe_id=recipe.pk, ingredient_id=new_ingredient.id, amount=ingredient.amount)
+        await RecipeIngredient.create(recipe=recipe, ingredient=new_ingredient[0], amount=ingredient.amount)
     await recipe.tags.add(*[tag for tag in await Tag.filter(id__in=req.tags)])
     return CommonResponse()
 
@@ -32,7 +32,6 @@ async def create_recipe(req: RecipeCreateForm):
 @router.get("/detail/{recipe_id}", description="레시피 상세", response_model=ObjectResponse)
 async def recipe_detail(recipe_id: int):
     recipe = await Recipe.get(id=recipe_id)
-    print(recipe)
     # like_users = recipe.like_users.all()
     # comments = recipe.comments.all()
     return ObjectResponse(data=recipe)
