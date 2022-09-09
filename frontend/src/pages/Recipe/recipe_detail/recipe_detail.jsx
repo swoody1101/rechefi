@@ -2,18 +2,21 @@ import { useEffect, useState } from "react";
 import {
   RecipeDetailContentWrapper,
   RecipeDetailIngredinetsContentDiv,
-  RecipeDetailIngredinetsDiv,
+  RecipeDetailLikeBorderDiv,
+  RecipeDetailLikeCount,
+  RecipeDetailLikeWrppaerDiv,
   RecipeDetailTitleWrapperDiv,
 } from "../recipe_detail_styles";
 import RecipeDetailContent from "./recipe_detail_content";
 import { dummyDetail } from "./recipe_detail_dummy";
 import RecipeDetailIngredients from "./recipe_detail_ingredients";
 import RecipedetailTitleArea from "./recipe_detail_title_area";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import RecipeDetailComments from "./recipe_detail_comments";
 const RecipeDetail = () => {
   const [post, setPost] = useState({});
   const [ingredients, setIngredients] = useState([]);
   const [tags, setTags] = useState([]);
-  const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
 
   useEffect(() => {
@@ -28,7 +31,6 @@ const RecipeDetail = () => {
       date,
       comment_count,
       like_member_id,
-      comments,
     } = dummyDetail;
     setPost({
       title,
@@ -41,7 +43,6 @@ const RecipeDetail = () => {
     });
     setIngredients(ingredients);
     setTags(tags);
-    setComments(comments);
     setContent(content);
   }, []);
   return (
@@ -56,6 +57,18 @@ const RecipeDetail = () => {
         <RecipeDetailContentWrapper>
           <RecipeDetailContent content={content} />
         </RecipeDetailContentWrapper>
+      </RecipeDetailIngredinetsContentDiv>
+      <RecipeDetailLikeWrppaerDiv>
+        <div>추천하기</div>
+        <RecipeDetailLikeBorderDiv>
+          <div>
+            <ThumbUpIcon />
+          </div>
+          <RecipeDetailLikeCount>{post.likes}</RecipeDetailLikeCount>
+        </RecipeDetailLikeBorderDiv>
+      </RecipeDetailLikeWrppaerDiv>
+      <RecipeDetailIngredinetsContentDiv>
+        <RecipeDetailComments />
       </RecipeDetailIngredinetsContentDiv>
     </div>
   );
