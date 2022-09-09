@@ -9,4 +9,4 @@ class User(Model):
     about_me = fields.CharField(max_length=300, null=True, description='자기소개 글')
     is_active = fields.BooleanField(default=True)
     is_admin = fields.BooleanField(default=False)
-    following = fields.ManyToManyField('b303.User', through='User', related_name='followers')
+    following = fields.ManyToManyField('b303.User', through='follow', related_name='followers')

@@ -1,6 +1,7 @@
 from typing import List, Union
 
 from pydantic import BaseModel, Field
+# from app.schemas.accounts import *
 # from ..models.recipes import *
 # from tortoise.contrib.pydantic import pydantic_model_creator
 #
@@ -16,10 +17,14 @@ class IngredientForm(BaseModel):
 
 
 class IngredientRecipeForm(IngredientForm):
-    amount: int
+    amount: str
 
 
-class Recipe(BaseModel):
+class RecipeLike(BaseModel):
+    user_id: int
+
+
+class RecipeCreateForm(BaseModel):
     user_id: int
     title: str
     content: str
@@ -28,8 +33,10 @@ class Recipe(BaseModel):
     ingredients: List[IngredientRecipeForm]
 
 
-class RecipeCreateForm(Recipe):
-    pass
+class Recipe(RecipeCreateForm):
+    created_at: str
+    updated_at: str
+    likes: List[RecipeLike]
 
 
 class RecipeList(BaseModel):
