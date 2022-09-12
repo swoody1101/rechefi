@@ -1,35 +1,42 @@
-import asyncio
-from collections.abc import AsyncIterator
-
 import pytest
 from httpx import AsyncClient
 from tortoise import Tortoise
-from tortoise.exceptions import DBConnectionError
 
-from app.config import TORTOISE_ORM
 from app.main import app
 
-TEST_BASE_URL = "http://test"
+DB_URL = "mysql://:test:"
 
 
-@pytest.fixture(autouse=True)
-def initialize():
-    loop = asyncio.get_event_loop()
-
-    try:
-        loop.run_until_complete(Tortoise.init(TORTOISE_ORM))
-    except DBConnectionError:
-        pass
-    else:
-        loop.run_until_complete(Tortoise._drop_databases())
-
-    loop.run_until_complete(Tortoise.init(TORTOISE_ORM, _create_db=True))
-    loop.run_until_complete(Tortoise.generate_schemas(safe=False))
-    yield
-    loop.run_until_complete(Tortoise._drop_databases())
+async def init_db(db_url, create_db: bool = False, schemas: bool = False) -> None:
+    """Initial database connection"""
+    await Tortoise.init(
+        db_url=db_url, modules={"models": ["models"]}, _create_db=create_db
+    )
+    if create_db:
+        print(f"Database created! {db_url = }")
+    if schemas:
+        await Tortoise.generate_schemas()
+        print("Success to generate schemas")
 
 
-@pytest.fixture
-async def async_client() -> AsyncIterator[AsyncClient]:
-    async with AsyncClient(app=app, base_url=TEST_BASE_URL) as client:
+async def init(db_url: str = DB_URL):
+    await init_db(db_url, True, True)
+
+
+@pytest.fixture(scope="session")
+def anyio_backend():
+    return "asyncio"
+
+
+@pytest.fixture(scope="session")
+async def client():
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        print("Client is ready")
         yield client
+
+
+@pytest.fixture(scope="session", autouse=True)
+async def initialize_tests():
+    await init()
+    yield
+    await Tortoise._drop_databases()
