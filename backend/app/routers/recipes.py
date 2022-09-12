@@ -2,9 +2,13 @@ from fastapi import APIRouter, Response, status
 from typing import Union
 
 from starlette.responses import JSONResponse
+from tortoise.expressions import Subquery
 
 from app.models.recipes import Recipe, Tag, Ingredient, RecipeComment, LikeRecipe, RecipeIngredient
-from app.schemas.recipes import RecipeCreateForm, TagForm, IngredientForm, IngredientRecipeForm, RecipeCommentForm
+from app.models.accounts import User
+
+from app.schemas.recipes import RecipeCreateForm, TagForm, IngredientForm, IngredientRecipeForm, RecipeCommentForm, \
+    LikeRecipeForm, RecipeCommentList, RecipeForm
 from app.schemas.common import *
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
@@ -36,20 +40,27 @@ async def create_recipe(req: RecipeCreateForm):
 @router.get("/detail/{recipe_id}", description="레시피 상세", response_model=ObjectResponse)
 async def recipe_detail(recipe_id: int):
     recipe = await Recipe.get(id=recipe_id)
-    # like_users = await recipe.like_users.all().values("id", "nickname")
-    # comments = await RecipeComment.filter(recipe_id=recipe_id)
-    datas = {
-        'recipe': recipe,
-        # 'likes': like_users,
-        # 'comments': comments
+    ingredients = [
+        IngredientRecipeForm(**dict(await ingredient.ingredient), amount=ingredient.amount)
+        for ingredient in await RecipeIngredient.filter(recipe_id=recipe_id)
+    ]
+    data = {
+        "recipe": recipe,
+        "nickname": (await recipe.user).nickname,
+        "tags": await recipe.tags.all(),
+        "ingredients": ingredients,
+        "like_users": await recipe.like_users.all().values("id", "nickname"),
+        # comments = await RecipeComment.filter(recipe_id=recipe_id)
     }
-    return ObjectResponse(data=datas)
+
+    return ObjectResponse(data=data)
 
 
 @router.get("/comment/{recipe_id}", description="레시피 댓글 리스트", response_model=MultipleObjectResponse, status_code=200)
 async def get_comment_list(recipe_id: int):
     comments = await RecipeComment.filter(recipe_id=recipe_id)
-    return MultipleObjectResponse(data=comments)
+    data = [RecipeCommentList(**dict(comment), nickname=(await comment.user).nickname) for comment in comments]
+    return MultipleObjectResponse(data=data)
 
 
 @router.post("/comment/{recipe_id}", description="레시피 댓글 작성", response_model=CommonResponse, status_code=201)
@@ -81,6 +92,33 @@ async def delete_comment(comment_id: int):
     return CommonResponse()
 
 
+@router.post("/like/{recipe_id}", description="레시피 좋아요", response_model=ObjectResponse, status_code=201)
+async def like_recipe(recipe_id: int, req: LikeRecipeForm, response: Response):
+    # 유저 인증 로직
+    recipe = await Recipe.get_or_none(id=recipe_id)
+    user = await User.get_or_none(id=req.user_id)
+    like_recipe_list = await LikeRecipe.filter(user_id=req.user_id, recipe_id=recipe_id)
+    if recipe is None:
+        return JSONResponse(status_code=404, content=CommonFailedResponse(detail="추천할 레시피가 없습니다.").dict())
+    elif user is None:
+        return JSONResponse(status_code=401, content=CommonFailedResponse(detail="로그인이 필요합니다.").dict())
+    else:
+        data = {
+            "method": "",
+            "like": True
+        }
+        if not like_recipe_list:
+            await LikeRecipe.create(user_id=req.user_id, recipe_id=recipe_id)
+            data["method"] = 'post'
+            data["like"] = True
+        else:
+            await LikeRecipe.filter(user_id=req.user_id, recipe_id=recipe_id).delete()
+            data["method"] = 'delete'
+            data["like"] = False
+            response.status_code = 200
+        return ObjectResponse(data=data)
+
+
 @router.put("/{recipe_id}", description="레시피 수정", response_model=SingleResponse)
 async def edit_recipe(recipe_id: int, req: RecipeCreateForm):
     # 유저 인증 로직
@@ -99,10 +137,21 @@ async def delete_recipe(recipe_id: int):
     return CommonResponse()
 
 
-@router.get("/{recipe_id}")
+@router.get("/{recipe_id}", description="레시피 목록 조회", response_model=MultipleObjectResponse)
 async def get_recipe_list(recipe_id: int, q: Union[str, None] = None):
     recipes = await Recipe.filter(id__gte=recipe_id)
-    if q:
-        return {"recipe_id": recipe_id, "q": q}
-    return {"recipe_id": recipe_id}
+    data = [
+        {
+            "title": recipe.title,
+            "date": recipe.created_at,
+            "user_id": recipe.user_id,
+            "img_url": recipe.img_url,
+            "nickname": (await recipe.user).nickname,
+            "tags": await recipe.tags.all(),
+            "likes": len(await recipe.like_users.all()),
+            "comments_count": len(await RecipeComment.filter(recipe_id=recipe_id))
+        }
+        for recipe in recipes
+    ]
+    return MultipleObjectResponse(data=data)
 
