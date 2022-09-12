@@ -5,6 +5,11 @@ class CommonResponse(BaseModel):
     message: str = "success"
 
 
+class CommonFailedResponse(BaseModel):
+    message: str = "failed"
+    detail: str
+
+
 class LoginResponse(CommonResponse):
     user_id: int = Field(nullable=True)
 
