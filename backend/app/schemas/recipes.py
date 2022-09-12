@@ -41,3 +41,11 @@ class Recipe(RecipeCreateForm):
 
 class RecipeList(BaseModel):
     pass
+
+
+class RecipeCommentForm(BaseModel):
+    user_id: int
+    content: str
+    root: int
+    group: int
+    sequence: int
