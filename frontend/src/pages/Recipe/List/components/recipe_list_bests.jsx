@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Box,
-  Chip,
   Container,
   Divider,
   Typography,
@@ -36,5 +35,9 @@ function RecipeListBests({ bestRecipes }) {
     </Container>
   );
 }
+
+RecipeListBests.defaultProps = {
+  bestRecipes: [],
+};
 
 export default RecipeListBests;

@@ -14,4 +14,8 @@ function RecipeListItemLikeBtn({ likes }) {
   );
 }
 
+RecipeListItemLikeBtn.defaultProps = {
+  likes: 0,
+};
+
 export default RecipeListItemLikeBtn;
