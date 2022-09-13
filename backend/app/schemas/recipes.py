@@ -33,10 +33,11 @@ class RecipeCreateForm(BaseModel):
     ingredients: List[IngredientRecipeForm]
 
 
-class Recipe(RecipeCreateForm):
+class RecipeForm(RecipeCreateForm):
+    nickname: str
     created_at: str
     updated_at: str
-    likes: List[RecipeLike]
+    likes: List[dict]
 
 
 class RecipeList(BaseModel):
@@ -49,3 +50,12 @@ class RecipeCommentForm(BaseModel):
     root: int
     group: int
     sequence: int
+
+
+class RecipeCommentList(RecipeCommentForm):
+    nickname: str
+
+
+
+class LikeRecipeForm(BaseModel):
+    user_id: int

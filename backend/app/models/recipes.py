@@ -29,10 +29,9 @@ class Recipe(Model):
         return self
 
 
-
 class LikeRecipe(Model):
     user = fields.ForeignKeyField('b303.User',on_delete='CASCADE')
-    article = fields.ForeignKeyField('b303.Recipe', on_delete='CASCADE')
+    recipe = fields.ForeignKeyField('b303.Recipe', on_delete='CASCADE')
     created_at = fields.DatetimeField(auto_now_add=True)
 
 
@@ -59,3 +58,7 @@ class RecipeComment(Model):
     root = fields.IntField(default=0)
     group = fields.IntField(default=0)
     sequence = fields.IntField(default=0)
+
+
+
+
