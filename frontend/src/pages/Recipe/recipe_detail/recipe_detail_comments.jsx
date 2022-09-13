@@ -14,7 +14,7 @@ import {
 import RecipeDetailCommentElement from "./recipe_detail_comment_element";
 import { dummyDetailComment } from "./recipe_detail_dummy";
 
-const RecipeDetailComments = () => {
+const RecipeDetailComments = ({ aiButton }) => {
   const [comment, setComment] = useState([]);
   const commentContentRef = useRef(null);
 
@@ -104,7 +104,7 @@ const RecipeDetailComments = () => {
     commentContentRef.current.value = "";
   };
   return (
-    <RecipeDetailCommentWraper>
+    <RecipeDetailCommentWraper aiButton={aiButton}>
       {Object.keys(comment).map((e, i) => (
         <RecipeDetailCommentElementBox key={i}>
           {comment[e].root === 0 ? (

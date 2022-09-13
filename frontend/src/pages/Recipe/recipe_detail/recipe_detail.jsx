@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import {
+  RecipeDetailAIButton,
+  RecipeDetailAIButtonWrapper,
   RecipeDetailContentWrapper,
   RecipeDetailIngredinetsContentDiv,
   RecipeDetailLikeBorderDiv,
@@ -13,12 +15,15 @@ import RecipeDetailIngredients from "./recipe_detail_ingredients";
 import RecipedetailTitleArea from "./recipe_detail_title_area";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import RecipeDetailComments from "./recipe_detail_comments";
+import SpatialTrackingIcon from "@mui/icons-material/SpatialTracking";
+import RecipeDeatilAIvoiceControll from "./recipe_detail_AIvoice_controll";
+
 const RecipeDetail = () => {
   const [post, setPost] = useState({});
   const [ingredients, setIngredients] = useState([]);
   const [tags, setTags] = useState([]);
   const [content, setContent] = useState("");
-
+  const [aiButton, setAiButton] = useState(false);
   useEffect(() => {
     const {
       title,
@@ -45,11 +50,23 @@ const RecipeDetail = () => {
     setTags(tags);
     setContent(content);
   }, []);
+  const toggleAI = () => {
+    setAiButton((prev) => {
+      return !prev;
+    });
+  };
   return (
     <div>
+      {aiButton ? <RecipeDeatilAIvoiceControll /> : null}
       <RecipeDetailTitleWrapperDiv>
         <RecipedetailTitleArea post={post} />
       </RecipeDetailTitleWrapperDiv>
+      <RecipeDetailAIButtonWrapper>
+        <RecipeDetailAIButton onClick={toggleAI}>
+          레시피 읽어주기<SpatialTrackingIcon></SpatialTrackingIcon>
+        </RecipeDetailAIButton>
+      </RecipeDetailAIButtonWrapper>
+
       <RecipeDetailIngredinetsContentDiv>
         <RecipeDetailIngredients ingredients={ingredients} />
       </RecipeDetailIngredinetsContentDiv>
@@ -68,7 +85,7 @@ const RecipeDetail = () => {
         </RecipeDetailLikeBorderDiv>
       </RecipeDetailLikeWrppaerDiv>
       <RecipeDetailIngredinetsContentDiv>
-        <RecipeDetailComments />
+        <RecipeDetailComments aiButton={aiButton} />
       </RecipeDetailIngredinetsContentDiv>
     </div>
   );
