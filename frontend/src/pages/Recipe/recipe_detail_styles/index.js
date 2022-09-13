@@ -62,7 +62,7 @@ export const RecipeDetailIngredientsText = styled.div`
 
 export const RecipeDetailIngredientElementDiv = styled.div`
   border-radius: 14px;
-  background-color: ${Palette.mainColor5};
+  background-color: ${Palette.mainColor3};
   text-align: center;
   margin: 3%;
   padding: 3%;
@@ -122,6 +122,7 @@ export const RecipeDetailCommentWraper = styled.div`
   flex-direction: column;
   padding-top: 5%;
   border-top: 1px solid;
+  margin-bottom: ${(props) => (props.aiButton ? "7vh" : "2vh")};
 `;
 
 export const RecipeDetailCommentElementWraper = styled(
@@ -200,4 +201,67 @@ export const RecipeDetailCommentButton = styled.button`
   :active {
   }
   cursor: pointer;
+`;
+
+export const RecipeDetailAIButtonWrapper = styled.div`
+  width: 100%;
+  height: 5vh;
+  display: flex;
+  margin-top: 5%;
+`;
+
+export const RecipeDetailAIButton = styled.button`
+  margin-left: auto;
+  margin-right: 5%;
+  width: 45%;
+  height: 100%;
+  background-color: ${Palette.mainColor3};
+  border: none;
+  border-radius: 14px;
+  font-size: medium;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  :active {
+    background-color: ${Palette.mainColor5};
+  }
+`;
+
+export const RecipeDetailAIRemoteWrapper = styled.div`
+  position: fixed;
+  bottom: 1vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+export const RecipeDetailAIRemoteBox = styled.div`
+  width: 85%;
+  height: 5vh;
+  background-color: ${Palette.mainColor5};
+  border-radius: 14px;
+  box-shadow: 4px 4px 3px 1px rgba(0, 0, 255, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const FastForwardBox = styled.div`
+  margin-left: auto;
+  margin-right: 5%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ReForwardBox = styled.div`
+  margin-right: auto;
+  margin-left: 5%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
