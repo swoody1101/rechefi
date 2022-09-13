@@ -1,8 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response, status
 from typing import Union
+
+from starlette.responses import JSONResponse
+
 from app.models.recipes import Recipe, Tag, Ingredient, RecipeComment, LikeRecipe, RecipeIngredient
 from app.schemas.recipes import RecipeCreateForm, TagForm, IngredientForm, IngredientRecipeForm
-from app.schemas.common import CommonResponse, ObjectResponse, SingleResponse
+from app.schemas.common import CommonResponse, ObjectResponse, SingleResponse, CommonFailedResponse
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
 
@@ -32,9 +35,8 @@ async def create_recipe(req: RecipeCreateForm):
 @router.get("/detail/{recipe_id}", description="레시피 상세", response_model=ObjectResponse)
 async def recipe_detail(recipe_id: int):
     recipe = await Recipe.get(id=recipe_id)
-    # like_users = await recipe.like_users.all()
-    # comments = recipe.comments.all()
-    # print(like_users)
+    # like_users = await recipe.like_users.all().values("id", "nickname")
+    # comments = await RecipeComment.filter(recipe_id=recipe_id)
     datas = {
         'recipe': recipe,
         # 'likes': like_users,
@@ -45,9 +47,12 @@ async def recipe_detail(recipe_id: int):
 
 @router.put("/{recipe_id}", description="레시피 수정", response_model=SingleResponse)
 async def edit_recipe(recipe_id: int, req: RecipeCreateForm):
-    recipe = await Recipe.filter(id=recipe_id).update(**req.dict())
-
-    return SingleResponse(id=recipe_id)
+    recipe = await Recipe.get_or_none(id=recipe_id)
+    if recipe is None:
+        return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 레시피입니다.").dict())
+    else:
+        await recipe.update(**req.dict())
+        return SingleResponse(id=recipe_id)
 
 
 @router.post("/{recipe_id}", description="레시피 삭제", response_model=CommonResponse)
@@ -58,7 +63,7 @@ async def delete_recipe(recipe_id: int):
 
 @router.get("/{recipe_id}")
 async def get_recipe_list(recipe_id: int, q: Union[str, None] = None):
-    recipes = await Recipe.filter(id >= recipe_id)
+    recipes = await Recipe.filter(id__gte=recipe_id)
     if q:
         return {"recipe_id": recipe_id, "q": q}
     return {"recipe_id": recipe_id}
