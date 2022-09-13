@@ -23,6 +23,15 @@ class UserLoginForm(BaseModel):
     email: str
     password: str
 
+####토큰####
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: Union[str, None] = None
+
 
 class CurrentUser(BaseModel):
     email: str
