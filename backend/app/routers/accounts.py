@@ -6,13 +6,13 @@ from app.schemas.accounts import UserSignupForm, CurrentUser
 from app.schemas.common import CommonResponse
 
 # 로그인
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm 
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from typing import Union
-from pydantic import BaseModel
 from passlib.context import CryptContext
+from app.schemas.accounts import TokenData
 
 router = APIRouter(prefix="/members", tags=["members"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
@@ -22,13 +22,7 @@ SECRET_KEY = "788d89c0cc2378247a4157f6fb1745cab6b3243df21b8e3047a73401a6a25fe2"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
 
-
-class TokenData(BaseModel):
-    email: Union[str, None] = None
 
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
@@ -89,25 +83,25 @@ async def signup(req: UserSignupForm):
     return CommonResponse()
 
 @router.get("/validation/1/{email}", description="아이디 중복체크")
-async def email_check(email):
+async def email_check(email, response: Response):
     user = await User.get_or_none(email=email)
-    if user:
-        return "이미 사용중인 아이디입니다."
-    return "사용할 수 있는 아이디입니다."
+    if user is None:
+        response.status_code = status.HTTP_201_CREATED
+        return {"message": "success"}
 
 @router.get("/validation/2/{nickname}", description="닉네임 중복체크")
-async def nickname_check(nickname):
+async def nickname_check(nickname, response: Response):
     user = await User.get_or_none(nickname=nickname)
-    if user:
-        return "이미 사용중인 닉네임입니다."
-    return "사용할 수 있는 닉네임입니다."
+    if user is None:
+        response.status_code = status.HTTP_201_CREATED
+        return {"message": "success"}
 
 
 @router.get("/", description="마이페이지", response_model=CurrentUser)
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="권한이 없습니다.",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
