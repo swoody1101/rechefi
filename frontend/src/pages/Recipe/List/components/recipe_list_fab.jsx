@@ -2,10 +2,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Fab } from "@mui/material";
 import React from "react";
 
-function RecipeListFab() {
+function RecipeListFab({ onClick }) {
   return (
     <Fab
       aria-label="edit"
+      onClick={onClick}
       sx={{
         position: "fixed",
         left: "auto",
