@@ -14,6 +14,13 @@ from typing import Union
 from passlib.context import CryptContext
 from app.schemas.accounts import TokenData
 
+# 비밀번호 발급
+import string, secrets
+
+
+
+
+
 router = APIRouter(prefix="/members", tags=["members"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
 
@@ -55,6 +62,38 @@ async def authenticate_user(form_data):
         return False
     return user
 
+####### 존재하는 유저인지 확인 #######
+async def check_exist_user(member_id):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="존재하지 않는 유저입니다.",
+        headers={"WWW-Authenticate": "Bearer"},
+    )    
+    user = await User.get_or_none(email=member_id)
+    if user is None:
+        raise credentials_exception
+    return user
+
+####### 현재 유저정보 받아오기 #######
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="권한이 없습니다.",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = TokenData(email=email)
+    except JWTError:
+        raise credentials_exception
+    user = await User.get_or_none(email=token_data.email)
+    if user is None:
+        raise credentials_exception
+    return user
+
 ##################여기서부터 API입니다#################################
 
 @router.post("/login/1", description="로그인")
@@ -74,6 +113,12 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         data={"sub": user.email}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+#나중에 구현
+@router.post("/login/2", description="소셜로그인") 
+async def social_login(): 
+    pass
+
 
 @router.post("/signup", description="회원가입", response_model=CommonResponse)
 async def signup(req: UserSignupForm):
@@ -96,38 +141,59 @@ async def nickname_check(nickname, response: Response):
         response.status_code = status.HTTP_201_CREATED
         return {"message": "success"}
 
+# redis 연동 되면 구현
+@router.get("/validation/3/{email}", description="이메일로 인증토큰 발송") 
+def email_check():
+    pass
+
+@router.get("/logout", description="로그아웃") 
+def logout():
+    # redis 연동되면 블랙리스트 처리하고, 안되면 프론트에서 토큰삭제만
+    pass
+
+@router.get("/new-password/{email}", description="새로운 비밀번호 발급")
+async def create_new_password():
+    string_pool = string.ascii_letters + string.digits
+    while True:
+        temp_password = ''.join(secrets.choice(string_pool) for i in range(10))
+        if (any(c.islower() for c in temp_password) 
+        and any(c.isupper() for c in temp_password)
+        and sum(c.isdigit() for c in temp_password) >= 3):
+            break    
+    return temp_password
+
 
 @router.get("/", description="마이페이지", response_model=CurrentUser)
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="권한이 없습니다.",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-        token_data = TokenData(email=email)
-    except JWTError:
-        raise credentials_exception
-    user = await User.get_or_none(email=token_data.email)
-    if user is None:
-        raise credentials_exception
-    return user
+async def get_my_page(current_user: User = Depends(get_current_user), token: str = Depends(oauth2_scheme)):
+    return current_user
 
 @router.get("/{member_id}", description="다른사람 페이지", response_model=CurrentUser)
-async def get_other_user(member_id, token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="존재하지 않는 유저입니다.",
-        headers={"WWW-Authenticate": "Bearer"},
-    )    
-    user = await User.get_or_none(email=member_id)
-    if user is None:
-        raise credentials_exception
+async def get_other_page(member_id, user: User = Depends(check_exist_user), token: str = Depends(oauth2_scheme)):
     return user
+
+
+@router.get("/follow/{member_id}", description="해당 유저의 팔로워/팔로우 조회")
+async def get_follow(member_id, user: User = Depends(check_exist_user), token: str = Depends(oauth2_scheme)):
+    followers = await user.followers
+    followers = list(map(lambda followers: followers.email, followers))
+    follows = await user.following
+    follows = list(map(lambda follows: follows.email, follows))
+
+    return {"followers": followers, "follows": follows}
+
+
+@router.post("/follow/{member_id}", description="해당 유저를 팔로우/팔로우 취소")
+async def do_follow(member_id, me: User = Depends(get_current_user), user: User = Depends(check_exist_user), token: str = Depends(oauth2_scheme)):
+    # 본인이 아닌경우에만 팔로우/언팔로우 가능
+    if me != user:
+        if await me.following.filter(pk=user.pk).exists():
+            await me.following.remove(user)
+            return 'unfollow'
+        await me.following.add(user)
+        return 'follow'
+    return '본인은 팔로우 할 수 없음'
+
+
 
 ####################################
 ####################################
