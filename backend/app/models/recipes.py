@@ -13,6 +13,22 @@ class Recipe(Model):
     tags = fields.ManyToManyField('b303.Tag', related_name='recipe_tag', through='recipetag', on_delete='CASCADE', description='레시피 관련 태그')
     ingredients = fields.ManyToManyField('b303.Ingredient', related_name='recipe_ingredient', through='recipeingredient', description='레시피 사용 재료ㅋ')
 
+    async def update(self, user_id, title, content, img_url, tags, ingredients):
+        if self.user != user_id:
+            return self
+        self.title = title
+        self.content = content
+        self.img_url = img_url
+        await self.save()
+        await self.tags.clear()
+        await self.ingredients.clear()
+        for ingredient in ingredients:
+            new_ingredient, _ = await Ingredient.get_or_create(name=ingredient.name)
+            await RecipeIngredient.create(recipe=self, ingredient=new_ingredient, amount=ingredient.amount)
+        await self.tags.add(*[tag for tag in await Tag.filter(id__in=tags)])
+        return self
+
+
 
 class LikeRecipe(Model):
     user = fields.ForeignKeyField('b303.User',on_delete='CASCADE')
