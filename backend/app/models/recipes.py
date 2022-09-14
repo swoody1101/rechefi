@@ -13,9 +13,7 @@ class Recipe(Model):
     tags = fields.ManyToManyField('b303.Tag', related_name='recipe_tag', through='recipetag', on_delete='CASCADE', description='레시피 관련 태그')
     ingredients = fields.ManyToManyField('b303.Ingredient', related_name='recipe_ingredient', through='recipeingredient', description='레시피 사용 재료ㅋ')
 
-    async def update(self, user_id, title, content, img_url, tags, ingredients):
-        if self.user != user_id:
-            return self
+    async def update(self, title, content, img_url, tags, ingredients):
         self.title = title
         self.content = content
         self.img_url = img_url
