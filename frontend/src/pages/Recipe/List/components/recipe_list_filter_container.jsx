@@ -23,6 +23,36 @@ function RecipeListFilterContainer({ onFilterApplied }) {
     );
   };
 
+  // handle ingred info
+  const [selectedIngred, setSelectedIngred] = useState([]);
+
+  const addIngred = (ingred) => {
+    setSelectedIngred([
+      ...selectedIngred,
+      { ...ingred, include: true },
+    ]);
+  };
+
+  const deleteIngred = (ingred_id) => {
+    console.log(ingred_id);
+
+    setSelectedIngred(
+      selectedIngred.filter(
+        (ingred) => ingred.id !== ingred_id
+      )
+    );
+  };
+
+  const changeIngred = (ingred_id, flag) => {
+    setSelectedIngred(
+      selectedIngred.map((ingred) =>
+        ingred.id === ingred_id
+          ? { ...ingred, include: flag }
+          : ingred
+      )
+    );
+  };
+
   return (
     <Accordion
       sx={{
@@ -54,15 +84,18 @@ function RecipeListFilterContainer({ onFilterApplied }) {
           p: 2,
           display: "flex",
           flexDirection: "column",
-          rowGap: 1,
         }}
       >
-        {selectedTags}
         <RecipeListFilterTags
           onTagAdded={addTag}
           onTagDeleted={deleteTag}
         />
-        <RecipeListFilterIngredients />
+        <RecipeListFilterIngredients
+          onIngredAdded={addIngred}
+          onIngredDeleted={deleteIngred}
+          onIngredChanged={changeIngred}
+          selectedIngred={selectedIngred}
+        />
         <Button
           variant="contained"
           onClick={onFilterApplied}
