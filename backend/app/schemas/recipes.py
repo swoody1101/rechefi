@@ -25,19 +25,11 @@ class RecipeLike(BaseModel):
 
 
 class RecipeCreateForm(BaseModel):
-    user_id: int
     title: str
     content: str
     img_url: str = Field(nullable=True)
     tags: List[int]
     ingredients: List[IngredientRecipeForm]
-
-
-class RecipeForm(RecipeCreateForm):
-    nickname: str
-    created_at: str
-    updated_at: str
-    likes: List[dict]
 
 
 class RecipeList(BaseModel):
@@ -54,8 +46,3 @@ class RecipeCommentForm(BaseModel):
 
 class RecipeCommentList(RecipeCommentForm):
     nickname: str
-
-
-
-class LikeRecipeForm(BaseModel):
-    user_id: int
