@@ -26,7 +26,7 @@ export const SideBarWrapper = styled.div`
   left: 0;
   width: 75%;
   height: 100%;
-  z-index: 5;
+  z-index: 15;
   animation: ${moveSideBar} 0.3s ease;
 `;
 
@@ -37,7 +37,7 @@ export const Backdrop = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 4;
+  z-index: 10;
   animation: ${opacityKeyFrames} 0.4s ease;
 `;
 
