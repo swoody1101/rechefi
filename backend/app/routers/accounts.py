@@ -18,9 +18,6 @@ from app.schemas.accounts import TokenData
 import string, secrets
 
 
-
-
-
 router = APIRouter(prefix="/members", tags=["members"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
 
@@ -62,17 +59,6 @@ async def authenticate_user(form_data):
         return False
     return user
 
-####### 존재하는 유저인지 확인 #######
-async def check_exist_user(member_id):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="존재하지 않는 유저입니다.",
-        headers={"WWW-Authenticate": "Bearer"},
-    )    
-    user = await User.get_or_none(email=member_id)
-    if user is None:
-        raise credentials_exception
-    return user
 
 ####### 현재 유저정보 받아오기 #######
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -93,6 +79,18 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     if user is None:
         raise credentials_exception
     return user
+
+####### 타 유저정보 받아오기 #######
+async def get_other_user(member_id, current_user: User = Depends(get_current_user)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="존재하지 않는 유저입니다.",
+        headers={"WWW-Authenticate": "Bearer"},
+    )    
+    other_user = await User.get_or_none(email=member_id)
+    if other_user is None:
+        raise credentials_exception
+    return other_user
 
 ##################여기서부터 API입니다#################################
 
@@ -164,16 +162,16 @@ async def create_new_password():
 
 
 @router.get("/", description="마이페이지", response_model=CurrentUser)
-async def get_my_page(current_user: User = Depends(get_current_user), token: str = Depends(oauth2_scheme)):
+async def get_my_page(current_user: User = Depends(get_current_user)):
     return current_user
 
 @router.get("/{member_id}", description="다른사람 페이지", response_model=CurrentUser)
-async def get_other_page(member_id, user: User = Depends(check_exist_user), token: str = Depends(oauth2_scheme)):
-    return user
+async def get_other_page(member_id, other_user: User = Depends(get_other_user)):
+    return other_user
 
 
 @router.get("/follow/{member_id}", description="해당 유저의 팔로워/팔로우 조회")
-async def get_follow(member_id, user: User = Depends(check_exist_user), token: str = Depends(oauth2_scheme)):
+async def get_follow(member_id, user: User = Depends(get_other_user)):
     followers = await user.followers
     followers = list(map(lambda followers: followers.email, followers))
     follows = await user.following
@@ -183,7 +181,7 @@ async def get_follow(member_id, user: User = Depends(check_exist_user), token: s
 
 
 @router.post("/follow/{member_id}", description="해당 유저를 팔로우/팔로우 취소")
-async def do_follow(member_id, me: User = Depends(get_current_user), user: User = Depends(check_exist_user), token: str = Depends(oauth2_scheme)):
+async def do_follow(member_id, me: User = Depends(get_current_user), user: User = Depends(get_other_user)):
     # 본인이 아닌경우에만 팔로우/언팔로우 가능
     if me != user:
         if await me.following.filter(pk=user.pk).exists():
