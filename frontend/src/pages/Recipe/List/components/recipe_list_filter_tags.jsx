@@ -71,7 +71,7 @@ function RecipeListFilterTags({
       }
     });
 
-    // set color UI toggle
+    // set color toggle
     setTags(
       tags.map((tag) =>
         tag.id === tag_id
@@ -94,7 +94,13 @@ function RecipeListFilterTags({
   ));
 
   return (
-    <Box sx={{ m: 1 }}>
+    <Box
+      sx={{
+        m: 1,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Typography variant="h6" fontWeight={"bold"}>
         요리 분류
       </Typography>
