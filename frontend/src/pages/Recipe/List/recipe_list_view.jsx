@@ -135,8 +135,8 @@ function RecipeListView() {
 
         // if scroll end
         if (
-          documentScrollPos ===
-          document.documentElement.scrollHeight
+          documentScrollPos <=
+          document.documentElement.scrollHeight - 20
         ) {
           addRecipesBeingShown(5);
         }
@@ -162,7 +162,7 @@ function RecipeListView() {
   }, [data]);
 
   return (
-    <Container sx={{ p: 2 }}>
+    <Container sx={{ p: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
       <RecipeList recipes={recipes} loading={loading} />
       <RecipeListFab />
