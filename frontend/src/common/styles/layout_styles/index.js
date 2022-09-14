@@ -10,6 +10,7 @@ export const LayoutStyledHeader = styled.header`
   height: 5vh;
   position: sticky;
   top: 0;
+  z-index: 9;
 `;
 
 export const LayoutStyledMain = styled.main``;

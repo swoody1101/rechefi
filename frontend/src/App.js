@@ -5,6 +5,7 @@ import MainPage from "./pages/Main/main_page";
 import Layout from "./common/components/layout";
 import Test from "./pages/test";
 import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail";
+import MyCook from "./pages/community/my-cook";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/recipe" element={<Test />} />
             <Route path="/account" element={<MainPage />} />
             <Route path="/recipe/detail" element={<RecipeDetail />} />
+            <Route path="/community/my-cook" element={<MyCook />} />
           </Routes>
         </Layout>
       </BrowserRouter>
