@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Container } from "@mui/material";
 import RecipeListItem from "./recipe_list_item";
-import RecipeListFilter from "./recipe_list_filter_container";
+import RecipeListFilter from "./filter/recipe_list_filter_container";
 import RecipeListLoadingSpinner from "./recipe_list_loading_spinner";
-import { useState } from "react";
 
 function RecipeList({ recipes, loading }) {
   const [filter, setFilter] = useState({

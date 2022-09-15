@@ -1,6 +1,6 @@
+import React from "react";
 import { Chip } from "@mui/material";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import React from "react";
 
 function RecipeListItemLikeBtn({ likes }) {
   return (
