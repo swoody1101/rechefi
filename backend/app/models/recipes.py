@@ -21,8 +21,8 @@ class Recipe(Model):
         await self.tags.clear()
         await self.ingredients.clear()
         for ingredient in ingredients:
-            new_ingredient, _ = await Ingredient.get_or_create(name=ingredient.name)
-            await RecipeIngredient.create(recipe=self, ingredient=new_ingredient, amount=ingredient.amount)
+            new_ingredient, _ = await Ingredient.get_or_create(name=ingredient['name'])
+            await RecipeIngredient.create(recipe=self, ingredient=new_ingredient, amount=ingredient["amount"])
         await self.tags.add(*[tag for tag in await Tag.filter(id__in=tags)])
         return self
 
