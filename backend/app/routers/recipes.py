@@ -17,7 +17,8 @@ router = APIRouter(prefix="/recipe", tags=["recipe"])
 
 @router.post("/tag", description="레시피 태그 생성", response_model=CommonResponse)
 async def create_tag(req: TagForm, user: User = Depends(get_current_user)):
-    if user.is_admin is True:
+    # if user.is_admin is True:
+    if user is not None:
         await Tag.get_or_create(**req.dict())
     else:
         return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
@@ -26,7 +27,8 @@ async def create_tag(req: TagForm, user: User = Depends(get_current_user)):
 
 @router.post("/ingredient", description="레시피 재료 생성", response_model=CommonResponse)
 async def create_ingredient(req: IngredientForm, user: User = Depends(get_current_user)):
-    if user.is_admin is True:
+    # if user.is_admin is True:
+    if user is not None:
         await Ingredient.get_or_create(**req.dict())
     else:
         return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
@@ -38,8 +40,8 @@ async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_
     # 유저 인증 로직
     recipe = await Recipe.create(user_id=user.id, title=req.title, content=req.content, img_url=req.img_url)
     for ingredient in req.ingredients:
-        new_ingredient, created = await Ingredient.get_or_create(name=ingredient.name)
-        await RecipeIngredient.create(recipe=recipe, ingredient=new_ingredient, amount=ingredient.amount)
+        new_ingredient, created = await Ingredient.get_or_create(name=ingredient["name"])
+        await RecipeIngredient.create(recipe=recipe, ingredient=new_ingredient, amount=ingredient["amount"])
     await recipe.tags.add(*[tag for tag in await Tag.filter(id__in=req.tags)])
     return CommonResponse()
 
@@ -48,7 +50,7 @@ async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_
 async def recipe_detail(recipe_id: int):
     recipe = await Recipe.get_or_none(id=recipe_id)
     if recipe is None:
-        return JSONResponse(status_code=404, content=CommonFailedResponse(detail="").dict())
+        return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 레시피입니다.").dict())
     else:
         ingredients = [
             IngredientRecipeForm(**dict(await ingredient.ingredient), amount=ingredient.amount)
