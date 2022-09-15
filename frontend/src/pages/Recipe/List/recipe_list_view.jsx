@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import RecipeListBests from "./components/recipe_list_bests";
 import RecipeList from "./components/recipe_list";
 import RecipeListFab from "./components/recipe_list_fab";
-import { Container } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonBase,
+  Container,
+} from "@mui/material";
 import { useEffect } from "react";
 import { useCallback } from "react";
 import { useMemo } from "react";
@@ -18,6 +23,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 1,
+        tags: [{ id: 1 }, { id: 2 }],
+        ingredients: [{ name: "파" }, { name: "양파" }],
       },
       {
         img: "../../../../assets/img/food_example_1.jpg",
@@ -26,6 +33,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 2,
+        tags: [{ id: 2 }],
+        ingredients: [{ name: "양파" }],
       },
       {
         img: "../../../../assets/img/food_example_1.jpg",
@@ -34,6 +43,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 3,
+        tags: [],
+        ingredients: [],
       },
       {
         img: "../../../../assets/img/food_example_1.jpg",
@@ -42,6 +53,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 4,
+        tags: [],
+        ingredients: [],
       },
       {
         img: "../../../../assets/img/food_example_1.jpg",
@@ -50,6 +63,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 5,
+        tags: [],
+        ingredients: [],
       },
       {
         img: "../../../../assets/img/food_example_1.jpg",
@@ -58,6 +73,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 11,
+        tags: [],
+        ingredients: [],
       },
       {
         img: "../../../../assets/img/food_example_1.jpg",
@@ -66,6 +83,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 12,
+        tags: [],
+        ingredients: [],
       },
       {
         img: "../../../../assets/img/food_example_1.jpg",
@@ -74,6 +93,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 13,
+        tags: [],
+        ingredients: [],
       },
       {
         img: "../../../../assets/img/food_example_1.jpg",
@@ -82,6 +103,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 14,
+        tags: [],
+        ingredients: [],
       },
       {
         img: "../../../../assets/img/food_example_1.jpg",
@@ -90,6 +113,8 @@ function RecipeListView() {
         views: 1576,
         likes: 30,
         id: 15,
+        tags: [],
+        ingredients: [],
       },
     ],
     []
