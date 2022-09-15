@@ -20,10 +20,6 @@ class IngredientRecipeForm(IngredientForm):
     amount: str
 
 
-class RecipeLike(BaseModel):
-    user_id: int
-
-
 class RecipeCreateForm(BaseModel):
     title: str
     content: str
@@ -37,7 +33,6 @@ class RecipeList(BaseModel):
 
 
 class RecipeCommentForm(BaseModel):
-    user_id: int
     content: str
     root: int
     group: int
@@ -45,4 +40,5 @@ class RecipeCommentForm(BaseModel):
 
 
 class RecipeCommentList(RecipeCommentForm):
+    user_id: int
     nickname: str
