@@ -30,9 +30,15 @@ const SidebarElementList = ({ sidebarClose }) => {
       </SidebarRecipeElement>
       <div>
         <SideBarCommunityDivWrapper>커뮤니티</SideBarCommunityDivWrapper>
-        {elements.map((e, i) => (
-          <SideBarCommunityElementDiv key={i}>{e}</SideBarCommunityElementDiv>
-        ))}
+
+        <SideBarCommunityElementDiv
+          onClick={() => {
+            navigate("/community/my-cook");
+            sidebarClose();
+          }}
+        >
+          요리자랑
+        </SideBarCommunityElementDiv>
       </div>
       <div
         onClick={() => {
