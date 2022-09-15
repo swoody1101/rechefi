@@ -40,4 +40,5 @@ class RecipeCommentForm(BaseModel):
 
 
 class RecipeCommentList(RecipeCommentForm):
+    user_id: int
     nickname: str
