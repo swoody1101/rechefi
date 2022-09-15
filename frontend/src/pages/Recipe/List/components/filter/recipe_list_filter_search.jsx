@@ -7,9 +7,8 @@ import {
   IconButton,
   OutlinedInput,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
 import RecipeFilterIngredSearchedItem from "./recipe_list_filter_ingredient_searched_item";
 
 function RecipeListFilterSearch({

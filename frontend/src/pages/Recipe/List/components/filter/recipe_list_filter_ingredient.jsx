@@ -2,14 +2,13 @@ import {
   Box,
   Divider,
   IconButton,
-  StepContext,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import RecipeListFilterSearch from "./recipe_list_filter_search";
 import RecipeFilterIngredItem from "./recipe_list_filter_ingredient_item";
-import AlertSnackbar from "../../../../common/components/alert_snackbar";
+import AlertSnackbar from "../../../../../common/components/alert_snackbar";
 
 function RecipeListFilterIngredients({
   onIngredAdded,

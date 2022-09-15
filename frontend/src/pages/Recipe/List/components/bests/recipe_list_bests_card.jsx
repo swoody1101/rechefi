@@ -24,7 +24,7 @@ function BestRecipeCard({ bestRecipe }) {
           userDrag: "none",
           userSelect: "none",
         }}
-        src={require("../../../../assets/img/food_example_2.jpg")}
+        src={require("../../../../../assets/img/food_example_2.jpg")}
         alt={bestRecipe.title}
       />
     </Box>
