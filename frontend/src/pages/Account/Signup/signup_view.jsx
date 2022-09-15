@@ -59,7 +59,9 @@ const SignUp = () => {
       password: password,
       nickname: nickname,
     };
-    window.localStorage.setItem("userName", JSON.stringify(userObj));
+    window.localStorage.setItem("userObj", JSON.stringify(userObj));
+
+    console.log(localStorage.getItem("userObj"));
   };
 
   return (
