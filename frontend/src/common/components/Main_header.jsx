@@ -1,5 +1,5 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import { LayoutStyledHeader } from "../styles/layout_styles";
+import { LayoutStyledHeader } from "../styles/layout_styles/main-layout-styled-header-styles";
 import { SideBarOpenButton } from "../styles/sidebar_styles";
 
 const Header = ({ sidebarHandler }) => {

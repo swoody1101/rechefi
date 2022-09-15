@@ -8,15 +8,15 @@ import {
   RecipeDetailLikeCount,
   RecipeDetailLikeWrppaerDiv,
   RecipeDetailTitleWrapperDiv,
-} from "../recipe_detail_styles";
-import RecipeDetailContent from "./recipe_detail_content";
-import { dummyDetail } from "./recipe_detail_dummy";
-import RecipeDetailIngredients from "./recipe_detail_ingredients";
-import RecipedetailTitleArea from "./recipe_detail_title_area";
+} from "../recipe_detail_styles/styles";
+import RecipeDetailContent from "./content";
+import { dummyDetail } from "./dummy";
+import RecipeDetailIngredients from "./ingredients";
+import RecipedetailTitleArea from "./title_area";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import RecipeDetailComments from "./recipe_detail_comments";
+import RecipeDetailComments from "./comments";
 import SpatialTrackingIcon from "@mui/icons-material/SpatialTracking";
-import RecipeDeatilAIvoiceControll from "./recipe_detail_AIvoice_controll";
+import RecipeDeatilAIvoiceControll from "./AIvoice_controll";
 
 const RecipeDetail = () => {
   const [post, setPost] = useState({});
