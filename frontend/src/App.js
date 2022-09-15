@@ -11,6 +11,7 @@ import SignUp from "./pages/Account/Signup/signup_view";
 import Login from "./pages/Account/Login/login_view";
 import NewPassword from "./pages/Account/Login/new_password_view";
 import MyPage from "./pages/Account/Mypage/mypage_view";
+import MyCookWriter from "./pages/community/my_cook/write";
 
 function App() {
   return (
@@ -23,7 +24,10 @@ function App() {
             <Route path="/recipe" element={<RecipeListView></RecipeListView>} />
             <Route path="/account" element={<MainPage />} />
             <Route path="/recipe/detail" element={<RecipeDetail />} />
-            <Route path="/community/my-cook" element={<MyCook />} />
+            <Route path="/community">
+              <Route path="write" element={<MyCookWriter />} />
+              <Route path="my-cook" element={<MyCook />} />
+            </Route>
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/new-password" element={<NewPassword />} />
