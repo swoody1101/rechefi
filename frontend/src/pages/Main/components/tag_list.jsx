@@ -1,5 +1,5 @@
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { TagElementButton, TagListDiv } from "../styles/tag-list-styles";
+import { TagElementButton, TagListDiv } from "../styles/tag_list_styles";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 

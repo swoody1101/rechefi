@@ -3,7 +3,7 @@ import {
   RecipeDetailIngredientsElementWrapper,
   RecipeDetailIngredientsText,
   RecipeDetailIngredientsWrapper,
-} from "../recipe_detail_styles";
+} from "../recipe_detail_styles/styles";
 
 const RecipeDetailIngredients = ({ ingredients }) => {
   return (

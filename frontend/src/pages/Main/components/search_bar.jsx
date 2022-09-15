@@ -5,7 +5,7 @@ import {
   SearchInput,
   SearchSelect,
   SearchWrapperDiv,
-} from "../styles/search-bar-styles";
+} from "../styles/search_bar_styles";
 import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {

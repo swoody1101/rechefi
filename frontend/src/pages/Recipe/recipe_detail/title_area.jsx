@@ -4,7 +4,7 @@ import {
   RecipeTitleTitleAreaDiv,
   RecipeWriterAreaDiv,
   RecipeWriterDateAreaDiv,
-} from "../recipe_detail_styles";
+} from "../recipe_detail_styles/styles";
 
 const RecipedetailTitleArea = ({ post }) => {
   return (
