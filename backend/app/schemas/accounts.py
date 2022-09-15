@@ -23,6 +23,10 @@ class UserLoginForm(BaseModel):
     email: str
     password: str
 
+class MyPageForm(BaseModel):
+    nickname: str
+    about_me: Union[str, None]
+
 ####토큰####
 class Token(BaseModel):
     access_token: str
