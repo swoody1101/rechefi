@@ -5,9 +5,9 @@ import {
   MyCookDetailImage,
   MyCookDetailImageWrapper,
   MyCookDetailWrapper,
-} from "../my-cook-list/my-cook-list-style";
+} from "../my_cook_list/list_style";
 import { createPortal } from "react-dom";
-import RecipeDetailComments from "../../../Recipe/recipe_detail/recipe_detail_comments";
+import RecipeDetailComments from "../../../Recipe/recipe_detail/comments";
 
 export const MyCookDetail = ({ postId }) => {
   const [post, setPost] = useState({

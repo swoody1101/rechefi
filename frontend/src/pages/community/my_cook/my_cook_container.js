@@ -1,5 +1,5 @@
 import React from "react";
-import MyCookList from "./my-cook-list/my-cook-list";
+import MyCookList from "./my_cook_list/my-cook-list";
 
 const MyCook = () => {
   return (

@@ -9,13 +9,12 @@ import {
   RecipeDetailCommentElementNameDiv,
   RecipeDetailCommentElementWraper,
   RecipeDetailCommentInput,
-} from "../recipe_detail_styles";
+} from "../recipe_detail_styles/styles";
 
 const RecipeDetailCommentElement = ({ comment, reCommentPush }) => {
   const [reCommentOpen, setReCommentOpen] = useState(false);
   const [reCommentContent, setReCommentContent] = useState("");
   const onClick = () => {
-    console.log(reCommentContent);
     const inputValue = reCommentContent;
     const reComment = {
       content: inputValue,
