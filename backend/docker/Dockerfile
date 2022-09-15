@@ -10,7 +10,6 @@ COPY ./requirements.txt /backend/requirements.txt
 # 
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r /backend/requirements.txt
-RUN aerich upgrade
 # 
 COPY ./app /backend/app
 
