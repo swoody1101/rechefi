@@ -7,10 +7,10 @@ import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail";
 import MyCook from "./pages/community/my_cook/my_cook_container";
 import RecipeListView from "./pages/Recipe/List/recipe_list_page";
 
-import SignUp from "./pages/Account/Signup/signup_view";
-import Login from "./pages/Account/Login/login_view";
-import NewPassword from "./pages/Account/Login/new_password_view";
-import MyPage from "./pages/Account/Mypage/mypage_view";
+import SignUp from "./pages/Account/Signup/signup_page";
+import Login from "./pages/Account/Login/login_page";
+import NewPassword from "./pages/Account/Login/new_password_page";
+import MyPage from "./pages/Account/Mypage/mypage_page";
 
 function App() {
   return (
