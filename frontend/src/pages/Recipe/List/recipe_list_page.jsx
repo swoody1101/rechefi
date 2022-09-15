@@ -9,7 +9,7 @@ import RecipeList from "./components/recipe_list";
 import RecipeListFab from "./components/recipe_list_fab";
 import { Container } from "@mui/material";
 
-function RecipeListView() {
+function RecipeListPage() {
   // DEBUG
   const data = useMemo(
     () => [
@@ -192,4 +192,4 @@ function RecipeListView() {
   );
 }
 
-export default RecipeListView;
+export default RecipeListPage;
