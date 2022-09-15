@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import { Palette } from "./palette";
 
 export const Reset = css`
   * {
@@ -11,13 +12,5 @@ export const Reset = css`
     height: 100vh;
     width: 100vw;
     max-height: 100vh;
-  }
-
-  :root {
-    --main-color-5: #e38b29;
-    --main-color-4: #f1a661;
-    --main-color-3: #ffd8a9;
-    --main-color-2: #fdeedc;
-    --main-color-1: #fefbf7;
   }
 `;
