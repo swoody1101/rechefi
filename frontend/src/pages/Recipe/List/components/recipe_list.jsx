@@ -10,6 +10,12 @@ function RecipeList({ recipes, loading }) {
     ingreds: [],
   });
 
+  // see recipe detail
+  const seeRecipeDetail = (id) => {
+    // TODO : replace with navigation
+    console.log("recipe id: " + id);
+  };
+
   // recipes data render
   const recipeItems = recipes.map((recipe) => {
     // validate tags filter
@@ -70,7 +76,11 @@ function RecipeList({ recipes, loading }) {
     if (!isIngredFilterd) return null;
 
     return (
-      <RecipeListItem key={recipe.id} recipe={recipe} />
+      <RecipeListItem
+        key={recipe.id}
+        recipe={recipe}
+        onclick={() => seeRecipeDetail(recipe.id)}
+      />
     );
   });
 
