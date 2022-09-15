@@ -17,6 +17,9 @@ from app.schemas.accounts import TokenData
 # 비밀번호 발급
 import string, secrets
 
+# rdis
+from app.config import redis_session
+
 
 router = APIRouter(prefix="/members", tags=["members"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
@@ -27,6 +30,27 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
+
+def create_random():
+    string_pool = string.ascii_letters + string.digits
+    while True:
+        signup_token = ''.join(secrets.choice(string_pool) for i in range(10))
+        if (any(c.islower() for c in signup_token) 
+        and any(c.isupper() for c in signup_token)
+        and sum(c.isdigit() for c in signup_token) >= 3):
+            break    
+    return signup_token
+
+@router.post("/test", description="이메일로 인증토큰 발송") 
+def email_check(req: UserSignupForm, signup_token: str = Depends(create_random)):
+    # redis_db = redis.Redis(host='localhost', port='6379', charset='utf-8', decode_responses=True)
+    tmp_db = req.dict()
+    redis_session.lpush(signup_token, tmp_db['email'], tmp_db['password'], tmp_db['nickname'])
+    # redis_session.expire('token', 10)
+
+
+
+    return 'good'
 
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
