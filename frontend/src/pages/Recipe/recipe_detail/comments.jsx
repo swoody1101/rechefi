@@ -10,9 +10,9 @@ import {
   RecipeDetailCommentInput,
   RecipeDetailCommentWraper,
   RecipeDetailRecommentElementWrapper,
-} from "../recipe_detail_styles";
-import RecipeDetailCommentElement from "./recipe_detail_comment_element";
-import { dummyDetailComment } from "./recipe_detail_dummy";
+} from "../recipe_detail_styles/styles";
+import RecipeDetailCommentElement from "./comment_element";
+import { dummyDetailComment } from "./dummy";
 
 const RecipeDetailComments = ({ aiButton }) => {
   const [comment, setComment] = useState([]);

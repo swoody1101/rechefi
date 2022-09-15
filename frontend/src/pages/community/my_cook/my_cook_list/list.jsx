@@ -7,9 +7,9 @@ import {
   MyCookGridLi,
   MyCookGridUl,
   MyCookGridWrapper,
-} from "./my-cook-list-style";
+} from "./list_style";
 import { useInView } from "react-intersection-observer";
-import { MyCookDetail } from "../my-cook-detail";
+import { MyCookDetail } from "../my_cook_detail/my_cook_detail_page";
 import { Backdrop } from "../../../../common/styles/sidebar_styles";
 
 const MyCookList = () => {
