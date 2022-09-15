@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Avatar, Button, Box, styled, Typography } from "@mui/material";
+import { Avatar, Button, Box, Typography } from "@mui/material";
 
 const MyPageProfile = () => {
   // const nickname  = useSelector(state => state.)
@@ -37,5 +37,3 @@ const MyPageProfile = () => {
 };
 
 export default MyPageProfile;
-
-const FollowButton = styled(Button)({});
