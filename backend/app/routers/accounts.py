@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 # from app.enums.accounts import COLOR, UserRegion
 from app.models.accounts import User
-from app.schemas.accounts import UserSignupForm, CurrentUser
+from app.schemas.accounts import UserSignupForm, CurrentUser, MyPageForm
 from app.schemas.common import CommonResponse
 
 # 로그인
@@ -139,7 +139,7 @@ async def nickname_check(nickname, response: Response):
         response.status_code = status.HTTP_201_CREATED
         return {"message": "success"}
 
-# redis 연동 되면 구현
+# redis 연동되면 구현
 @router.get("/validation/3/{email}", description="이메일로 인증토큰 발송") 
 def email_check():
     pass
@@ -161,11 +161,16 @@ async def create_new_password():
     return temp_password
 
 
-@router.get("/", description="마이페이지", response_model=CurrentUser)
+@router.get("/", description="마이페이지 조회", response_model=CurrentUser)
 async def get_my_page(current_user: User = Depends(get_current_user)):
     return current_user
 
-@router.get("/{member_id}", description="다른사람 페이지", response_model=CurrentUser)
+@router.put("/", description="마이페이지 수정", response_model=CurrentUser)
+async def edit_my_page(req: MyPageForm, current_user: User = Depends(get_current_user)):
+    await current_user.update(**req.dict())
+    return current_user
+
+@router.get("/{member_id}", description="다른사람 페이지 조회", response_model=CurrentUser)
 async def get_other_page(member_id, other_user: User = Depends(get_other_user)):
     return other_user
 
@@ -192,7 +197,10 @@ async def do_follow(member_id, me: User = Depends(get_current_user), user: User 
     return '본인은 팔로우 할 수 없음'
 
 
-
+@router.delete("/", description="회원탈퇴")
+async def delete_user(current_user: User = Depends(get_current_user)):
+    await current_user.delete()
+    return {"message": "success"}
 ####################################
 ####################################
 ####################################
