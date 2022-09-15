@@ -6,8 +6,8 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import RecipeListFilterTags from "./recipe_list_filter_tags";
-import RecipeListFilterIngredients from "./recipe_list_filter_ingredient";
+import RecipeListFilterTags from "./tag/recipe_list_filter_tags";
+import RecipeListFilterIngredients from "./ingredient/recipe_list_filter_ingredient";
 
 function RecipeListFilterContainer({ onFilterApplied }) {
   // handle tag information
