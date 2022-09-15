@@ -1,15 +1,22 @@
 import React from "react";
-import MyPageProfile from "./components/mypage_porfile";
-import MyPageFollowButton from "./components/mypage_follow_button";
-import { Box, Stack } from "@mui/material";
+import MyPageProfile from "./components/mypage_profile";
+import MyPageFollow from "./components/mypage_follow";
+import { Box, Container } from "@mui/material";
 
 const MyPage = () => {
   return (
-    <Box maxWidth="sm" sx={{ width: "100%" }}>
-      <Stack>
-        <MyPageProfile></MyPageProfile>
-      </Stack>
-    </Box>
+    <Container
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        marginTop: "50px",
+      }}
+    >
+      <Box sx={{ width: "100%" }}>
+        <MyPageProfile />
+        <MyPageFollow />
+      </Box>
+    </Container>
   );
 };
 
