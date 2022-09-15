@@ -2,8 +2,10 @@ import { Global } from "@emotion/react";
 import { Reset } from "./common/styles/global";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import SignUpView from "./pages/Account/Singup/singup_view";
-import LoginView from "./pages/Account/Login/login_view";
+import SignUp from "./pages/Account/Singup/singup_view";
+import Login from "./pages/Account/Login/login_view";
+import NewPassword from "./pages/Account/Login/new_password_view";
+import MyPage from "./pages/Account/Mypage/mypage_view";
 
 function App() {
   return (
@@ -11,8 +13,10 @@ function App() {
       <Global styles={Reset} />
       <BrowserRouter>
         <Routes>
-          <Route path="/signup" element={<SignUpView />} />
-          <Route path="/login" element={<LoginView />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/new-password" element={<NewPassword />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </BrowserRouter>
     </div>
