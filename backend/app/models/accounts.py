@@ -10,3 +10,9 @@ class User(Model):
     is_active = fields.BooleanField(default=True)
     is_admin = fields.BooleanField(default=False)
     following = fields.ManyToManyField('b303.User', through='follow', related_name='followers')
+
+    async def update(self, nickname, about_me):
+        self.nickname = nickname
+        self.about_me = about_me
+        await self.save()
+        return self
