@@ -32,6 +32,17 @@ function RecipeWriteTitleInput({
           "& .MuiInput-underline:after": {
             borderBottomColor: Palette.mainColor4,
           },
+          "& ::placeholder": {
+            fontWeight: "bold",
+            fontSize: "1.2rem",
+          },
+        }}
+        inputProps={{
+          style: {
+            fontWeight: "bold",
+            fontSize: "1.2rem",
+            color: Palette.black3,
+          },
         }}
       />
     </Box>
