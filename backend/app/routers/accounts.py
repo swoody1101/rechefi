@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 
 # from app.enums.accounts import COLOR, UserRegion
 from app.models.accounts import User
@@ -7,6 +7,7 @@ from app.schemas.common import CommonResponse
 
 # 로그인
 from fastapi import Depends, HTTPException, Response, status
+from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm 
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
@@ -17,6 +18,14 @@ from app.schemas.accounts import TokenData
 # 비밀번호 발급
 import string, secrets
 
+# rdis
+from app.config import redis_session
+# redis_db = redis.Redis(host='localhost', port='6379', charset='utf-8', decode_responses=True)
+
+
+# 메일 인증 서비스
+from app.mail_config import send_in_background
+
 
 router = APIRouter(prefix="/members", tags=["members"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
@@ -25,6 +34,19 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
 SECRET_KEY = "788d89c0cc2378247a4157f6fb1745cab6b3243df21b8e3047a73401a6a25fe2"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
+
+
+def create_random():
+    string_pool = string.ascii_letters + string.digits
+    while True:
+        signup_token = ''.join(secrets.choice(string_pool) for i in range(10))
+        if (any(c.islower() for c in signup_token) 
+        and any(c.isupper() for c in signup_token)
+        and sum(c.isdigit() for c in signup_token) >= 3):
+            break    
+    return signup_token
+
 
 
 
@@ -93,6 +115,42 @@ async def get_other_user(member_id, current_user: User = Depends(get_current_use
     return other_user
 
 ##################여기서부터 API입니다#################################
+@router.post("/", description="인증 메일 발송") 
+async def email_authentication(background_tasks: BackgroundTasks, req: UserSignupForm, signup_token: str = Depends(create_random)):
+    # 이메일로 인증링크 발송
+    send = await send_in_background(background_tasks, email=req.email, token=signup_token)
+    if send is False:
+        return "이메일 형식이 올바르지 않습니다."
+    
+    # redis에 임시로 정보 저장
+    tmp_db = req.dict()
+    redis_session.rpush(signup_token, tmp_db['email'], tmp_db['password'], tmp_db['nickname'])
+    # 인증토큰의 유효시간 5분으로 설정
+    redis_session.expire(signup_token, 300)
+
+    return f'{req.email}로 인증 메일이 발송되었습니다.'
+
+@router.get("/{email}/{token}", description="인증 확인 후 회원가입")
+async def signup(email, token):
+    tmp_email = redis_session.lindex(token, 0)
+    if tmp_email is None or tmp_email != email:
+        return '잘못된 인증입니다.'
+
+    # redis로부터 임시데이터 받아옴
+    tmp_password = redis_session.lindex(token, 1)
+    tmp_password = get_password_hash(tmp_password)
+    tmp_nickname = redis_session.lindex(token, 2)
+    
+    await User.create(email=tmp_email, password=tmp_password, nickname=tmp_nickname)
+    
+    # DB에 저장이 된 임시데이터는 삭제
+    redis_session.delete(token)
+
+    # 우리 메인 페이지로 리다이렉트
+    return RedirectResponse("https://naver.com")
+
+
+
 
 @router.post("/login/1", description="로그인")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -117,14 +175,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 async def social_login(): 
     pass
 
-
-@router.post("/signup", description="회원가입", response_model=CommonResponse)
-async def signup(req: UserSignupForm):
-    req.password = get_password_hash(req.password)
-    await User.create(**req.dict())
-    # if not req.email.isalpha()
-    return CommonResponse()
-
 @router.get("/validation/1/{email}", description="아이디 중복체크")
 async def email_check(email, response: Response):
     user = await User.get_or_none(email=email)
@@ -139,10 +189,6 @@ async def nickname_check(nickname, response: Response):
         response.status_code = status.HTTP_201_CREATED
         return {"message": "success"}
 
-# redis 연동되면 구현
-@router.get("/validation/3/{email}", description="이메일로 인증토큰 발송") 
-def email_check():
-    pass
 
 @router.get("/logout", description="로그아웃") 
 def logout():
@@ -201,6 +247,14 @@ async def do_follow(member_id, me: User = Depends(get_current_user), user: User 
 async def delete_user(current_user: User = Depends(get_current_user)):
     await current_user.delete()
     return {"message": "success"}
+
+# 테스트 계정 생성용/인증없는 회원가입
+@router.post("/signup", description="테스트용 회원가입", response_model=CommonResponse)
+async def signup(req: UserSignupForm):
+    req.password = get_password_hash(req.password)
+    await User.create(**req.dict())
+    # if not req.email.isalpha()
+    return CommonResponse()
 ####################################
 ####################################
 ####################################
