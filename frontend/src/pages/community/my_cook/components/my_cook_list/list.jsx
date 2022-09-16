@@ -10,7 +10,7 @@ import {
 } from "./list_style";
 import { useInView } from "react-intersection-observer";
 import { MyCookDetail } from "../my_cook_detail/my_cook_detail_page";
-import { Backdrop } from "../../../../common/styles/sidebar_styles";
+import { Backdrop } from "../../../../../common/styles/sidebar_styles";
 
 const MyCookList = () => {
   const [imageState, setImageState] = useState([]);
