@@ -167,7 +167,12 @@ async def get_my_page(current_user: User = Depends(get_current_user)):
 
 @router.put("/", description="마이페이지 수정", response_model=CurrentUser)
 async def edit_my_page(req: MyPageForm, current_user: User = Depends(get_current_user)):
-    await current_user.update(**req.dict())
+    current_user.nickname = req.nickname
+    current_user.about_me = req.about_me
+    if len(req.password):
+        current_user.password = get_password_hash(req.password)
+
+    await current_user.save()
     return current_user
 
 @router.get("/{member_id}", description="다른사람 페이지 조회", response_model=CurrentUser)
