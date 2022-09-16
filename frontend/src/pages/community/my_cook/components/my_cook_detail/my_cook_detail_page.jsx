@@ -7,7 +7,7 @@ import {
   MyCookDetailWrapper,
 } from "../my_cook_list/list_style";
 import { createPortal } from "react-dom";
-import RecipeDetailComments from "../../../Recipe/recipe_detail/comments";
+import RecipeDetailComments from "../../../../Recipe/recipe_detail/comments";
 
 export const MyCookDetail = ({ postId }) => {
   const [post, setPost] = useState({

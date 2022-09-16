@@ -1,12 +1,12 @@
 import { TextField } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import RecipeList from "../../../Recipe/List/components/recipe_list";
+import RecipeList from "../../../../Recipe/List/components/recipe_list";
 import {
   RecipeListModal,
   RecipeListSearchWrapper,
   RecipeListWrapper,
-} from "../styles/write_styles";
+} from "../../styles/write_styles";
 import SearchIcon from "@mui/icons-material/Search";
 
 const RecipeModal = () => {

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Palette } from "../../../../common/styles/palette";
+import { Palette } from "../../../../../common/styles/palette";
 
 export const MyCookGridUl = styled.ul`
   display: flex;

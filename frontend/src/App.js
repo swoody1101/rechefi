@@ -11,7 +11,7 @@ import SignUp from "./pages/Account/Signup/signup_view";
 import Login from "./pages/Account/Login/login_view";
 import NewPassword from "./pages/Account/Login/new_password_view";
 import MyPage from "./pages/Account/Mypage/mypage_view";
-import MyCookWriter from "./pages/community/my_cook/write/write";
+import MyCookWriter from "./pages/community/my_cook/components/write/write";
 
 function App() {
   return (

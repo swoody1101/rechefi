@@ -20,7 +20,7 @@ function RecipeListItem({ recipe, onclick }) {
       }}
     >
       <CardActionArea
-        onclick={onclick}
+        onClick={onclick}
         sx={{
           display: "flex",
           height: "100%",
@@ -72,9 +72,7 @@ function RecipeListItem({ recipe, onclick }) {
                 src="/assets/img/food_example_2.jpg"
                 sx={{ width: 24, height: 24, mr: 1 }}
               /> */}
-              <Typography varaint="h6">
-                {recipe.author}
-              </Typography>
+              <Typography varaint="h6">{recipe.author}</Typography>
             </Box>
           </Box>
 
@@ -86,8 +84,7 @@ function RecipeListItem({ recipe, onclick }) {
             }}
           >
             <Typography variant="caption">
-              조회수 :
-              {" " + recipe.views.toLocaleString(undefined)}
+              조회수 :{" " + recipe.views.toLocaleString(undefined)}
             </Typography>
             <RecipeListItemLikeBtn likes={recipe.likes} />
           </Box>
