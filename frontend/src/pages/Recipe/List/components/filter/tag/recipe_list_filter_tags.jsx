@@ -5,6 +5,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import { Palette } from "../../../../../../common/styles/palette";
 
 function RecipeListFilterTags({
   onTagAdded,
@@ -84,9 +85,17 @@ function RecipeListFilterTags({
     <Chip
       key={tag.id}
       label={tag.name}
-      color={tag.selected ? "success" : "primary"}
       sx={{
         mx: 1,
+        background: tag.selected
+          ? Palette.mainColor3
+          : Palette.gray1,
+        // erase opacity animation
+        "&:hover, &:focus": {
+          backgroundColor: tag.selected
+            ? Palette.mainColor3
+            : Palette.gray1,
+        },
       }}
       onClick={(e) => toggleTagSelected(tag.id)}
     />
@@ -100,15 +109,19 @@ function RecipeListFilterTags({
         flexDirection: "column",
       }}
     >
-      <Typography variant="h6" fontWeight={"bold"}>
-        요리 분류
+      <Typography
+        variant="h6"
+        fontWeight={"bold"}
+        color={Palette.black1}
+      >
+        요리 태그
       </Typography>
       <Divider sx={{ mb: 2 }} />
       <Box
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "space-evenly",
+          justifyContent: "space-between",
           rowGap: 1,
         }}
       >
