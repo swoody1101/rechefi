@@ -1,6 +1,6 @@
-import { Box, Divider, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { useState } from "react";
-import { Palette } from "../../../../../../common/styles/palette";
+import TitleWithDivider from "../../../../../../common/components/title_with_divider";
 import RecipeListFilterTagChip from "./recipe_list_filter_tag_item";
 
 function RecipeListFilterTags({
@@ -92,14 +92,7 @@ function RecipeListFilterTags({
         flexDirection: "column",
       }}
     >
-      <Typography
-        variant="h6"
-        fontWeight={"bold"}
-        color={Palette.black1}
-      >
-        요리 태그
-      </Typography>
-      <Divider sx={{ mb: 2 }} />
+      <TitleWithDivider variant="h6" title="요리 태그" />
       <Box
         sx={{
           display: "flex",
