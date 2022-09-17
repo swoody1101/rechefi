@@ -8,6 +8,8 @@ import React, { useState } from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import RecipeListFilterTags from "./tag/recipe_list_filter_tags";
 import RecipeListFilterIngredients from "./ingredient/recipe_list_filter_ingredient";
+import { Palette } from "../../../../../common/styles/palette";
+import RecipeFilterBtn from "./recipe_list_filter_btn";
 
 function RecipeListFilterContainer({ onFilterApplied }) {
   // handle tag information
@@ -94,18 +96,15 @@ function RecipeListFilterContainer({ onFilterApplied }) {
           onIngredChanged={changeIngred}
           selectedIngred={selectedIngreds}
         />
-        <Button
-          variant="contained"
+        <RecipeFilterBtn
+          Content={"적용"}
           onClick={() =>
             onFilterApplied({
               tags: selectedTags,
               ingreds: selectedIngreds,
             })
           }
-          sx={{ m: 1 }}
-        >
-          적용
-        </Button>
+        />
       </Paper>
     </Accordion>
   );
