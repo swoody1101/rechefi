@@ -9,6 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import RecipeListFilterSearch from "./recipe_list_filter_ingredient_search";
 import RecipeFilterIngredItem from "./recipe_list_filter_ingredient_item";
 import AlertSnackbar from "../../../../../../common/components/alert_snackbar";
+import { Palette } from "../../../../../../common/styles/palette";
 
 function RecipeListFilterIngredients({
   onIngredAdded,
@@ -158,6 +159,7 @@ function RecipeListFilterIngredients({
         <Typography
           variant="h6"
           fontWeight={"bold"}
+          color={Palette.black3}
           sx={{ flexGrow: 1 }}
         >
           재료 검색
