@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Container } from "@mui/material";
 import RecipeWriteTitleInput from "./components/recipe_write_title_input";
 import RecipeListFilterTags from "../List/components/filter/tag/recipe_list_filter_tags";
-import { Palette } from "../../../common/styles/palette";
+import RecipeWriteBox from "./components/recipe_write_box";
 
 function RecipeWritePage() {
   // control title data
@@ -31,6 +31,7 @@ function RecipeWritePage() {
 
   return (
     <Container sx={{ p: 1 }}>
+      {/* title */}
       <RecipeWriteTitleInput
         value={title}
         onChange={onTitleChange}
@@ -38,20 +39,13 @@ function RecipeWritePage() {
         validation={titleValidation}
         errorMessage={"1 - 21자내로 입력해요"}
       />
-      <Box
-        sx={{
-          mt: 2,
-          mx: 2,
-          p: 1,
-          borderRadius: 2,
-          backgroundColor: Palette.mainColor1,
-        }}
-      >
+      {/* tags */}
+      <RecipeWriteBox>
         <RecipeListFilterTags
           onTagAdded={addTag}
           onTagDeleted={deleteTag}
         />
-      </Box>
+      </RecipeWriteBox>
     </Container>
   );
 }
