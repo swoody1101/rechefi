@@ -9,14 +9,6 @@ function RecipeWriteTitleInput({
   validation,
   errorMessage,
 }) {
-  const isError = () => {
-    // dismiss value at first
-    if (title === null) return false;
-    // validation ok
-    if (validation()) return false;
-    return true;
-  };
-
   const onChange = (e) => {
     setValue(e.target.value);
   };
@@ -28,8 +20,8 @@ function RecipeWriteTitleInput({
         value={title}
         placeholder={placeholder}
         onChange={onChange}
-        error={isError()}
-        helperText={isError() ? errorMessage : ""}
+        error={!validation()}
+        helperText={!validation() ? errorMessage : ""}
         fullWidth
         // for underline color
         sx={{
