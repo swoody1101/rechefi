@@ -1,14 +1,12 @@
 import {
   Accordion,
   AccordionSummary,
-  Button,
   Paper,
 } from "@mui/material";
 import React, { useState } from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import RecipeListFilterTags from "./tag/recipe_list_filter_tags";
 import RecipeListFilterIngredients from "./ingredient/recipe_list_filter_ingredient";
-import { Palette } from "../../../../../common/styles/palette";
 import RecipeFilterBtn from "./recipe_list_filter_btn";
 
 function RecipeListFilterContainer({ onFilterApplied }) {
