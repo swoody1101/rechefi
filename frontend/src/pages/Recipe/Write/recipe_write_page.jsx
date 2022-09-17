@@ -4,6 +4,7 @@ import RecipeWriteTitleInput from "./components/recipe_write_title_input";
 import RecipeListFilterTags from "../List/components/filter/tag/recipe_list_filter_tags";
 import RecipeWriteBox from "./components/recipe_write_box";
 import RecipeWriteIngredInputs from "./components/recipe_write_ingredient_list";
+import RecipeWriteAddCotentBar from "./components/recipe_write_add_content_bar";
 
 function RecipeWritePage() {
   // control title data
@@ -32,6 +33,8 @@ function RecipeWritePage() {
   // ingredients for recipe
   const [ingreds, setIngred] = useState([]);
 
+  // recipe contents
+
   return (
     <Container sx={{ p: 1 }}>
       {/* title */}
@@ -57,6 +60,9 @@ function RecipeWritePage() {
           setIngredients={setIngred}
         />
       </RecipeWriteBox>
+
+      {/* content */}
+      <RecipeWriteAddCotentBar />
     </Container>
   );
 }
