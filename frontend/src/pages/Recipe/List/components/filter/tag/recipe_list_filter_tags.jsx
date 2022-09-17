@@ -79,6 +79,7 @@ function RecipeListFilterTags({
 
   const tagItems = tags.map((tag) => (
     <RecipeListFilterTagChip
+      key={tag.id}
       tag={tag}
       onClick={(e) => toggleTagSelected(tag.id)}
     />
