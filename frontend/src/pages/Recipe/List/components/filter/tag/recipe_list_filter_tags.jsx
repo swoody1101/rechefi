@@ -1,11 +1,7 @@
-import {
-  Box,
-  Chip,
-  Divider,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { Palette } from "../../../../../../common/styles/palette";
+import RecipeListFilterTagChip from "./recipe_list_filter_tag_item";
 
 function RecipeListFilterTags({
   onTagAdded,
@@ -82,21 +78,8 @@ function RecipeListFilterTags({
   };
 
   const tagItems = tags.map((tag) => (
-    <Chip
-      key={tag.id}
-      label={tag.name}
-      sx={{
-        mx: 1,
-        background: tag.selected
-          ? Palette.mainColor3
-          : Palette.gray1,
-        // erase opacity animation
-        "&:hover, &:focus": {
-          backgroundColor: tag.selected
-            ? Palette.mainColor3
-            : Palette.gray1,
-        },
-      }}
+    <RecipeListFilterTagChip
+      tag={tag}
       onClick={(e) => toggleTagSelected(tag.id)}
     />
   ));
