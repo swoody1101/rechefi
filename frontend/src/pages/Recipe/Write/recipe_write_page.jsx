@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { Box, Container } from "@mui/material";
+import { Container } from "@mui/material";
 import RecipeWriteTitleInput from "./components/recipe_write_title_input";
 import RecipeListFilterTags from "../List/components/filter/tag/recipe_list_filter_tags";
 import RecipeWriteBox from "./components/recipe_write_box";
+import RecipeWriteIngredInputs from "./components/recipe_write_ingredient_list";
 
 function RecipeWritePage() {
   // control title data
   const [title, setTitle] = useState(null);
-  const onTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
 
   const titleValidation = () => {
+    // dismiss value at first
+    if (title === null) return true;
     if (0 < title.length && title.length < 17) return true;
     else return false;
   };
@@ -29,12 +29,15 @@ function RecipeWritePage() {
     );
   };
 
+  // ingredients for recipe
+  const [ingreds, setIngred] = useState([]);
+
   return (
     <Container sx={{ p: 1 }}>
       {/* title */}
       <RecipeWriteTitleInput
         value={title}
-        onChange={onTitleChange}
+        setValue={setTitle}
         placeholder="제목을 입력하세요"
         validation={titleValidation}
         errorMessage={"1 - 21자내로 입력해요"}
@@ -44,6 +47,14 @@ function RecipeWritePage() {
         <RecipeListFilterTags
           onTagAdded={addTag}
           onTagDeleted={deleteTag}
+        />
+      </RecipeWriteBox>
+
+      {/* ingredients */}
+      <RecipeWriteBox>
+        <RecipeWriteIngredInputs
+          ingredients={ingreds}
+          setIngredients={setIngred}
         />
       </RecipeWriteBox>
     </Container>
