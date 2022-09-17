@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import RecipeListItemLikeBtn from "./recipe_list_item_like_btn";
 
-function RecipeListItem({ recipe, onclick }) {
+function RecipeListItem({ recipe, onClick }) {
   return (
     <Card
       sx={{
@@ -20,7 +20,7 @@ function RecipeListItem({ recipe, onclick }) {
       }}
     >
       <CardActionArea
-        onClick={onclick}
+        onClick={onClick}
         sx={{
           display: "flex",
           height: "100%",
