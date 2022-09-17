@@ -4,17 +4,15 @@ import RecipeListItem from "./recipe_list_item";
 import RecipeListFilter from "./filter/recipe_list_filter_container";
 import RecipeListLoadingSpinner from "./recipe_list_loading_spinner";
 
-function RecipeList({ recipes, loading }) {
+function RecipeList({
+  recipes,
+  loading,
+  onRecipeItemClicked,
+}) {
   const [filter, setFilter] = useState({
     tags: [],
     ingreds: [],
   });
-
-  // see recipe detail
-  const seeRecipeDetail = (id) => {
-    // TODO : replace with navigation
-    console.log("recipe id: " + id);
-  };
 
   // recipes data render
   const recipeItems = recipes.map((recipe) => {
@@ -67,9 +65,9 @@ function RecipeList({ recipes, loading }) {
       <RecipeListItem
         key={recipe.id}
         recipe={recipe}
-        onclick={() => {
-          seeRecipeDetail(recipe.id);
-        }}
+        onClick={() =>
+          onRecipeItemClicked(recipe.id, recipe.title)
+        }
       />
     );
   });
