@@ -184,7 +184,7 @@ function RecipeListPage() {
   }, [data]);
 
   return (
-    <Container sx={{ p: 1 }}>
+    <Container sx={{ pt: 2, px: 1, pb: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
       <RecipeList recipes={recipes} loading={loading} />
       <RecipeListFab />
