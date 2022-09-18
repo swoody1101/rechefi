@@ -18,6 +18,7 @@ export const MyCookGridWrapper = styled.div`
 export const MyCookGridLi = styled.li`
   height: 10vh;
   flex-grow: 1;
+  list-style-type: none;
 `;
 
 export const MyCookGridImage = styled.img`
