@@ -40,8 +40,8 @@ async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_
     # 유저 인증 로직
     recipe = await Recipe.create(user_id=user.id, title=req.title, content=req.content, img_url=req.img_url)
     for ingredient in req.ingredients:
-        new_ingredient, created = await Ingredient.get_or_create(name=ingredient["name"])
-        await RecipeIngredient.create(recipe=recipe, ingredient=new_ingredient, amount=ingredient["amount"])
+        new_ingredient, created = await Ingredient.get_or_create(name=ingredient.name)
+        await RecipeIngredient.create(recipe=recipe, ingredient=new_ingredient, amount=ingredient.amount)
     await recipe.tags.add(*[tag for tag in await Tag.filter(id__in=req.tags)])
     return CommonResponse()
 
