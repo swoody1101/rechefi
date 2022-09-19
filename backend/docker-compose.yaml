@@ -3,6 +3,7 @@ services: # 이 항목 밑에 실행하려는 컨테이너 들을 정의 ( 컴�
   db: # 서비스 명
     image: mysql:8.0 # 사용할 이미지
     container_name: mysql
+    command:  bash -c "/wait-for-it.sh -t 0 mysql:3306"
 #    restart: always
 #    tty: true
     ports:
@@ -15,28 +16,41 @@ services: # 이 항목 밑에 실행하려는 컨테이너 들을 정의 ( 컴�
       - 3307
     volumes:
       - b303:/var/lib/mysql # -v 옵션 (다렉토리 마운트 설정)
-#    networks:
-#      - local-net
+    networks:
+      - local-net
+  # redis
+  redis:
+    image: redis:alpine
+    command: redis-server --port 6379
+    container_name: redis_boot
+    hostname: redis_boot
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - 6379:6379
   # FastAPI
-#  api:
-#    # db起動後に立ち上げる
-#    links:
-#      - db
-#    container_name: "api"
-#    # path配下のDockerfile読み込み
-#    build: .
-#    ports:
-#      - "8000:8000"
-#    volumes:
-#      - .:/usr/src/app
-#    environment: # -e 옵션
-#      - DB_URL=${DB_URL}
-#      - ROOT_PASSWORD=${ROOT_PASSWORD} # MYSQL 패스워드 설정 옵션
-#    networks:
-#      - local-net
-#networks:
-#  local-net:
-#    driver: bridge
+  api:
+    # db
+    links:
+      - db
+    container_name: "api"
+    # path
+    build: .
+    command: ["./wait-for-it.sh", "mysql:3307"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/usr/src/app
+      - .:/scripts/wait-for-it.sh
+    environment: # -e 옵션
+      - DB_URL=${DB_URL}
+      - ROOT_PASSWORD=${ROOT_PASSWORD} # MYSQL 패스워드 설정 옵션
+    networks:
+      - local-net
+networks:
+  local-net:
+    driver: bridge
 
 volumes:
   b303:
