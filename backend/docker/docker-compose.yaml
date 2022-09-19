@@ -11,16 +11,16 @@ services: # 이 항목 밑에 실행하려는 컨테이너 들을 정의 ( 컴�
       - TZ=Asia/Seoul
     volumes:
       - b303:/var/lib/mysql # -v 옵션 (다렉토리 마운트 설정)
-  fastapi:
-    build:
-      context: .
-      dockerfile: ../Dockerfile
-    #    restart: always
-    volumes:
-      - /:/backend
-    # command: aerich upgrade
-    depends_on:
-      - db
+#  fastapi:
+#    build:
+#      context: .
+#      dockerfile: ../Dockerfile
+#    #    restart: always
+#    volumes:
+#      - /:/backend
+#    # command: aerich upgrade
+#    depends_on:
+#      - db
 
 volumes:
   b303:

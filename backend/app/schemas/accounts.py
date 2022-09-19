@@ -26,6 +26,8 @@ class UserLoginForm(BaseModel):
 class MyPageForm(BaseModel):
     nickname: str
     about_me: Union[str, None]
+    password: Union[str, None]
+
 
 ####토큰####
 class Token(BaseModel):

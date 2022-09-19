@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AlertSnackbar from "../../../common/components/alert_snackbar";
 
 import {
   Button,
@@ -9,10 +10,16 @@ import {
   TextField,
 } from "@mui/material";
 
-import regex from "../components/regex";
+import regex from "../../../utils/regex";
 
 const NewPassword = () => {
   const [email, setEmail] = useState("");
+  const ALERT_MESSAGE = "이메일 형식으로 입력해주세요.";
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  const alertClose = () => {
+    setAlertOpen(false);
+  };
 
   const emailHandler = (event) => {
     setEmail(event.target.value);
@@ -29,6 +36,11 @@ const NewPassword = () => {
 
   return (
     <MainContainer>
+      <AlertSnackbar
+        open={alertOpen}
+        handleClose={alertClose}
+        message={ALERT_MESSAGE}
+      />
       <Grid container>
         <Grid item xs={12}>
           <TextField
