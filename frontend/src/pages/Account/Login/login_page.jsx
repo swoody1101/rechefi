@@ -27,19 +27,7 @@ const LoginView = () => {
     const email = refEmail.current.value;
     const password = refPassword.current.value;
 
-    console.log(email);
-    console.log(password);
-
-    const user = JSON.parse(localStorage.getItem("userObj"));
-    console.log(user);
-    if (user.email === email && user.password === password) {
-      console.log("로그인 성공");
-      refEmail.current.value = "";
-      refPassword.current.value = "";
-      return;
-    }
-    console.log("아이디와 비밀번호 확인해줍쇼");
-    // dispatch(loginThunk(email, password));
+    dispatch(loginThunk({ email, password }));
   };
 
   return (

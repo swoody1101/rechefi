@@ -1,0 +1,56 @@
+version: "3.9"
+services: # 이 항목 밑에 실행하려는 컨테이너 들을 정의 ( 컴포즈에서 컨테이너 : 서비스 )
+  db: # 서비스 명
+    image: mysql:8.0 # 사용할 이미지
+    container_name: mysql
+    command:  bash -c "/wait-for-it.sh -t 0 mysql:3306"
+#    restart: always
+#    tty: true
+    ports:
+      - "3307:3306" # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)  <- 컨테이너 내부는 무조건 3306
+    environment: # -e 옵션
+      - MYSQL_DATABASE=B303
+      - MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD} # MYSQL 패스워드 설정 옵션
+      - TZ=Asia/Seoul
+    expose:
+      - 3307
+    volumes:
+      - b303:/var/lib/mysql # -v 옵션 (다렉토리 마운트 설정)
+    networks:
+      - local-net
+  # redis
+  redis:
+    image: redis:alpine
+    command: redis-server --port 6379
+    container_name: redis_boot
+    hostname: redis_boot
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - 6379:6379
+  # FastAPI
+  api:
+    # db
+    links:
+      - db
+    container_name: "api"
+    # path
+    build: .
+    command: ["./wait-for-it.sh", "mysql:3307"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/usr/src/app
+      - .:/scripts/wait-for-it.sh
+    environment: # -e 옵션
+      - DB_URL=${DB_URL}
+      - ROOT_PASSWORD=${ROOT_PASSWORD} # MYSQL 패스워드 설정 옵션
+    networks:
+      - local-net
+networks:
+  local-net:
+    driver: bridge
+
+volumes:
+  b303:

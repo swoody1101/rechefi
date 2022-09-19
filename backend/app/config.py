@@ -1,4 +1,5 @@
 from pydantic import BaseSettings
+import redis
 
 class Settings(BaseSettings):
     DB_URL : str = ""
@@ -29,3 +30,11 @@ TORTOISE_ORM = {
     'use_tz': False,
     'timezone': 'Asia/Seoul'
 }
+
+pool = redis.ConnectionPool(
+    host='localhost',
+    port=6379,
+    # password=configs.REDIS_PASSWORD,
+    decode_responses=True
+)
+redis_session = redis.Redis(connection_pool=pool)
