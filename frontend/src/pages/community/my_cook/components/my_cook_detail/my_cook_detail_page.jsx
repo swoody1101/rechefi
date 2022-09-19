@@ -64,19 +64,6 @@ export const MyCookDetail = ({ postId }) => {
       },
     }
   );
-  // useEffect(() => {
-  //   setPost({
-  //     id: 1,
-  //     title: "안녕하세요",
-  //     likes: 10,
-  //     date: "어머니가 해주신 짬뽕이에요",
-  //     member_id: 1,
-  //     member_nickname: "기타치는이현태",
-  //     comment_count: 5,
-  //     image_url: "/img/apples.jpg",
-  //     content: "아아아아아아아아아아아아아",
-  //   });
-  // }, []);
   if (isLoading) {
     return <div>로딩중...</div>;
   }
