@@ -43,7 +43,7 @@ function RecipeWriteAddCotentBar({ addContent }) {
         {/* it can be component because of MUI */}
         <ToggleButton
           value="text"
-          disableRipple="true"
+          disableRipple={true}
           sx={{
             background: "",
             border: 0,
@@ -63,7 +63,7 @@ function RecipeWriteAddCotentBar({ addContent }) {
         </ToggleButton>
         <ToggleButton
           value="image"
-          disableRipple="true"
+          disableRipple={true}
           sx={{
             background: "",
             border: 0,
