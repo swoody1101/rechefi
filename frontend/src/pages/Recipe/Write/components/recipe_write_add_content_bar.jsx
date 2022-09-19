@@ -14,6 +14,7 @@ function RecipeWriteAddCotentBar({ addContent }) {
   const [contentType, setContentType] = useState("text");
 
   const handleType = (event, afterValue) => {
+    // text or image
     if (afterValue !== null) {
       setContentType(afterValue);
     }
@@ -39,17 +40,22 @@ function RecipeWriteAddCotentBar({ addContent }) {
         exclusive
         onChange={handleType}
       >
+        {/* it can be component because of MUI */}
         <ToggleButton
           value="text"
+          disableRipple="true"
           sx={{
             background: "",
             border: 0,
             borderRadius: "30%",
-            p: 0.5,
+            py: 0.5,
             color: Palette.gray2,
             "&.Mui-selected, &.Mui-selected:hover": {
               background: Palette.mainColor1,
               color: Palette.black3,
+            },
+            "&.MuiToggleButton-root": {
+              transition: "",
             },
           }}
         >
@@ -57,11 +63,12 @@ function RecipeWriteAddCotentBar({ addContent }) {
         </ToggleButton>
         <ToggleButton
           value="image"
+          disableRipple="true"
           sx={{
             background: "",
             border: 0,
-            borderRadius: "20%",
-            p: 0.5,
+            borderRadius: "30%",
+            py: 0.5,
             color: Palette.gray2,
             "&.Mui-selected, &.Mui-selected:hover": {
               background: Palette.mainColor1,
