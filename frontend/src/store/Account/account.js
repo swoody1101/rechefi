@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import http from "../../utils/http-commons";
+import axios from "axios";
+import { getToken, saveToken } from "../../utils/JWT-token";
 
 const initialState = {
   loading: false,
@@ -14,15 +15,23 @@ const initialState = {
 
 export const loginThunk = createAsyncThunk(
   "login/loginThunks",
-  async (loginInfo) => {
+  async ({ email, password }) => {
     try {
-      console.log("요청");
-      const response = await http.post("/members/test", loginInfo);
-      console.log("response: " + response);
-      const token = response.headers["access_token"];
-      console.log("성공2");
-      console.log(token);
-      return response;
+      const loginInfo = new FormData();
+      loginInfo.append("username", email);
+      loginInfo.append("password", password);
+
+      const response = await axios.post(
+        "http://localhost:8000/members/login/1",
+        loginInfo
+      );
+
+      const token = response.data["access_token"];
+
+      saveToken(token);
+      console.log("getToken: " + getToken());
+
+      return;
     } catch (error) {
       console.log(error);
       return error.response;
