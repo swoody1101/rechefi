@@ -14,6 +14,7 @@ import {
   ThemeProvider,
   TextField,
 } from "@mui/material";
+import { Palette } from "../../../common/styles/palette";
 
 const LoginView = () => {
   const theme = createTheme();
@@ -32,12 +33,12 @@ const LoginView = () => {
     const user = JSON.parse(localStorage.getItem("userObj"));
     console.log(user);
     if (user.email === email && user.password === password) {
-      alert("로그인 성공");
+      console.log("로그인 성공");
       refEmail.current.value = "";
       refPassword.current.value = "";
       return;
     }
-    alert("아이디와 비밀번호 확인해줍쇼");
+    console.log("아이디와 비밀번호 확인해줍쇼");
     // dispatch(loginThunk(email, password));
   };
 
@@ -99,7 +100,7 @@ const LoginView = () => {
 export default LoginView;
 
 const LoginButton = styled(Button)({
-  background: "#E38B29",
+  background: Palette.mainColor5,
 });
 
 const LinkButton = styled(Button)({
