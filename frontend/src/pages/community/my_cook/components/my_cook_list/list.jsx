@@ -11,17 +11,17 @@ import {
 import { useInView } from "react-intersection-observer";
 import { MyCookDetail } from "../my_cook_detail/my_cook_detail_page";
 import { Backdrop } from "../../../../../common/styles/sidebar_styles";
-import axios from "axios";
+import http from "../../../../../utils/http-commons";
 import { useInfiniteQuery } from "react-query";
 
 const fetchPostList = async (pageParam) => {
-  const res = await axios.get(
-    `http://localhost:8000/community/gallery/{article_id}?cooking_id=${pageParam}`
+  const res = await http.get(
+    `/community/gallery/{article_id}?cooking_id=${pageParam}`
   );
-  console.log(res);
+  console.log(res.data.data);
   return {
     result: res.data,
-    nextPage: pageParam + 1,
+    nextPage: pageParam + 100,
     isLast: res.data.isLast,
   };
 };
@@ -39,19 +39,6 @@ const MyCookList = () => {
         !lastPage.isLast ? lastPage.nextPage : undefined,
     }
   );
-  console.log(data, status, isFetchingNextPage);
-  // useEffect(() => {
-  //   if (imageState.length === 0) {
-  //     console.log("처음으로 로딩");
-  //     let temp = imageState;
-  //     for (let i = 0; i < 100; i++) {
-  //       temp.push(dummyItems[i % 10]);
-  //     }
-  //     setImageState(temp);
-  //     return;
-  //   }
-  // }, []);
-
   useEffect(() => {
     if (inView) {
       // console.log("첫 로딩 이후 테슽");
@@ -65,7 +52,8 @@ const MyCookList = () => {
       fetchNextPage();
     }
   }, [fetchNextPage, inView]);
-
+  console.log(data);
+  if (status === "loading") return <div>로딩중</div>;
   return (
     <MyCookGridWrapper>
       {openDetail && (
@@ -79,18 +67,21 @@ const MyCookList = () => {
         </div>
       )}
       <MyCookGridUl>
-        {imageState.map((e, i) => (
-          <MyCookGridLi key={i}>
-            <MyCookGridImage
-              src={e.image_url}
-              alt="test"
-              onClick={() => {
-                setOpenDetail((prev) => {
-                  return !prev;
-                });
-                setPostId(e.id);
-              }}
-            ></MyCookGridImage>
+        {data.pages.map((page, index) => (
+          <MyCookGridLi key={index}>
+            {Object.keys(page.result.data).map((e, i) => (
+              <MyCookGridImage
+                src={page.result.data[e].img_url}
+                key={i}
+                alt="test"
+                onClick={() => {
+                  setOpenDetail((prev) => {
+                    return !prev;
+                  });
+                  setPostId(page.result.data[e].user_id);
+                }}
+              ></MyCookGridImage>
+            ))}
           </MyCookGridLi>
         ))}
         <div ref={ref}></div>
