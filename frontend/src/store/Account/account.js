@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+
+import http from "../../utils/http-commons";
 
 const initialState = {
   loading: false,
   error: null,
   success: false,
-  email: "",
+  username: "",
   password: "",
   nickname: "",
   auth: false,
@@ -13,13 +14,15 @@ const initialState = {
 
 export const loginThunk = createAsyncThunk(
   "login/loginThunks",
-  async ({ email, password }) => {
+  async (loginInfo) => {
     try {
-      const response = await axios.post("/members/login/1", {
-        email,
-        password,
-      });
-      return response.data;
+      console.log("요청");
+      const response = await http.post("/members/test", loginInfo);
+      console.log("response: " + response);
+      const token = response.headers["access_token"];
+      console.log("성공2");
+      console.log(token);
+      return response;
     } catch (error) {
       console.log(error);
       return error.response;
@@ -32,7 +35,7 @@ export const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.email = "";
+      state.username = "";
       state.password = "";
       state.auth = false;
       state.loading = false;
