@@ -117,6 +117,10 @@ async def get_other_user(member_id, current_user: User = Depends(get_current_use
 ##################여기서부터 API입니다#################################
 @router.post("/", description="인증 메일 발송") 
 async def email_authentication(background_tasks: BackgroundTasks, req: UserSignupForm, signup_token: str = Depends(create_random)):
+    # 아이디 중복체크
+    user = await User.get_or_none(email=req.email)
+    if user:
+        return "사용중인 이메일입니다."
     # 이메일로 인증링크 발송
     send = await send_in_background(background_tasks, email=req.email, token=signup_token)
     if send is False:
@@ -254,12 +258,16 @@ async def delete_user(current_user: User = Depends(get_current_user)):
     return {"message": "success"}
 
 # 테스트 계정 생성용/인증없는 회원가입
-@router.post("/signup", description="테스트용 회원가입", response_model=CommonResponse)
+@router.post("/signup", description="테스트용 회원가입")
 async def signup(req: UserSignupForm):
+    user = await User.get_or_none(email=req.email)
+    if user:
+        return "사용중인 이메일입니다."
     req.password = get_password_hash(req.password)
     await User.create(**req.dict())
     # if not req.email.isalpha()
-    return CommonResponse()
+    return {"message": "success"}
+
 ####################################
 ####################################
 ####################################
