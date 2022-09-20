@@ -19,7 +19,6 @@ const fetchPostList = async (pageParam) => {
   const res = await axios.get(
     `http://localhost:8000/community/gallery/{article_id}?cooking_id=${pageParam}`
   );
-  console.log(res.data.data);
   return {
     result: res.data,
     nextPage: pageParam + 100,
@@ -45,7 +44,6 @@ const MyCookList = () => {
   //     fetchNextPage();
   //   }
   // }, [fetchNextPage, inView]);
-  console.log(data);
   if (status === "loading") return <div>로딩중</div>;
   return (
     <MyCookGridWrapper>

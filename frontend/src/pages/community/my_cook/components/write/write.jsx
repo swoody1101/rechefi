@@ -43,7 +43,6 @@ const MyCookWriter = () => {
 
   const textHandler = (keyword) => {
     setContent(keyword);
-    console.log(keyword);
   };
 
   const { mutate, isSuccess } = useMutation(postWrite, {
@@ -51,7 +50,6 @@ const MyCookWriter = () => {
       queryClient.invalidateQueries("myCookPosts");
     },
     onSuccess: (data) => {
-      console.log(data);
       navigate("/community/my-cook");
     },
   });

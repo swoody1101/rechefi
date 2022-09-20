@@ -8,19 +8,13 @@ const http = axios.create({
   },
 });
 
-// const loginToken = useSelector((state) => {
-//   state.account.loginToken;
-// });
-
 http.interceptors.request.use(
   (config) => {
     const loginToken = getToken();
 
     // if has login token
     if (loginToken)
-      config.headers.common[
-        "Authorization"
-      ] = `Bearer ${loginToken}`;
+      config.headers.common["Authorization"] = `Bearer ${loginToken}`;
     return config;
   },
   (error) => {
