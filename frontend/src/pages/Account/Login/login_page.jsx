@@ -39,7 +39,10 @@ const LoginView = () => {
           onSubmit={loginHandler}
           sx={{ mt: 10 }}
         >
-          <FormControl component="fieldset" variant="standard">
+          <FormControl
+            component="fieldset"
+            variant="standard"
+          >
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
