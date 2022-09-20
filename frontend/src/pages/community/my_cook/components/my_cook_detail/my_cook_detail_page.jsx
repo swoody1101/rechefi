@@ -9,10 +9,12 @@ import {
 import { createPortal } from "react-dom";
 import RecipeDetailComments from "../../../../Recipe/recipe_detail/comments";
 import { useQuery } from "react-query";
-import http from "../../../../../utils/http-commons";
+import axios from "axios";
 
 const fetchMyCookDetail = async (param) => {
-  const res = await http.get(`/community/gallery/detail/1`);
+  const res = await axios.get(
+    `http://localhost:8000/community/gallery/detail/100`
+  );
   return res.data;
 };
 
@@ -47,7 +49,7 @@ export const MyCookDetail = ({ postId }) => {
         console.log(data.data);
         const temp = data.data;
         setPost({
-          id: postId,
+          id: 100,
           title: temp.title,
           likes: temp.like_users,
           date: temp.create_at,
@@ -77,9 +79,9 @@ export const MyCookDetail = ({ postId }) => {
           src={post.image_url}
           alt="이미지"
         ></MyCookDetailImage>
+        <MyCookDetailContent>{post.content}</MyCookDetailContent>
       </MyCookDetailImageWrapper>
       <MyCookDetailContentWithCommentWrapper>
-        <MyCookDetailContent>{post.content}</MyCookDetailContent>
         <RecipeDetailComments aiButton={false} />
       </MyCookDetailContentWithCommentWrapper>
     </MyCookDetailWrapper>,

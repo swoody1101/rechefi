@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
-import { loginThunk } from "../../../store/Account/account";
+import { loginThunk } from "../../../store/module/accountReducer";
 
 import {
   Box,
