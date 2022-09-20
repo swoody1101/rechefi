@@ -1,11 +1,15 @@
-import React, { useState } from "react";
-import { Button, Container } from "@mui/material";
+import React, { useState, useRef } from "react";
+import { Container } from "@mui/material";
 import RecipeWriteTitleInput from "./components/recipe_write_title_input";
 import RecipeListFilterTags from "../List/components/filter/tag/recipe_list_filter_tags";
 import RecipeWriteBox from "./components/recipe_write_box";
 import RecipeWriteIngredInputs from "./components/recipe_write_ingredient_list";
 import RecipeWriteAddCotentBar from "./components/recipe_write_add_content_bar";
 import RecipeWriteContentBlock from "./components/recipe_write_content_block";
+import { Warn } from "../../../utils/sweatAlert";
+import { uploadImage } from "../../../utils/http-multipart";
+import RecipeWriteContentImage from "./components/recipe_write_content_img";
+import RecipeWriteContentText from "./components/recipe_write_content_text";
 
 function RecipeWritePage() {
   // control title data
@@ -36,15 +40,26 @@ function RecipeWritePage() {
 
   // recipe contents
   const [contents, setContents] = useState([
-    { content: "asdf" },
-    { content: "asdfasdf" },
-    { content: "asdfasdfasdf" },
+    { type: "text", content: "asdf" },
+    {
+      type: "image",
+      content:
+        "https://cdn.discordapp.com/attachments/733699779179184308/992697011780472944/IMG_0758.png",
+    },
+    { type: "text", content: "asdfasdfasdf" },
   ]);
 
+  // add text or image block
+  const imageInput = useRef();
   const addBlock = (type) => {
     if (type === "text") {
-      setContents([...contents, {}]);
+      setContents([
+        ...contents,
+        { type: "text", content: "" },
+      ]);
     } else if (type === "image") {
+      // activate image input
+      imageInput.current.click();
     }
   };
 
@@ -54,6 +69,49 @@ function RecipeWritePage() {
     );
   };
 
+  const inputLocalImage = async (e) => {
+    const image = e.target.files[0];
+    if (!!!image) return;
+
+    // check image size
+    const maxAllowedSize = 5 * 1024 * 1024;
+    if (image.size > maxAllowedSize) {
+      Warn("파일 크기는 5MB를 넘을 수 없습니다");
+      return;
+    }
+
+    // check image name
+    let fileName = image.name;
+    let fileDot = fileName.lastIndexOf(".");
+    let fileType = fileName
+      .substring(fileDot + 1, fileName.length)
+      .toLowerCase();
+
+    if (fileType !== "png" && fileType !== "jpg") {
+      Warn("지원하지 않는 확장자입니다");
+      return;
+    }
+
+    // upload to server
+    const formData = new FormData();
+    formData.append("image", image);
+    const res = await uploadImage(formData);
+
+    // add to content
+    if (!isNaN(res)) {
+      setContents([
+        ...contents,
+        { type: "image", content: res },
+      ]);
+    } else {
+      Warn("업로드 중 문제가 발생하였습니다");
+    }
+
+    // reset input
+    e.target.files[0] = "";
+  };
+
+  // handle block position
   const downBlockPos = (index) => {
     if (index === 0) return;
 
@@ -64,7 +122,6 @@ function RecipeWritePage() {
       ...contents.slice(index + 1),
     ]);
   };
-
   const upBlockPos = (index) => {
     if (index === contents.length - 1) return;
 
@@ -93,7 +150,6 @@ function RecipeWritePage() {
           onTagDeleted={deleteTag}
         />
       </RecipeWriteBox>
-
       {/* ingredients */}
       <RecipeWriteBox>
         <RecipeWriteIngredInputs
@@ -101,16 +157,9 @@ function RecipeWritePage() {
           setIngredients={setIngred}
         />
       </RecipeWriteBox>
-
       {/* content */}
       {contents.map((block, index) => {
         return (
-          // <RecipeWriteContents
-          //   key={index}
-          //   contentList={contents}
-          //   setContentList={setContents}
-          // ></RecipeWriteContents>
-
           <RecipeWriteContentBlock
             key={index}
             index={index}
@@ -118,11 +167,26 @@ function RecipeWritePage() {
             onIndexUp={upBlockPos}
             onIndexDown={downBlockPos}
           >
-            <Button>{block.content}</Button>
+            {/* image or text */}
+            {block.type === "image" ? (
+              <RecipeWriteContentImage
+                link={block.content}
+              />
+            ) : (
+              <RecipeWriteContentText />
+            )}
           </RecipeWriteContentBlock>
         );
       })}
       <RecipeWriteAddCotentBar addContent={addBlock} />
+      {/* hidden image input */}
+      <input
+        accept="image/jpeg, image/png"
+        type="file"
+        style={{ display: "none" }}
+        ref={imageInput}
+        onChange={(e) => inputLocalImage(e)}
+      />
     </Container>
   );
 }
