@@ -14,7 +14,9 @@ http.interceptors.request.use(
 
     // if has login token
     if (loginToken)
-      config.headers.common["Authorization"] = loginToken;
+      config.headers.common[
+        "Authorization"
+      ] = `Bearer ${loginToken}`;
     return config;
   },
   (error) => {
