@@ -1,12 +1,31 @@
 import { Box } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Warn } from "../../../../../../common/components/sweatAlert";
 import TitleWithDivider from "../../../../../../common/components/title_with_divider";
+import http from "../../../../../../utils/http-commons";
 import RecipeListFilterTagChip from "./recipe_list_filter_tag_item";
 
 function RecipeListFilterTags({
   onTagAdded,
   onTagDeleted,
 }) {
+  // get tags from server
+  useEffect(() => {
+    http
+      .get("/recipe/tag")
+      .then((response) => {
+        response.data.map((tag) => ({
+          ...tag,
+          selected: false,
+        }));
+      })
+      .catch(
+        Warn(
+          "태그 목록을 불러오는 중 문제가 발생하였습니다"
+        )
+      );
+  }, []);
+
   // DEBUG
   const data = [
     {
@@ -47,8 +66,12 @@ function RecipeListFilterTags({
     },
   ];
 
+  // TODO : remove dummy and change state init
   const [tags, setTags] = useState(
-    data.map((tag) => ({ ...tag, selected: false }))
+    data.map((tag) => ({
+      ...tag,
+      selected: false,
+    }))
   );
 
   /**
