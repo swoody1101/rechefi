@@ -5,17 +5,21 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+
 import MainPage from "./pages/Main/main_page";
 import Layout from "./common/components/Main_layout";
 import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail";
 import MyCook from "./pages/community/my_cook/my_cook_container";
-import RecipeList from "./pages/Recipe/List/recipe_list_page";
 
-import SignUp from "./pages/Account/Signup/signup_view";
-import Login from "./pages/Account/Login/login_view";
-import NewPassword from "./pages/Account/Login/new_password_view";
-import MyPage from "./pages/Account/Mypage/mypage_view";
+import RecipeList from "./pages/Recipe/List/recipe_list_page";
 import RecipeWrite from "./pages/Recipe/Write/recipe_write_page";
+
+import SignUp from "./pages/Account/Signup/signup_page";
+import Login from "./pages/Account/Login/login_page";
+import NewPassword from "./pages/Account/Login/new_password_page";
+import MyPage from "./pages/Account/Mypage/mypage_page";
+import ProfileModifyPage from "./pages/Account/Mypage/profile_modify_page";
+import MyPageFollowerList from "./pages/Account/Mypage/components/mypage_follower_list";
 
 function App() {
   return (
@@ -49,6 +53,14 @@ function App() {
               element={<NewPassword />}
             />
             <Route path="/mypage" element={<MyPage />} />
+            <Route
+              path="/profile-modify"
+              element={<ProfileModifyPage />}
+            />
+            <Route
+              path="/follower-list"
+              element={<MyPageFollowerList />}
+            />
           </Routes>
         </Layout>
       </BrowserRouter>
