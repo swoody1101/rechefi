@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useSelector, shallowEqual } from "react-redux";
+import { getToken } from "./JWT-token";
 
 const http = axios.create({
   baseURL: "http://localhost:8080",
@@ -10,10 +10,7 @@ const http = axios.create({
 
 http.interceptors.request.use(
   (config) => {
-    const loginToken = useSelector(
-      (state) => state.account.loginToken,
-      shallowEqual
-    );
+    const loginToken = getToken();
 
     // if has login token
     if (loginToken)
