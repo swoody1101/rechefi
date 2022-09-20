@@ -17,7 +17,7 @@ http.interceptors.request.use(
 
     // if has login token
     if (loginToken)
-      config.headers.common["access_token"] = loginToken;
+      config.headers.common["Authorization"] = loginToken;
     return config;
   },
   (error) => {
