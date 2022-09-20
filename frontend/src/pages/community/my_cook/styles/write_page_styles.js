@@ -49,3 +49,8 @@ export const ImageArea = styled.div`
   border-bottom-right-radius: 14px;
   overflow-y: scroll;
 `;
+
+export const UploadImageImg = styled.img`
+  width: 100%;
+  height: auto;
+`;

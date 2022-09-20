@@ -10,12 +10,31 @@ import {
 import EmptyWriteImage from "./empty_write_image";
 import RecipeModal from "./recipe_modal";
 import WriteTextArea from "./write_text";
+import http from "../../../../../utils/http-commons";
+import { useMutation, useQueryClient } from "react-query";
+// import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+const postWrite = async ({ content, imageUploadUrl }) => {
+  console.log(imageUploadUrl);
+  const { data } = await http.post("/community/gallery", {
+    title: "타이틀",
+    content: content,
+    img_url: imageUploadUrl,
+    category: 0,
+    recipe_id: 0,
+  });
+  console.log(data);
+  return data;
+};
 
 const MyCookWriter = () => {
   const [searchModal, setSearchModal] = useState(false);
   const [imageUploadUrl, setImageUploadUrl] = useState("");
   const [content, setContent] = useState("");
-  const [post, setPost] = useState({});
+
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const uploadHandler = (keyword) => {
     setImageUploadUrl(keyword);
@@ -27,13 +46,19 @@ const MyCookWriter = () => {
     console.log(keyword);
   };
 
-  const postWrite = () => {
-    setPost({
-      title: "자랑게시판",
-      content: content,
-      iamge_url: imageUploadUrl,
-    });
-  };
+  const { mutate, isSuccess } = useMutation(postWrite, {
+    onMutate: () => {
+      queryClient.invalidateQueries("myCookPosts");
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      navigate("/community/my-cook");
+    },
+  });
+
+  if (isSuccess) {
+  }
+
   return (
     <WriteWrapper>
       {searchModal && (
@@ -61,7 +86,13 @@ const MyCookWriter = () => {
         <EmptyWriteImage uploadHandler={uploadHandler} />
         <WriteTextArea textHandler={textHandler} />
       </WriteAreaWrapper>
-      <WriteButton onClick={postWrite}> 글 등록 </WriteButton>
+      <WriteButton
+        onClick={() => {
+          mutate({ content, imageUploadUrl });
+        }}
+      >
+        글 등록
+      </WriteButton>
     </WriteWrapper>
   );
 };

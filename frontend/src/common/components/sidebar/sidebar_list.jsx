@@ -14,7 +14,7 @@ const SidebarElementList = ({ sidebarClose }) => {
 
   return (
     <SidebarBoardDiv>
-      <SidebarMyAccount />
+      <SidebarMyAccount sidebarClose={sidebarClose} />
       <SidebarRecipeElement
         onClick={() => {
           navigate("/recipe", {
