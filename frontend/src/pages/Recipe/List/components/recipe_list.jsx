@@ -4,7 +4,11 @@ import RecipeListItem from "./recipe_list_item";
 import RecipeListFilter from "./filter/recipe_list_filter_container";
 import RecipeListLoadingSpinner from "./recipe_list_loading_spinner";
 
-function RecipeList({ recipes, loading }) {
+function RecipeList({
+  recipes,
+  loading,
+  onRecipeItemClicked,
+}) {
   const [filter, setFilter] = useState({
     tags: [],
     ingreds: [],
@@ -70,7 +74,13 @@ function RecipeList({ recipes, loading }) {
     if (!isIngredFilterd) return null;
 
     return (
-      <RecipeListItem key={recipe.id} recipe={recipe} />
+      <RecipeListItem
+        key={recipe.id}
+        recipe={recipe}
+        onClick={() =>
+          onRecipeItemClicked(recipe.id, recipe.title)
+        }
+      />
     );
   });
 
