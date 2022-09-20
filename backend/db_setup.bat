@@ -1,3 +1,1 @@
-cd docker
-docker-compose --env-file ../.env up -d
-cd ..
+docker-compose -f db-docker-compose.yaml --env-file ./.env up -d
