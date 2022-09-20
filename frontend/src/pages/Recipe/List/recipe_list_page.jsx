@@ -183,10 +183,22 @@ function RecipeListPage() {
     setBestRecipes(data.slice(0, 5));
   }, [data]);
 
+  // see recipe detail
+  const onRecipeItemClicked = (id, title) => {
+    // TODO : replace with navigation
+    console.log(
+      "recipe id: " + id + ", recipe title : " + title
+    );
+  };
+
   return (
     <Container sx={{ pt: 2, px: 1, pb: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
-      <RecipeList recipes={recipes} loading={loading} />
+      <RecipeList
+        recipes={recipes}
+        loading={loading}
+        onRecipeItemClicked={onRecipeItemClicked}
+      />
       <RecipeListFab />
     </Container>
   );
