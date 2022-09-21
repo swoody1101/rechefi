@@ -14,10 +14,12 @@ function RecipeListFilterTags({
     http
       .get("/recipe/tag")
       .then((response) => {
-        response.data.map((tag) => ({
-          ...tag,
-          selected: false,
-        }));
+        setTags(
+          response.data.map((tag) => ({
+            ...tag,
+            selected: false,
+          }))
+        );
       })
       .catch(
         Warn(
