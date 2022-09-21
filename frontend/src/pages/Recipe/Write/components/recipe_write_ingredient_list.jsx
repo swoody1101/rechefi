@@ -15,8 +15,6 @@ function RecipeWriteIngredList({
         index === inputed_idx ? inputed_ingred : ingred
       )
     );
-
-    console.log(ingredients);
   };
 
   const onDelete = (deleted_idx) => {
