@@ -23,8 +23,7 @@ function RecipeWriteContentBlock({
         flexDirection: "column",
         background: Palette.mainColor1,
         borderRadius: 2,
-        mx: 2,
-        my: 1,
+        m: 2,
       }}
     >
       <Box
