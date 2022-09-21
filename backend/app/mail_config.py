@@ -6,16 +6,16 @@ import os
 load_dotenv()
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME'),
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD'),
-    MAIL_FROM = os.environ.get('MAIL_FROM'),
-    MAIL_PORT = 587,
-    MAIL_SERVER = "smtp.naver.com",
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+    MAIL_FROM="ssafy303@naver.com",
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.naver.com",
     MAIL_FROM_NAME="Project_name",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
-    USE_CREDENTIALS = True,
-    VALIDATE_CERTS = True
+    MAIL_TLS=True,
+    MAIL_SSL=False,
+    USE_CREDENTIALS=True,
+    VALIDATE_CERTS=True
 )
 
 async def send_in_background(background_tasks: BackgroundTasks, email: str, token: str):

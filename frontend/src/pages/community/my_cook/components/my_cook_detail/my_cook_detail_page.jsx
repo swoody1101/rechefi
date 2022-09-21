@@ -7,7 +7,16 @@ import {
   MyCookDetailWrapper,
 } from "../my_cook_list/list_style";
 import { createPortal } from "react-dom";
-import RecipeDetailComments from "../../../Recipe/recipe_detail/comments";
+import RecipeDetailComments from "../../../../Recipe/recipe_detail/comments";
+import { useQuery } from "react-query";
+import axios from "axios";
+
+const fetchMyCookDetail = async (param) => {
+  const res = await axios.get(
+    `http://localhost:8000/community/gallery/detail/100`
+  );
+  return res.data;
+};
 
 export const MyCookDetail = ({ postId }) => {
   const [post, setPost] = useState({
@@ -17,7 +26,7 @@ export const MyCookDetail = ({ postId }) => {
     date: "",
     member_id: 0,
     member_nickname: "",
-    comment_count: 0,
+    comments: [],
     image_url: "",
   });
   useEffect(() => {
@@ -32,21 +41,37 @@ export const MyCookDetail = ({ postId }) => {
       window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
     };
   }, []);
-
-  useEffect(() => {
-    setPost({
-      id: 1,
-      title: "안녕하세요",
-      likes: 10,
-      date: "어머니가 해주신 짬뽕이에요",
-      member_id: 1,
-      member_nickname: "기타치는이현태",
-      comment_count: 5,
-      image_url: "/img/apples.jpg",
-      content: "아아아아아아아아아아아아아",
-    });
-  }, []);
-
+  const { isLoading, isError, data, error } = useQuery(
+    "myCookDetail",
+    fetchMyCookDetail,
+    {
+      onSuccess: (data) => {
+        console.log(data.data);
+        const temp = data.data;
+        setPost({
+          id: 100,
+          title: temp.title,
+          likes: temp.like_users,
+          date: temp.create_at,
+          member_id: temp.user_id,
+          member_nickname: temp.nickname,
+          comments: temp.comments,
+          image_url: temp.img_url,
+          views: temp.views,
+          content: temp.content,
+        });
+      },
+      onError: (e) => {
+        console.log(e.message);
+      },
+    }
+  );
+  if (isLoading) {
+    return <div>로딩중...</div>;
+  }
+  if (isError) {
+    return <div>Error: {error.message}</div>;
+  }
   return createPortal(
     <MyCookDetailWrapper>
       <MyCookDetailImageWrapper>
@@ -54,9 +79,9 @@ export const MyCookDetail = ({ postId }) => {
           src={post.image_url}
           alt="이미지"
         ></MyCookDetailImage>
+        <MyCookDetailContent>{post.content}</MyCookDetailContent>
       </MyCookDetailImageWrapper>
       <MyCookDetailContentWithCommentWrapper>
-        <MyCookDetailContent>{post.content}</MyCookDetailContent>
         <RecipeDetailComments aiButton={false} />
       </MyCookDetailContentWithCommentWrapper>
     </MyCookDetailWrapper>,
