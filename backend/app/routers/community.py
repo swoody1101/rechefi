@@ -299,7 +299,7 @@ async def delete_cooking(article_id: int, user: User = Depends(get_current_user)
 
 @router.get("/cooking/{article_id}", description="게시물 목록 조회", response_model=MultipleObjectResponse)
 async def get_cooking_list(article_id: int, q: Union[str, None] = None):
-    articles = await Cooking.filter(id__gte=article_id).select_related('user')
+    articles = await Cooking.filter(id__gte=article_id).select_related('user').limit(100)
     data = [
         {
             "title": article.title,
@@ -317,7 +317,7 @@ async def get_cooking_list(article_id: int, q: Union[str, None] = None):
 
 @router.get("/notice-board/{article_id}", description="공지사항 목록 조회", response_model=MultipleObjectResponse)
 async def get_notice_list(article_id: int, q: Union[str, None] = None):
-    articles = await Notice.filter(id__gte=article_id).select_related('user')
+    articles = await Notice.filter(id__gte=article_id).select_related('user').limit(100)
     data = [
         {
             "title": article.title,
@@ -333,7 +333,7 @@ async def get_notice_list(article_id: int, q: Union[str, None] = None):
 
 @router.get("/gallery/{article_id}", description="갤러리 목록 조회", response_model=MultipleObjectResponse)
 async def get_article_list(cooking_id: int, q: Union[str, None] = None):
-    cookings = await Cooking.filter(id__gte=cooking_id).select_related('user')
+    cookings = await Cooking.filter(id__gte=cooking_id).select_related('user').limit(100)
     data = [
         {
             "title": article.title,
