@@ -18,6 +18,7 @@ import axios from "axios";
 const fetchPostList = async (pageParam) => {
   const res = await axios.get(
     `http://localhost:8000/community/gallery/{article_id}?cooking_id=${pageParam}`
+    // `https://j7b303.p.ssafy.io/api/community/gallery/{article_id}?cooking_id=${pageParam}`
   );
   return {
     result: res.data,
