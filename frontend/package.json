@@ -23,6 +23,8 @@
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-logger": "^3.0.6",
+    "slate": "^0.82.1",
+    "slate-react": "^0.82.2",
     "sweetalert2": "^11.4.33",
     "web-vitals": "^2.1.0"
   },
