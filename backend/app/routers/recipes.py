@@ -25,6 +25,16 @@ async def create_tag(req: TagForm, user: User = Depends(get_current_user)):
     return CommonResponse()
 
 
+@router.get("/tag", description="레시피 태그 리스트 조회", response_model=MultipleObjectResponse)
+async def get_tag_list():
+    return MultipleObjectResponse(data=await Tag.all())
+
+
+@router.get("/ingredient", description="레시피 재료 리스트 조회", response_model=MultipleObjectResponse)
+async def get_ingredient_list():
+    return MultipleObjectResponse(data=await Ingredient.all())
+
+
 @router.post("/ingredient", description="레시피 재료 생성", response_model=CommonResponse)
 async def create_ingredient(req: IngredientForm, user: User = Depends(get_current_user)):
     # if user.is_admin is True:
@@ -159,7 +169,7 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
 
 @router.get("/{recipe_id}", description="레시피 목록 조회", response_model=MultipleObjectResponse)
 async def get_recipe_list(recipe_id: int, q: Union[str, None] = None):
-    recipes = await Recipe.filter(id__gte=recipe_id)
+    recipes = await Recipe.filter(id__gte=recipe_id).limit(100)
     data = [
         {
             "title": recipe.title,
@@ -168,6 +178,7 @@ async def get_recipe_list(recipe_id: int, q: Union[str, None] = None):
             "img_url": recipe.img_url,
             "nickname": (await recipe.user).nickname,
             "tags": await recipe.tags.all(),
+            "ingredients": await recipe.ingredients.all(),
             "likes": len(await recipe.like_users.all()),
             "comments_count": len(await RecipeComment.filter(recipe_id=recipe_id))
         }
