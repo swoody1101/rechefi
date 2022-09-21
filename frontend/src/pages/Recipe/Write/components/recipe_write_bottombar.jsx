@@ -3,7 +3,11 @@ import React from "react";
 import { Palette } from "../../../../common/styles/palette";
 import RecipeWriteBottombarButton from "./recipe_write_bottombar_btn";
 
-function RecipeWriteBottombar({ onConfirm, onCancel }) {
+function RecipeWriteBottombar({
+  confirmDisabled,
+  onConfirm,
+  onCancel,
+}) {
   return (
     <Box
       sx={{
@@ -13,6 +17,7 @@ function RecipeWriteBottombar({ onConfirm, onCancel }) {
       }}
     >
       <RecipeWriteBottombarButton
+        disabled={confirmDisabled}
         onClick={onConfirm}
         color={Palette.mainColor4}
       >
