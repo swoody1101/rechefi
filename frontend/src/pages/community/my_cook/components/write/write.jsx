@@ -7,11 +7,9 @@ import {
   WriteButton,
   WriteWrapper,
 } from "../../styles/write/write_styles";
-import EmptyWriteImage from "./empty_write_image";
+import UploadImageArea from "./UploadImageArea";
 import RecipeModal from "./recipe_modal";
 import WriteTextArea from "./write_text";
-import http from "../../../../../utils/http-commons";
-import { useMutation, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import useAddMyCook from "../../../../../hooks/my_cook/useAddMyCook";
 
@@ -57,7 +55,7 @@ const MyCookWriter = () => {
         </RecipeListSearchResultButton>
       </RecipeListSearchWithResultDiv>
       <WriteAreaWrapper>
-        <EmptyWriteImage uploadHandler={uploadHandler} />
+        <UploadImageArea uploadHandler={uploadHandler} />
         <WriteTextArea textHandler={textHandler} />
       </WriteAreaWrapper>
       <WriteButton

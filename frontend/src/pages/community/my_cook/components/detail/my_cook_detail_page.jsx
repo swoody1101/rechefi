@@ -9,14 +9,13 @@ import {
 import { createPortal } from "react-dom";
 import RecipeDetailComments from "../../../../Recipe/recipe_detail/comments";
 import { useQuery } from "react-query";
-import axios from "axios";
-
-const fetchMyCookDetail = async (param) => {
-  const res = await axios.get(
-    `http://localhost:8000/community/gallery/detail/100`
-  );
-  return res.data;
-};
+import { useFetchDetail } from "../../../../../hooks/useFetch";
+// const fetchMyCookDetail = async (param) => {
+//   const res = await axios.get(
+//     `http://localhost:8000/community/gallery/detail/100`
+//   );
+//   return res.data;
+// };
 
 export const MyCookDetail = ({ postId }) => {
   const [post, setPost] = useState({
@@ -41,45 +40,51 @@ export const MyCookDetail = ({ postId }) => {
       window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
     };
   }, []);
-  const { isLoading, isError, data, error } = useQuery(
-    "myCookDetail",
-    fetchMyCookDetail,
-    {
-      onSuccess: (data) => {
-        console.log(data.data);
-        const temp = data.data;
-        setPost({
-          id: 100,
-          title: temp.title,
-          likes: temp.like_users,
-          date: temp.create_at,
-          member_id: temp.user_id,
-          member_nickname: temp.nickname,
-          comments: temp.comments,
-          image_url: temp.img_url,
-          views: temp.views,
-          content: temp.content,
-        });
-      },
-      onError: (e) => {
-        console.log(e.message);
-      },
-    }
-  );
+  const { isLoading, isError, data, error } = useFetchDetail({
+    queryKey: "myCookDetail",
+    articleId: postId,
+    uri: "/community/gallery/detail/",
+  });
+  // const { isLoading, isError, data, error } = useQuery(
+  //   "myCookDetail",
+  //   fetchMyCookDetail,
+  //   {
+  //     onSuccess: (data) => {
+  //       console.log(data.data);
+  //       const temp = data.data;
+  //       setPost({
+  //         id: 100,
+  //         title: temp.title,
+  //         likes: temp.like_users,
+  //         date: temp.create_at,
+  //         member_id: temp.user_id,
+  //         member_nickname: temp.nickname,
+  //         comments: temp.comments,
+  //         image_url: temp.img_url,
+  //         views: temp.views,
+  //         content: temp.content,
+  //       });
+  //     },
+  //     onError: (e) => {
+  //       console.log(e.message);
+  //     },
+  //   }
+  // );
   if (isLoading) {
     return <div>로딩중...</div>;
   }
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
+  console.log(data.data.content);
   return createPortal(
     <MyCookDetailWrapper>
       <MyCookDetailImageWrapper>
         <MyCookDetailImage
-          src={post.image_url}
+          src={data.data.img_url}
           alt="이미지"
         ></MyCookDetailImage>
-        <MyCookDetailContent>{post.content}</MyCookDetailContent>
+        <MyCookDetailContent>{data.data.content}</MyCookDetailContent>
       </MyCookDetailImageWrapper>
       <MyCookDetailContentWithCommentWrapper>
         <RecipeDetailComments aiButton={false} />
