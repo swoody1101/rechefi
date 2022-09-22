@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Response, status, Header, Depends
-from typing import Union
+from fastapi import APIRouter, Response, status, Header, Depends, Query
+from typing import Union, List
 
 from starlette.responses import JSONResponse
 
@@ -9,7 +9,7 @@ from app.models.recipes import Recipe, Tag, Ingredient, RecipeComment, LikeRecip
 from app.models.accounts import User
 
 from app.schemas.recipes import RecipeCreateForm, TagForm, IngredientForm, IngredientRecipeForm, RecipeCommentForm, \
-    RecipeCommentList
+    RecipeCommentList, SearchRecipeQeury
 from app.schemas.common import *
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
@@ -168,8 +168,26 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
 
 
 @router.get("/{recipe_id}", description="레시피 목록 조회", response_model=MultipleObjectResponse)
-async def get_recipe_list(recipe_id: int, q: Union[str, None] = None):
-    recipes = await Recipe.filter(id__gte=recipe_id).limit(100).order_by('-id')
+async def get_recipe_list(recipe_id: int,
+                          mid: Union[int, None] = None,
+                          tag: Union[str, None] = None,
+                          ingredient: Union[str, None] = None):
+
+    query = Recipe.filter(id__gte=recipe_id).select_related('tags', 'ingredients')
+    #
+    # if mid:
+    #     print(f'member: {mid}')
+    #     query = query.filter(user_id=mid)
+    # if tag:
+    #     tags = tag.split(',')
+    #     for t in tags:
+    #         query = query.filter(tags__id__in=tags)
+    #
+    # if ingredient:
+    #     ingredients = ingredient.split(',')
+    #     for igd in ingredients:
+    #         query = query.filter(ingredients__name__in=igd)
+    recipes = await query.limit(100).order_by('-id')
     data = [
         {
             "id": recipe.id,

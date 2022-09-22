@@ -64,3 +64,7 @@ class RecipeList(BaseModel):
     updated_at: datetime
 
 
+class SearchRecipeQeury(BaseModel):
+    tags: List[int]
+    ingredients: List[str]
+
