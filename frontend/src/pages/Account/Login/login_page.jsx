@@ -1,14 +1,6 @@
 import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
-import { loginThunk } from "../../../store/module/accountReducer";
 import { useNavigate } from "react-router-dom";
-import {
-  OK,
-  BAD_REQUEST,
-  NOT_FOUND,
-  CONFLICT,
-} from "../../../utils/CustomConst";
-
 import {
   Box,
   Button,
@@ -21,6 +13,7 @@ import {
   ThemeProvider,
   TextField,
 } from "@mui/material";
+import { loginThunk } from "../../../store/module/accountReducer";
 import { Palette } from "../../../common/styles/palette";
 
 const LoginView = () => {
