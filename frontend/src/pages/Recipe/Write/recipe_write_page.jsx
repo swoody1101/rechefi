@@ -1,20 +1,20 @@
 import React, { useState, useRef } from "react";
 import { Container } from "@mui/material";
-import RecipeWriteTitleInput from "./components/recipe_write_title_input";
+import RecipeWriteTitleInput from "./components/title/recipe_write_title_input";
 import RecipeListFilterTags from "../List/components/filter/tag/recipe_list_filter_tags";
 import RecipeWriteBox from "./components/recipe_write_box";
-import RecipeWriteIngredInputs from "./components/recipe_write_ingredient_list";
+import RecipeWriteIngredInputs from "./components/ingredient/recipe_write_ingredient_list";
 import RecipeWriteAddCotentBar from "./components/recipe_write_add_content_bar";
-import RecipeWriteContentBlock from "./components/recipe_write_content_block";
-import RecipeWriteContentImage from "./components/recipe_write_content_img";
-import RecipeWriteContentText from "./components/recipe_write_content_text";
+import RecipeWriteContentBlock from "./components/content/recipe_write_content_block";
+import RecipeWriteContentImage from "./components/content/recipe_write_content_img";
+import RecipeWriteContentText from "./components/content/recipe_write_content_text";
 import {
   Confirm,
   Success,
   Warn,
 } from "../../../common/components/sweatAlert";
 import { uploadImage } from "../../../utils/http-multipart";
-import RecipeWriteBottombar from "./components/recipe_write_bottombar";
+import RecipeWriteBottombar from "./components/bottombar/recipe_write_bottombar";
 import { useNavigate } from "react-router-dom";
 import http from "../../../utils/http-commons";
 

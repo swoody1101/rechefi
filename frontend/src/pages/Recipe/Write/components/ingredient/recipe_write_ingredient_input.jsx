@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import React from "react";
-import { Palette } from "../../../../common/styles/palette";
+import { Palette } from "../../../../../common/styles/palette";
 
 function RecipeWriteIngredInput({
   label,
