@@ -27,6 +27,7 @@ class MyPageForm(BaseModel):
     nickname: str
     about_me: Union[str, None]
     password: Union[str, None]
+    img_url: Union[str, None]
 
 
 ####토큰####
@@ -43,6 +44,7 @@ class CurrentUser(BaseModel):
     email: str
     nickname: str
     about_me: Union[str, None]
+    img_url: Union[str, None]
     is_active: bool
     is_admin: bool
 
