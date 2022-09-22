@@ -1,28 +1,16 @@
 import React from "react";
-import {
-  Box,
-  Container,
-  Divider,
-  Typography,
-} from "@mui/material";
+import { Container } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import BestRecipeCard from "./recipe_list_bests_card";
+import TitleWithDivider from "../../../../../common/components/title_with_divider";
 
 function RecipeListBests({ bestRecipes }) {
   return (
     <Container>
-      <Box>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: "bold",
-          }}
-        >
-          베스트 레시피
-        </Typography>
-      </Box>
-      <Divider sx={{ mb: 2, mt: 1 }} />
-
+      <TitleWithDivider
+        variant="h5"
+        title="베스트 레시피"
+      />
       <Carousel
         animation="slide"
         interval="6000"

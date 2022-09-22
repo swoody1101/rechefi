@@ -1,11 +1,16 @@
 import { Global } from "@emotion/react";
 import { Reset } from "./common/styles/global";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import MainPage from "./pages/Main/main_page";
 import Layout from "./common/components/Main_layout";
 import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail";
 import MyCook from "./pages/community/my_cook/my_cook_container";
-import RecipeListView from "./pages/Recipe/List/recipe_list_page";
+
+import RecipeList from "./pages/Recipe/List/recipe_list_page";
+import RecipeWrite from "./pages/Recipe/Write/recipe_write_page";
+
 
 import SignUp from "./pages/Account/Signup/signup_page";
 import Login from "./pages/Account/Login/login_page";
@@ -19,16 +24,20 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <div className="App">
+
       <QueryClientProvider client={queryClient}>
         <Global styles={Reset} />
         <BrowserRouter>
           <Layout>
             <Routes>
               <Route path="/" element={<MainPage />} />
+                          <Route path="/recipe">
+              <Route index element={<RecipeList />} />
               <Route
-                path="/recipe"
-                element={<RecipeListView></RecipeListView>}
+                path="write"
+                element={<RecipeWrite />}
               />
+            </Route>
               <Route path="/account" element={<MainPage />} />
               <Route path="/recipe/detail" element={<RecipeDetail />} />
               <Route path="/community">
@@ -43,6 +52,7 @@ function App() {
           </Layout>
         </BrowserRouter>
       </QueryClientProvider>
+
     </div>
   );
 }

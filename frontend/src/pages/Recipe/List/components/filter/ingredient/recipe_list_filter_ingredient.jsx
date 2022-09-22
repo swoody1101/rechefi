@@ -9,6 +9,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import RecipeListFilterSearch from "./recipe_list_filter_ingredient_search";
 import RecipeFilterIngredItem from "./recipe_list_filter_ingredient_item";
 import AlertSnackbar from "../../../../../../common/components/alert_snackbar";
+import { Palette } from "../../../../../../common/styles/palette";
+import TitleWithDivider from "../../../../../../common/components/title_with_divider";
 
 function RecipeListFilterIngredients({
   onIngredAdded,
@@ -154,23 +156,12 @@ function RecipeListFilterIngredients({
         flexDirection: "column",
       }}
     >
-      <Box sx={{ display: "flex" }}>
-        <Typography
-          variant="h6"
-          fontWeight={"bold"}
-          sx={{ flexGrow: 1 }}
-        >
-          재료 검색
-        </Typography>
-        <IconButton
-          onClick={openSearchDialog}
-          type="button"
-          aria-label="search"
-        >
-          <SearchIcon />
-        </IconButton>
-      </Box>
-      <Divider sx={{ mb: 1 }} />
+      <TitleWithDivider
+        variant="h6"
+        title="재료 검색"
+        onClick={openSearchDialog}
+        icon={<SearchIcon />}
+      ></TitleWithDivider>
       <Box
         sx={{ display: "flex", flexDirection: "column" }}
       >
