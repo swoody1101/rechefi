@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import React from "react";
-import TitleWithDivider from "../../../../common/components/title_with_divider";
+import TitleWithDivider from "../../../../../common/components/title_with_divider";
 import RecipeWriteIngredInputItem from "./recipe_write_ingredient_item";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 

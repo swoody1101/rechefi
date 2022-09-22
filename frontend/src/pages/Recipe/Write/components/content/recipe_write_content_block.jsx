@@ -4,7 +4,7 @@ import {
   IconButton,
 } from "@mui/material";
 import React from "react";
-import { Palette } from "../../../../common/styles/palette";
+import { Palette } from "../../../../../common/styles/palette";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseIcon from "@mui/icons-material/Clear";

@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import React from "react";
-import { Palette } from "../../../../common/styles/palette";
+import { Palette } from "../../../../../common/styles/palette";
 import RecipeWriteBottombarButton from "./recipe_write_bottombar_btn";
 
 function RecipeWriteBottombar({
