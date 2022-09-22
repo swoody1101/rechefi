@@ -1,32 +1,19 @@
 import { useState } from "react";
 import { Backdrop } from "../../../../../common/styles/sidebar_styles";
-import { WriteAreaWrapper } from "../../styles/write_page_styles";
+import { WriteAreaWrapper } from "../../styles/write/write_page_styles";
 import {
   RecipeListSearchResultButton,
   RecipeListSearchWithResultDiv,
   WriteButton,
   WriteWrapper,
-} from "../../styles/write_styles";
+} from "../../styles/write/write_styles";
 import EmptyWriteImage from "./empty_write_image";
 import RecipeModal from "./recipe_modal";
 import WriteTextArea from "./write_text";
 import http from "../../../../../utils/http-commons";
 import { useMutation, useQueryClient } from "react-query";
-// import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
-const postWrite = async ({ content, imageUploadUrl }) => {
-  console.log(imageUploadUrl);
-  const { data } = await http.post("/community/gallery", {
-    title: "타이틀",
-    content: content,
-    img_url: imageUploadUrl,
-    category: 0,
-    recipe_id: 0,
-  });
-  console.log(data);
-  return data;
-};
+import useAddMyCook from "../../../../../hooks/my_cook/useAddMyCook";
 
 const MyCookWriter = () => {
   const [searchModal, setSearchModal] = useState(false);
@@ -34,7 +21,8 @@ const MyCookWriter = () => {
   const [content, setContent] = useState("");
 
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+
+  const { mutate } = useAddMyCook("myCookPosts");
 
   const uploadHandler = (keyword) => {
     setImageUploadUrl(keyword);
@@ -44,18 +32,6 @@ const MyCookWriter = () => {
   const textHandler = (keyword) => {
     setContent(keyword);
   };
-
-  const { mutate, isSuccess } = useMutation(postWrite, {
-    onMutate: () => {
-      queryClient.invalidateQueries("myCookPosts");
-    },
-    onSuccess: (data) => {
-      navigate("/community/my-cook");
-    },
-  });
-
-  if (isSuccess) {
-  }
 
   return (
     <WriteWrapper>
@@ -86,7 +62,17 @@ const MyCookWriter = () => {
       </WriteAreaWrapper>
       <WriteButton
         onClick={() => {
-          mutate({ content, imageUploadUrl });
+          mutate(
+            {
+              uri: "/community/gallery",
+              sendData: { content, imageUploadUrl },
+            },
+            {
+              onSuccess: (data) => {
+                navigate("/community/my-cook");
+              },
+            }
+          );
         }}
       >
         글 등록
