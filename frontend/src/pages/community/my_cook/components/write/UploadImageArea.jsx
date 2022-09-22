@@ -9,7 +9,7 @@ import {
 } from "../../styles/write/write_page_styles";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
-const EmptyWriteImage = ({ uploadHandler }) => {
+const UploadImageArea = ({ uploadHandler }) => {
   const [imageFile, setImageFile] = useState("");
   const imgInput = useRef(null);
   const onImgChange = () => {
@@ -50,4 +50,4 @@ const EmptyWriteImage = ({ uploadHandler }) => {
   );
 };
 
-export default EmptyWriteImage;
+export default UploadImageArea;

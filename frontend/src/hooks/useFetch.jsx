@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 import http from "../utils/http-commons";
 
 export default function useFetchList({ queryKey, articleId, uri }) {
@@ -17,4 +17,11 @@ export default function useFetchList({ queryKey, articleId, uri }) {
         !lastPage.isLast ? lastPage.nextPage : undefined,
     }
   );
+}
+
+export function useFetchDetail({ queryKey, articleId, uri }) {
+  return useQuery([queryKey, articleId], async () => {
+    const response = await http.get(uri + articleId);
+    return response.data;
+  });
 }

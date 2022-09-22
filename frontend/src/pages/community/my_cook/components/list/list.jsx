@@ -11,7 +11,7 @@ import {
 import { useInView } from "react-intersection-observer";
 import { MyCookDetail } from "../detail/my_cook_detail_page";
 import { Backdrop } from "../../../../../common/styles/sidebar_styles";
-import useFetchList from "../../../../../hooks/useFetchMyCook";
+import useFetchList from "../../../../../hooks/useFetch";
 
 const MyCookList = () => {
   const [imageState, setImageState] = useState([]);
@@ -55,7 +55,7 @@ const MyCookList = () => {
                     setOpenDetail((prev) => {
                       return !prev;
                     });
-                    setPostId(page.result.data[e].user_id);
+                    setPostId(page.result.data[e].id);
                   }}
                 ></MyCookGridImage>
               </MyCookGridLi>
