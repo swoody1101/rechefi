@@ -16,6 +16,25 @@ const initialState = {
   nickname: "",
 };
 
+export const signupThunk = createAsyncThunk(
+  "signup/signupThunks",
+  async (signupInfo) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/members/signup",
+        signupInfo,
+        { headers: { "Content-Type": `application/json` } }
+      );
+
+      // console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return error.response;
+    }
+  }
+);
+
 export const loginThunk = createAsyncThunk(
   "login/loginThunks",
   async ({ email, password }) => {
@@ -29,7 +48,7 @@ export const loginThunk = createAsyncThunk(
         loginInfo
       );
 
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.error(error);
