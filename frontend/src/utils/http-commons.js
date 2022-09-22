@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "./JWT-token";
 
 const http = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "http://localhost:8000",
   headers: {
     "content-type": "application/json; charset=UTF-8",
   },
@@ -14,9 +14,7 @@ http.interceptors.request.use(
 
     // if has login token
     if (loginToken)
-      config.headers.common[
-        "Authorization"
-      ] = `Bearer ${loginToken}`;
+      config.headers.common["Authorization"] = `Bearer ${loginToken}`;
     return config;
   },
   (error) => {
