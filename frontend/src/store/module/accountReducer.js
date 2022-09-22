@@ -8,12 +8,12 @@ const initialState = {
   loading: false,
   error: null,
   success: false,
+  auth: false,
 
   // user data
   loginToken: getToken(),
   email: "",
   nickname: "",
-  num: "",
 };
 
 export const loginThunk = createAsyncThunk(
@@ -29,14 +29,8 @@ export const loginThunk = createAsyncThunk(
         loginInfo
       );
 
-      // TODO : more data is needed from server (userId, userNum, userNickname...)
-      // TODO : JWT token disassembled
-      return {
-        loginToken: response.data["access_token"],
-        userId: "",
-        userNickname: "",
-        userNum: "",
-      };
+      console.log(response.data);
+      return response.data;
     } catch (error) {
       console.error(error);
       return error.response;
@@ -49,7 +43,7 @@ export const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.username = "";
+      state.email = "";
       state.auth = false;
       state.loading = false;
       state.error = null;
@@ -66,13 +60,12 @@ export const loginSlice = createSlice({
       state.auth = true;
 
       // data recieved
-      state.loginToken = payload.loginToken;
-      state.email = payload.userId;
-      state.nickname = payload.userNickname;
-      state.num = payload.userNum;
+      state.loginToken = payload.access_token;
+      state.email = payload.email;
+      state.nickname = payload.nickname;
 
       // save in local storage
-      saveToken(payload.loginToken);
+      saveToken(state.loginToken);
     },
     [loginThunk.rejected]: (state, { payload }) => {
       // error
