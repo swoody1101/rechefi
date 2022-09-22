@@ -4,14 +4,29 @@ import {
   SidebarMyNicknameDiv,
   SidebarMyProfileImage,
 } from "../../styles/sidebar_styles";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-const SidebarMyAccount = () => {
+const SidebarMyAccount = ({ sidebarClose }) => {
+  const loginInfo = useSelector((store) => store.account);
+  const navigate = useNavigate();
   return (
     <SidebarMyAccountWrapper>
       <SidebarMyProfileImage>
         <AccountCircleIcon sx={{ fontSize: 75 }} />
       </SidebarMyProfileImage>
-      <SidebarMyNicknameDiv>테스트 계정님</SidebarMyNicknameDiv>
+      {loginInfo.auth ? (
+        <SidebarMyNicknameDiv>{loginInfo.nickname}</SidebarMyNicknameDiv>
+      ) : (
+        <div
+          onClick={() => {
+            navigate("/login");
+            sidebarClose();
+          }}
+        >
+          로그인하기
+        </div>
+      )}
     </SidebarMyAccountWrapper>
   );
 };
