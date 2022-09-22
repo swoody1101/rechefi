@@ -6,7 +6,7 @@ import {
   ImageUploadText,
   ImageUploadWrapper,
   UploadImageImg,
-} from "../../styles/write_page_styles";
+} from "../../styles/write/write_page_styles";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 const EmptyWriteImage = ({ uploadHandler }) => {

@@ -5,7 +5,7 @@ import {
   MyCookDetailImage,
   MyCookDetailImageWrapper,
   MyCookDetailWrapper,
-} from "../my_cook_list/list_style";
+} from "../../styles/list/list_style";
 import { createPortal } from "react-dom";
 import RecipeDetailComments from "../../../../Recipe/recipe_detail/comments";
 import { useQuery } from "react-query";
