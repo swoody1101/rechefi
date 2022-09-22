@@ -1,36 +1,14 @@
 import { Box } from "@mui/material";
-import React, { useState, useEffect } from "react";
-import { Warn } from "../../../../../../common/components/sweatAlert";
+import React from "react";
 import TitleWithDivider from "../../../../../../common/components/title_with_divider";
-import http from "../../../../../../utils/http-commons";
 import RecipeListFilterTagChip from "./recipe_list_filter_tag_item";
+import { useTags } from "../../../../../../hooks/Recipe/tag/useTags";
 
 function RecipeListFilterTags({
   onTagAdded,
   onTagDeleted,
 }) {
-  // TODO : remove dummy and change state init
-  const [tags, setTags] = useState([]);
-
-  // get tags from server
-  useEffect(() => {
-    http
-      .get("/recipe/tag")
-      .then((response) => {
-        let tagList = response.data.data;
-        setTags(
-          tagList.map((tag) => ({
-            ...tag,
-            selected: false,
-          }))
-        );
-      })
-      .catch(
-        Warn(
-          "태그 목록을 불러오는 중 문제가 발생하였습니다"
-        )
-      );
-  }, []);
+  const [tags, setTags] = useTags();
 
   /**
    * add or delete tag to selected tags
@@ -58,14 +36,6 @@ function RecipeListFilterTags({
     );
   };
 
-  const tagItems = tags.map((tag) => (
-    <RecipeListFilterTagChip
-      key={tag.id}
-      tag={tag}
-      onClick={(e) => toggleTagSelected(tag.id)}
-    />
-  ));
-
   return (
     <Box
       sx={{
@@ -83,7 +53,13 @@ function RecipeListFilterTags({
           rowGap: 1,
         }}
       >
-        {tagItems}
+        {tags.map((tag) => (
+          <RecipeListFilterTagChip
+            key={tag.id}
+            tag={tag}
+            onClick={(e) => toggleTagSelected(tag.id)}
+          />
+        ))}
       </Box>
     </Box>
   );

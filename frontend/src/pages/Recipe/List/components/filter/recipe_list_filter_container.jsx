@@ -8,20 +8,12 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import RecipeListFilterTags from "./tag/recipe_list_filter_tags";
 import RecipeListFilterIngredients from "./ingredient/recipe_list_filter_ingredient";
 import RecipeFilterBtn from "./recipe_list_filter_btn";
+import { useSelectedTag } from "../../../../../hooks/Recipe/tag/useSelectedTags";
 
 function RecipeListFilterContainer({ onFilterApplied }) {
   // handle tag information
-  const [selectedTags, setSelectedTags] = useState([]);
-
-  const addTag = (tag_id) => {
-    setSelectedTags([...selectedTags, tag_id]);
-  };
-
-  const deleteTag = (tag_id) => {
-    setSelectedTags(
-      selectedTags.filter((tag) => tag !== tag_id)
-    );
-  };
+  const [selectedTags, addTag, deleteTag] =
+    useSelectedTag();
 
   // handle ingred info
   const [selectedIngreds, setSelectedIngred] = useState([]);
