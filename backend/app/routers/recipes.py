@@ -72,14 +72,14 @@ async def recipe_detail(recipe_id: int):
             "tags": await recipe.tags.all(),
             "ingredients": ingredients,
             "like_users": await recipe.like_users.all().values("id", "nickname"),
-            # comments = await RecipeComment.filter(recipe_id=recipe_id)
+            # "comments": await RecipeComment.filter(recipe_id=recipe_id).order_by('-id')
         }
     return ObjectResponse(data=data)
 
 
 @router.get("/comment/{recipe_id}", description="레시피 댓글 리스트", response_model=MultipleObjectResponse, status_code=200)
 async def get_comment_list(recipe_id: int):
-    comments = await RecipeComment.filter(recipe_id=recipe_id)
+    comments = await RecipeComment.filter(recipe_id=recipe_id).order_by('-id')
     data = [RecipeCommentList(**dict(comment), nickname=(await comment.user).nickname) for comment in comments]
     return MultipleObjectResponse(data=data)
 
@@ -169,9 +169,10 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
 
 @router.get("/{recipe_id}", description="레시피 목록 조회", response_model=MultipleObjectResponse)
 async def get_recipe_list(recipe_id: int, q: Union[str, None] = None):
-    recipes = await Recipe.filter(id__gte=recipe_id).limit(100)
+    recipes = await Recipe.filter(id__gte=recipe_id).limit(100).order_by('-id')
     data = [
         {
+            "id": recipe.id,
             "title": recipe.title,
             "date": recipe.created_at,
             "user_id": recipe.user_id,

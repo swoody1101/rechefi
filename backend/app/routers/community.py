@@ -9,7 +9,7 @@ from app.models.community import Article, ArticleComment, LikeArticle, Notice, C
 from app.models.accounts import User
 
 from app.schemas.community import ArticleCreateForm, ArticleCommentForm, ArticleCommentList, ArticleDetail, \
-    CookingCreateForm
+    CookingCreateForm, NoticeDetail
 from app.schemas.common import *
 
 router = APIRouter(prefix="/community", tags=["community"])
@@ -20,7 +20,7 @@ router = APIRouter(prefix="/community", tags=["community"])
 @router.post("/notice-board", description="공지사항 작성", response_model=CommonResponse, status_code=201)
 async def create_notice(req: ArticleCreateForm, user: User = Depends(get_current_user)):
     # 유저 인증 로직
-    await Notice.create(user_id=user.id, category=0, **req.dict())
+    await Notice.create(user_id=user.id, **req.dict())
     return CommonResponse()
 
 @router.get("/notice-board/detail/{article_id}", description="공지사항 상세", response_model=ObjectResponse)
@@ -28,13 +28,13 @@ async def notice_detail(article_id: int):
     article = await Notice.get_or_none(id=article_id).select_related('user')
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
-    data = ArticleDetail(
+    data = NoticeDetail(
         nickname=article.user.nickname,
-        like_users=await article.like_users.all().values("id", "nickname"),
-        comments=[
-            ArticleCommentList(nickname=comment.user.nickname, **dict(comment))
-            for comment in await article.comments.all().select_related('user')
-        ],
+        # like_users=await article.like_users.all().values("id", "nickname"),
+        # comments=[
+        #     ArticleCommentList(nickname=comment.user.nickname, **dict(comment))
+        #     for comment in await article.comments.all().select_related('user')
+        # ],
         **dict(article)
     )
     return ObjectResponse(data=data)
@@ -80,10 +80,10 @@ async def article_detail(article_id: int):
     data = ArticleDetail(
         nickname=article.user.nickname,
         like_users=await article.like_users.all().values("id", "nickname"),
-        comments=[
-            ArticleCommentList(nickname=comment.user.nickname, **dict(comment))
-            for comment in await article.comments.all().select_related('user')
-        ],
+        # comments=[
+        #     ArticleCommentList(nickname=comment.user.nickname, **dict(comment))
+        #     for comment in await article.comments.all().select_related('user')
+        # ],
         **dict(article)
     )
     return ObjectResponse(data=data)
@@ -91,7 +91,7 @@ async def article_detail(article_id: int):
 
 @router.get("/free-board/comment/{article_id}", description="게시물 댓글 리스트", response_model=MultipleObjectResponse)
 async def get_article_comment_list(article_id: int):
-    comments = await ArticleComment.filter(article_id=article_id).select_related('user')
+    comments = await ArticleComment.filter(article_id=article_id).select_related('user').order_by('-id')
     data = [ArticleCommentList(**dict(comment), nickname=comment.user.nickname) for comment in comments]
     return MultipleObjectResponse(data=data)
 
@@ -196,10 +196,10 @@ async def cooking_detail(article_id: int):
     data = ArticleDetail(
         nickname=article.user.nickname,
         like_users=await article.like_users.all().values("id", "nickname"),
-        comments=[
-            ArticleCommentList(nickname=comment.user.nickname, **dict(comment))
-            for comment in await article.comments.all().select_related('user')
-        ],
+        # comments=[
+        #     ArticleCommentList(nickname=comment.user.nickname, **dict(comment))
+        #     for comment in await article.comments.all().select_related('user')
+        # ],
         **dict(article)
     )
     return ObjectResponse(data=data)
@@ -207,7 +207,7 @@ async def cooking_detail(article_id: int):
 
 @router.get("/gallery/comment/{article_id}", description="게시물 댓글 리스트", response_model=MultipleObjectResponse)
 async def get_cooking_comment_list(article_id: int):
-    comments = await CookingComment.filter(article_id=article_id).select_related('user')
+    comments = await CookingComment.filter(article_id=article_id).select_related('user').order_by('-id')
     data = [ArticleCommentList(**dict(comment), nickname=comment.user.nickname) for comment in comments]
     return MultipleObjectResponse(data=data)
 
@@ -297,18 +297,19 @@ async def delete_cooking(article_id: int, user: User = Depends(get_current_user)
     return CommonResponse()
 
 
-@router.get("/cooking/{article_id}", description="게시물 목록 조회", response_model=MultipleObjectResponse)
-async def get_cooking_list(article_id: int, q: Union[str, None] = None):
-    articles = await Cooking.filter(id__gte=article_id).select_related('user').limit(100)
+@router.get("/free-board/{article_id}", description="게시물 목록 조회", response_model=MultipleObjectResponse)
+async def get_article_list(article_id: int, q: Union[str, None] = None):
+    articles = await Article.filter(id__gte=article_id).select_related('user').limit(100).order_by('-id')
     data = [
         {
+            "id": article.id,
             "title": article.title,
             "date": article.created_at,
             "user_id": article.user_id,
             "img_url": article.img_url,
             "nickname": article.user.nickname,
             "likes": len(await article.like_users.all()),
-            "comments_count": len(await CookingComment.filter(article_id=article_id))
+            "comments_count": len(await ArticleComment.filter(article_id=article_id))
         }
         for article in articles
     ]
@@ -317,9 +318,10 @@ async def get_cooking_list(article_id: int, q: Union[str, None] = None):
 
 @router.get("/notice-board/{article_id}", description="공지사항 목록 조회", response_model=MultipleObjectResponse)
 async def get_notice_list(article_id: int, q: Union[str, None] = None):
-    articles = await Notice.filter(id__gte=article_id).select_related('user').limit(100)
+    articles = await Notice.filter(id__gte=article_id).select_related('user').limit(100).order_by('-id')
     data = [
         {
+            "id": article.id,
             "title": article.title,
             "date": article.created_at,
             "user_id": article.user_id,
@@ -332,17 +334,18 @@ async def get_notice_list(article_id: int, q: Union[str, None] = None):
 
 
 @router.get("/gallery/{article_id}", description="갤러리 목록 조회", response_model=MultipleObjectResponse)
-async def get_article_list(cooking_id: int, q: Union[str, None] = None):
-    cookings = await Cooking.filter(id__gte=cooking_id).select_related('user').limit(100)
+async def get_cooking_list(cooking_id: int, q: Union[str, None] = None):
+    cookings = await Cooking.filter(id__gte=cooking_id).select_related('user').limit(100).order_by('-id')
     data = [
         {
+            "id": article.id,
             "title": article.title,
             "date": article.created_at,
             "user_id": article.user_id,
             "img_url": article.img_url,
             "nickname": article.user.nickname,
             "likes": len(await article.like_users.all()),
-            "comments_count": len(await ArticleComment.filter(article_id=cooking_id))
+            "comments_count": len(await CookingComment.filter(cooking_id=cooking_id))
         }
         for article in cookings
     ]
