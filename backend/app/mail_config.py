@@ -18,19 +18,36 @@ conf = ConnectionConfig(
     VALIDATE_CERTS=True
 )
 
-async def send_in_background(background_tasks: BackgroundTasks, email: str, token: str):
+# 가입 인증 메일
+async def signup_mail(background_tasks: BackgroundTasks, email: str, token: str):
     try:
         message = MessageSchema(
-            subject="회원가입 인증 메일입니다.",
+            subject="회원가입 인증을 요청합니다.",
             recipients=[email],
             body=f'아래 링크를 클릭하여 인증을 완료해주세요.\nhttp://localhost:8000/members/{email}/{token}\n인증 링크의 유효시간은 5분입니다.',
             )
-        print(message.recipients)
         fm = FastMail(conf)
 
         background_tasks.add_task(fm.send_message,message)
 
         return True
         
+    except:
+        return False
+
+# 임시 비밀번호 발급 메일
+async def password_mail(background_tasks: BackgroundTasks, email: str, password: str):
+    try:
+        message = MessageSchema(
+            subject="임시 비밀번호를 발급하였습니다.",
+            recipients=[email],
+            body=f'다음과 같이 회원님의 임시 비밀번호를 발급합니다.\n{password}\n 로그인 후 비밀번호를 꼭 변경해주세요.',
+            )
+        fm = FastMail(conf)
+
+        background_tasks.add_task(fm.send_message,message)
+
+        return True
+    
     except:
         return False

@@ -24,15 +24,20 @@ from app.config import redis_session
 
 
 # 메일 인증 서비스
-from app.mail_config import send_in_background
+from app.mail_config import signup_mail, password_mail
+
+
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 
 router = APIRouter(prefix="/members", tags=["members"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
 
 ####### JWT 토큰 #######
-SECRET_KEY = "788d89c0cc2378247a4157f6fb1745cab6b3243df21b8e3047a73401a6a25fe2"
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
@@ -46,8 +51,6 @@ def create_random():
         and sum(c.isdigit() for c in signup_token) >= 3):
             break    
     return signup_token
-
-
 
 
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
@@ -115,6 +118,20 @@ async def get_other_user(member_id, current_user: User = Depends(get_current_use
     return other_user
 
 ##################여기서부터 API입니다#################################
+##################여기서부터 API입니다#################################
+##################여기서부터 API입니다#################################
+
+@router.get("/new-password/{email}", description="새로운 비밀번호 발급")
+async def create_new_password(background_tasks: BackgroundTasks, email, new_password: str = Depends(create_random)):
+    user = await User.get_or_none(email=email)
+    if user is None:
+        return "가입되지 않은 이메일입니다."
+    user.password = get_password_hash(new_password)
+    await user.save()
+    await password_mail(background_tasks, email=email, password=new_password)
+
+    return f'{email}로 임시 비밀번호가 발송되었습니다.'
+
 @router.post("/", description="인증 메일 발송") 
 async def email_authentication(background_tasks: BackgroundTasks, req: UserSignupForm, signup_token: str = Depends(create_random)):
     # 아이디 중복체크
@@ -122,7 +139,7 @@ async def email_authentication(background_tasks: BackgroundTasks, req: UserSignu
     if user:
         return "사용중인 이메일입니다."
     # 이메일로 인증링크 발송
-    send = await send_in_background(background_tasks, email=req.email, token=signup_token)
+    send = await signup_mail(background_tasks, email=req.email, token=signup_token)
     if send is False:
         return "이메일 형식이 올바르지 않습니다."
     
@@ -172,7 +189,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "email": user.email, "nickname": user.nickname}
 
 #나중에 구현
 @router.post("/login/2", description="소셜로그인") 
@@ -199,16 +216,8 @@ def logout():
     # redis 연동되면 블랙리스트 처리하고, 안되면 프론트에서 토큰삭제만
     pass
 
-@router.get("/new-password/{email}", description="새로운 비밀번호 발급")
-async def create_new_password():
-    string_pool = string.ascii_letters + string.digits
-    while True:
-        temp_password = ''.join(secrets.choice(string_pool) for i in range(10))
-        if (any(c.islower() for c in temp_password) 
-        and any(c.isupper() for c in temp_password)
-        and sum(c.isdigit() for c in temp_password) >= 3):
-            break    
-    return temp_password
+
+
 
 
 @router.get("/", description="마이페이지 조회", response_model=CurrentUser)
@@ -219,8 +228,10 @@ async def get_my_page(current_user: User = Depends(get_current_user)):
 async def edit_my_page(req: MyPageForm, current_user: User = Depends(get_current_user)):
     current_user.nickname = req.nickname
     current_user.about_me = req.about_me
-    if len(req.password):
+    current_user.img_url = req.img_url
+    if req.password:
         current_user.password = get_password_hash(req.password)
+        
 
     await current_user.save()
     return current_user
