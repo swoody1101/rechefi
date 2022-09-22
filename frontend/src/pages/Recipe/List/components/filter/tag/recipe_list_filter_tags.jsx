@@ -9,13 +9,17 @@ function RecipeListFilterTags({
   onTagAdded,
   onTagDeleted,
 }) {
+  // TODO : remove dummy and change state init
+  const [tags, setTags] = useState([]);
+
   // get tags from server
   useEffect(() => {
     http
       .get("/recipe/tag")
       .then((response) => {
+        let tagList = response.data.data;
         setTags(
-          response.data.map((tag) => ({
+          tagList.map((tag) => ({
             ...tag,
             selected: false,
           }))
@@ -27,54 +31,6 @@ function RecipeListFilterTags({
         )
       );
   }, []);
-
-  // DEBUG
-  const data = [
-    {
-      id: 1,
-      name: "중식",
-    },
-    {
-      id: 2,
-      name: "한식",
-    },
-    {
-      id: 3,
-      name: "양식",
-    },
-    {
-      id: 4,
-      name: "일식",
-    },
-    {
-      id: 5,
-      name: "월식",
-    },
-    {
-      id: 6,
-      name: "잡식",
-    },
-    {
-      id: 7,
-      name: "육식",
-    },
-    {
-      id: 8,
-      name: "채식",
-    },
-    {
-      id: 9,
-      name: "오태식",
-    },
-  ];
-
-  // TODO : remove dummy and change state init
-  const [tags, setTags] = useState(
-    data.map((tag) => ({
-      ...tag,
-      selected: false,
-    }))
-  );
 
   /**
    * add or delete tag to selected tags
