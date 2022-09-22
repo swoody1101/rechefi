@@ -9,7 +9,7 @@ import RecipeList from "./components/recipe_list";
 import RecipeListFab from "./components/recipe_list_fab";
 import { Container } from "@mui/material";
 
-function RecipeListView() {
+function RecipeListPage() {
   // DEBUG
   const data = useMemo(
     () => [
@@ -192,7 +192,7 @@ function RecipeListView() {
   };
 
   return (
-    <Container sx={{ p: 1 }}>
+    <Container sx={{ pt: 2, px: 1, pb: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
       <RecipeList
         recipes={recipes}
@@ -204,4 +204,4 @@ function RecipeListView() {
   );
 }
 
-export default RecipeListView;
+export default RecipeListPage;
