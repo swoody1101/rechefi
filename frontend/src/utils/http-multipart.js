@@ -1,12 +1,9 @@
 import axios from "axios";
-import { useSelector, shallowEqual } from "react-redux";
+import { getToken } from "./JWT-token";
 
 export const uploadImage = (formdata) => {
   return new Promise((resolve, reject) => {
-    const loginToken = useSelector(
-      (state) => state.account.loginToken,
-      shallowEqual
-    );
+    const loginToken = getToken();
     // not logined
     if (!loginToken) reject("login needed");
 
