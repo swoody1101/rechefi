@@ -26,13 +26,13 @@ async def create_tag(req: TagForm, user: User = Depends(get_current_user)):
 
 
 @router.get("/tag", description="레시피 태그 리스트 조회", response_model=MultipleObjectResponse)
-async def get_tag_list():
-    return MultipleObjectResponse(data=await Tag.all())
+async def get_tag_list(name: Union[str, None] = None):
+    return MultipleObjectResponse(data=await Tag.filter(name__contains=name))
 
 
 @router.get("/ingredient", description="레시피 재료 리스트 조회", response_model=MultipleObjectResponse)
-async def get_ingredient_list():
-    return MultipleObjectResponse(data=await Ingredient.all())
+async def get_ingredient_list(name: Union[str, None] = None):
+    return MultipleObjectResponse(data=await Ingredient.filter(name__contains=name))
 
 
 @router.post("/ingredient", description="레시피 재료 생성", response_model=CommonResponse)
