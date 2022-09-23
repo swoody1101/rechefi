@@ -3,12 +3,13 @@ import {
   AccordionSummary,
   Paper,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import RecipeListFilterTags from "./tag/recipe_list_filter_tags";
 import RecipeListFilterIngredients from "./ingredient/recipe_list_filter_ingredient";
 import RecipeFilterBtn from "./recipe_list_filter_btn";
 import { useSelectedTag } from "../../../../../hooks/Recipe/tag/useSelectedTags";
+import { useSelectedIngreds } from "../../../../../hooks/Recipe/ingredient/useSelectedIngreds";
 
 function RecipeListFilterContainer({ onFilterApplied }) {
   // handle tag information
@@ -16,32 +17,12 @@ function RecipeListFilterContainer({ onFilterApplied }) {
     useSelectedTag();
 
   // handle ingred info
-  const [selectedIngreds, setSelectedIngred] = useState([]);
-
-  const addIngred = (ingred) => {
-    setSelectedIngred([
-      ...selectedIngreds,
-      { ...ingred, include: true },
-    ]);
-  };
-
-  const deleteIngred = (ingred_id) => {
-    setSelectedIngred(
-      selectedIngreds.filter(
-        (ingred) => ingred.id !== ingred_id
-      )
-    );
-  };
-
-  const changeIngred = (ingred_id, flag) => {
-    setSelectedIngred(
-      selectedIngreds.map((ingred) =>
-        ingred.id === ingred_id
-          ? { ...ingred, include: flag }
-          : ingred
-      )
-    );
-  };
+  const [
+    selectedIngreds,
+    addIngred,
+    deleteIngred,
+    changeIngred,
+  ] = useSelectedIngreds();
 
   return (
     <Accordion
@@ -81,9 +62,9 @@ function RecipeListFilterContainer({ onFilterApplied }) {
           onTagDeleted={deleteTag}
         />
         <RecipeListFilterIngredients
-          onIngredAdded={addIngred}
-          onIngredDeleted={deleteIngred}
-          onIngredChanged={changeIngred}
+          onSelectedIngredAdded={addIngred}
+          onSelectedIngredDeleted={deleteIngred}
+          onSelectedIngredChanged={changeIngred}
           selectedIngred={selectedIngreds}
         />
         <RecipeFilterBtn
