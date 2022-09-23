@@ -1,10 +1,6 @@
 from pydantic import BaseModel, Field
-from typing import List, Union
+from typing import List
 from datetime import datetime
-
-
-# from app.models.community import ArticleComment
-# from app.enums.accounts import UserRegion
 
 
 class ArticleCreateForm(BaseModel):
@@ -43,7 +39,6 @@ class ArticleDetail(ArticleCreateForm):
     nickname: str
     views: int
     like_users: List[dict] = Field(Nullable=True)
-    # comments: List[ArticleCommentList] = Field(Nullable=True)
 
 
 class CookingCreateForm(ArticleCreateForm):
