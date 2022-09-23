@@ -49,7 +49,7 @@ function RecipeListFilterIngredients({
       }}
     >
       <TitleWithDivider
-        variant="h6"
+        textVariant="h6"
         title="재료 검색"
         onClick={() => setSearchOpen(true)}
         icon={<SearchIcon />}
