@@ -7,8 +7,11 @@ function RecipeListFilterTagChip({ tag, onClick }) {
     <Chip
       key={tag.id}
       label={tag.name}
+      size="small"
       sx={{
-        mx: 1,
+        mx: 0.5,
+        fontSize: "0.75rem",
+        fontWeight: "bold",
         background: tag.selected
           ? Palette.mainColor3
           : Palette.gray1,
