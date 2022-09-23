@@ -7,8 +7,8 @@ import {
   MyCookDetailWrapper,
 } from "../../styles/list/list_style";
 import { createPortal } from "react-dom";
-import RecipeDetailComments from "../../../../Recipe/recipe_detail/comments";
 import { useFetchDetail } from "../../../../../hooks/useFetch";
+import Comments from "../../../../../common/components/comments/comments";
 
 export const MyCookDetail = ({ postId }) => {
   useEffect(() => {
@@ -35,7 +35,6 @@ export const MyCookDetail = ({ postId }) => {
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
-  console.log(data.data.content);
   return createPortal(
     <MyCookDetailWrapper>
       <MyCookDetailImageWrapper>
@@ -46,7 +45,11 @@ export const MyCookDetail = ({ postId }) => {
         <MyCookDetailContent>{data.data.content}</MyCookDetailContent>
       </MyCookDetailImageWrapper>
       <MyCookDetailContentWithCommentWrapper>
-        <RecipeDetailComments aiButton={false} postId={postId} />
+        <Comments
+          aiButton={false}
+          postId={postId}
+          uri={"community/gallery/comment/"}
+        />
       </MyCookDetailContentWithCommentWrapper>
     </MyCookDetailWrapper>,
     document.getElementById("myCookDetail")
