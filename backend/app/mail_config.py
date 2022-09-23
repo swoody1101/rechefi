@@ -24,7 +24,7 @@ async def signup_mail(background_tasks: BackgroundTasks, email: str, token: str)
         message = MessageSchema(
             subject="회원가입 인증을 요청합니다.",
             recipients=[email],
-            body=f'아래 링크를 클릭하여 인증을 완료해주세요.\nhttp://localhost:8000/members/{email}/{token}\n인증 링크의 유효시간은 5분입니다.',
+            body=f'아래 링크를 클릭하여 인증을 완료해주세요.\nhttps://j7b303.p.ssafy.io/api/members/{email}/{token}\n인증 링크의 유효시간은 5분입니다.',
             )
         fm = FastMail(conf)
 
