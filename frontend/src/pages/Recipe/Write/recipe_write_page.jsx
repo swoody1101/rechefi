@@ -1,5 +1,8 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Container } from "@mui/material";
+import { uploadImage } from "../../../utils/http-multipart";
+import http from "../../../utils/http-commons";
 import RecipeWriteTitleInput from "./components/title/recipe_write_title_input";
 import RecipeListFilterTags from "../List/components/filter/tag/recipe_list_filter_tags";
 import RecipeWriteBox from "./components/recipe_write_box";
@@ -8,15 +11,13 @@ import RecipeWriteAddCotentBar from "./components/recipe_write_add_content_bar";
 import RecipeWriteContentBlock from "./components/content/recipe_write_content_block";
 import RecipeWriteContentImage from "./components/content/recipe_write_content_img";
 import RecipeWriteContentText from "./components/content/recipe_write_content_text";
+import RecipeWriteBottombar from "./components/bottombar/recipe_write_bottombar";
 import {
   Confirm,
   Success,
   Warn,
 } from "../../../common/components/sweatAlert";
-import { uploadImage } from "../../../utils/http-multipart";
-import RecipeWriteBottombar from "./components/bottombar/recipe_write_bottombar";
-import { useNavigate } from "react-router-dom";
-import http from "../../../utils/http-commons";
+import { useSelectedTag } from "../../../hooks/Recipe/tag/useSelectedTags";
 
 function RecipeWritePage() {
   // control title data
@@ -31,22 +32,13 @@ function RecipeWritePage() {
   };
 
   // control tag information
-  const [selectedTags, setSelectedTags] = useState([]);
-
-  const addTag = (tag_id) => {
-    setSelectedTags([...selectedTags, tag_id]);
-  };
-
-  const deleteTag = (tag_id) => {
-    setSelectedTags(
-      selectedTags.filter((tag) => tag !== tag_id)
-    );
-  };
+  const [selectedTags, addTag, deleteTag] =
+    useSelectedTag();
 
   // ingredients for recipe
   const [ingreds, setIngred] = useState([]);
 
-  // recipe contents
+  // recipe contentss
   const [contents, setContents] = useState([
     // DEBUG
     {
@@ -241,6 +233,7 @@ function RecipeWritePage() {
             ) : (
               <RecipeWriteContentText
                 index={index}
+                initValue={block.content}
                 onUpdated={updateTextContent}
               />
             )}
