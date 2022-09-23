@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Response, status, Header, Depends, Query
-from typing import Union, List
+from fastapi import APIRouter, Response, Depends
+from typing import Union
 
 from starlette.responses import JSONResponse
 
@@ -9,7 +9,7 @@ from app.models.recipes import Recipe, Tag, Ingredient, RecipeComment, LikeRecip
 from app.models.accounts import User
 
 from app.schemas.recipes import RecipeCreateForm, TagForm, IngredientForm, IngredientRecipeForm, RecipeCommentForm, \
-    RecipeCommentList, SearchRecipeQeury
+    RecipeCommentList
 from app.schemas.common import *
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
@@ -62,6 +62,8 @@ async def recipe_detail(recipe_id: int):
     if recipe is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 레시피입니다.").dict())
     else:
+        recipe.views += 1
+        await recipe.save()
         ingredients = [
             IngredientRecipeForm(**dict(await ingredient.ingredient), amount=ingredient.amount)
             for ingredient in await RecipeIngredient.filter(recipe_id=recipe_id)
@@ -172,19 +174,19 @@ async def get_recipe_list(recipe_id: int,
                           mid: Union[int, None] = None,
                           tag: Union[str, None] = None,
                           ingredient: Union[str, None] = None):
-    query = Recipe.filter(id__gte=recipe_id).prefetch_related('tags', 'ingredients').select_related('user')
+    query = Recipe.filter(id__gte=recipe_id).prefetch_related('tags', 'ingredients').select_related('user').order_by('-id')
     if mid:
-        query = query.filter(user_id=mid).order_by('-id')
-    recipes = list(await query)
+        query = query.filter(user_id=mid)
+    filtered_recipes = list(await query)
     if tag:
-        tags = list(map(int, tag.split(',')))
-        recipes = [recipe for recipe in recipes
-                   if set(tags).issubset(await recipe.tags.all().values_list("id", flat=True))]
+        tags = set(map(int, tag.split(',')))
+        filtered_recipes = [recipe for recipe in filtered_recipes
+                            if tags.issubset(await recipe.tags.all().values_list("id", flat=True))]
     if ingredient:
-        ingredients = ingredient.split(',')
-        recipes = [recipe for recipe in recipes
-                   if set(ingredients).issubset(await recipe.ingredients.all().values_list("name", flat=True))]
-    recipes = recipes[:100]
+        ingredients = set(ingredient.split(','))
+        filtered_recipes = [recipe for recipe in filtered_recipes
+                            if ingredients.issubset(await recipe.ingredients.all().values_list("name", flat=True))]
+    recipes = filtered_recipes[:100]
     data = [
         {
             "id": recipe.id,
@@ -193,6 +195,7 @@ async def get_recipe_list(recipe_id: int,
             "user_id": recipe.user_id,
             "img_url": recipe.img_url,
             "nickname": recipe.user.nickname,
+            'views': recipe.views,
             "tags": await recipe.tags.all(),
             "ingredients": await recipe.ingredients.all(),
             "likes": len(await recipe.like_users.all()),

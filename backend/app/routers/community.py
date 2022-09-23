@@ -14,9 +14,6 @@ from app.schemas.common import *
 
 router = APIRouter(prefix="/community", tags=["community"])
 
-# category / 0: notice / 1: free-board / 2: gallery
-
-
 @router.post("/notice-board", description="공지사항 작성", response_model=CommonResponse, status_code=201)
 async def create_notice(req: ArticleCreateForm, user: User = Depends(get_current_user)):
     # 유저 인증 로직
@@ -28,6 +25,8 @@ async def notice_detail(article_id: int):
     article = await Notice.get_or_none(id=article_id).select_related('user')
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
+    article.views += 1
+    await article.save()
     data = NoticeDetail(
         nickname=article.user.nickname,
         # like_users=await article.like_users.all().values("id", "nickname"),
@@ -77,6 +76,8 @@ async def article_detail(article_id: int):
     article = await Article.get_or_none(id=article_id).select_related('user')
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
+    article.views += 1
+    await article.save()
     data = ArticleDetail(
         nickname=article.user.nickname,
         like_users=await article.like_users.all().values("id", "nickname"),
@@ -193,6 +194,8 @@ async def cooking_detail(article_id: int):
     article = await Cooking.get_or_none(id=article_id).select_related('user')
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
+    article.views += 1
+    await article.save()
     data = ArticleDetail(
         nickname=article.user.nickname,
         like_users=await article.like_users.all().values("id", "nickname"),
@@ -207,7 +210,7 @@ async def cooking_detail(article_id: int):
 
 @router.get("/gallery/comment/{article_id}", description="게시물 댓글 리스트", response_model=MultipleObjectResponse)
 async def get_cooking_comment_list(article_id: int):
-    comments = await CookingComment.filter(article_id=article_id).select_related('user').order_by('-id')
+    comments = await CookingComment.filter(cooking_id=article_id).select_related('user').order_by('-id')
     data = [ArticleCommentList(**dict(comment), nickname=comment.user.nickname) for comment in comments]
     return MultipleObjectResponse(data=data)
 
@@ -215,7 +218,7 @@ async def get_cooking_comment_list(article_id: int):
 @router.post("/gallery/comment/{article_id}", description="게시물 댓글 작성", response_model=CommonResponse, status_code=201)
 async def create_cooking_comment(article_id: int, req: ArticleCommentForm, user: User = Depends(get_current_user)):
     # 유저 인증 로직
-    await CookingComment.create(article_id=article_id, user_id=user.id, **req.dict())
+    await CookingComment.create(cooking_id=article_id, user_id=user.id, **req.dict())
     return CommonResponse()
 
 
@@ -251,9 +254,9 @@ async def delete_cooking_comment(comment_id: int, user: User = Depends(get_curre
 @router.post("/gallery/like/{article_id}", description="게시물 좋아요", response_model=ObjectResponse, status_code=201)
 async def like_cooking(article_id: int, response: Response, user: User = Depends(get_current_user)):
     # 유저 인증 로직
-    article = await Article.get_or_none(id=article_id)
-    like_cooking_list = await LikeCooking.filter(user_id=user.id, article_id=article_id)
-    if article is None:
+    cooking = await Cooking.get_or_none(id=article_id)
+    like_cooking_list = await LikeCooking.filter(user_id=user.id, cooking_id=article_id)
+    if cooking is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="추천할 게시물이 없습니다.").dict())
     else:
         data = {
@@ -261,11 +264,11 @@ async def like_cooking(article_id: int, response: Response, user: User = Depends
             "like": True
         }
         if not like_cooking_list:
-            await LikeCooking.create(user_id=user.id, article_id=article_id)
+            await LikeCooking.create(user_id=user.id, cooking_id=article_id)
             data["method"] = 'post'
             data["like"] = True
         else:
-            await LikeCooking.filter(user_id=user.id, article_id=article_id).delete()
+            await LikeCooking.filter(user_id=user.id, cooking_id=article_id).delete()
             data["method"] = 'delete'
             data["like"] = False
             response.status_code = 200
@@ -317,6 +320,7 @@ async def get_article_list(article_id: int, q: Union[str, None] = None, opt: Uni
             "user_id": article.user_id,
             "img_url": article.img_url,
             "nickname": article.user.nickname,
+            'views': article.views,
             "likes": len(await article.like_users.all()),
             "comments_count": len(await ArticleComment.filter(article_id=article_id))
         }
@@ -345,6 +349,7 @@ async def get_notice_list(article_id: int, q: Union[str, None] = None, opt: Unio
             "user_id": article.user_id,
             "img_url": article.img_url,
             "nickname": article.user.nickname,
+            'views': article.views,
         }
         for article in articles
     ]
@@ -371,6 +376,7 @@ async def get_cooking_list(cooking_id: int, q: Union[str, None] = None, opt: Uni
             "user_id": article.user_id,
             "img_url": article.img_url,
             "nickname": article.user.nickname,
+            'views': article.views,
             "likes": len(await article.like_users.all()),
             "comments_count": len(await CookingComment.filter(cooking_id=cooking_id))
         }
