@@ -11,7 +11,6 @@ import MyCook from "./pages/community/my_cook/my_cook_container";
 import RecipeList from "./pages/Recipe/List/recipe_list_page";
 import RecipeWrite from "./pages/Recipe/Write/recipe_write_page";
 
-
 import SignUp from "./pages/Account/Signup/signup_page";
 import Login from "./pages/Account/Login/login_page";
 import NewPassword from "./pages/Account/Login/new_password_page";
@@ -24,22 +23,18 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <div className="App">
-
       <QueryClientProvider client={queryClient}>
         <Global styles={Reset} />
         <BrowserRouter>
           <Layout>
             <Routes>
               <Route path="/" element={<MainPage />} />
-                          <Route path="/recipe">
-              <Route index element={<RecipeList />} />
-              <Route
-                path="write"
-                element={<RecipeWrite />}
-              />
-            </Route>
+              <Route path="/recipe">
+                <Route index element={<RecipeList />} />
+                <Route path="write" element={<RecipeWrite />} />
+              </Route>
               <Route path="/account" element={<MainPage />} />
-              <Route path="/recipe/detail" element={<RecipeDetail />} />
+              <Route path="/recipe/postId=:detail" element={<RecipeDetail />} />
               <Route path="/community">
                 <Route path="write" element={<MyCookWriter />} />
                 <Route path="my-cook" element={<MyCook />} />
@@ -52,7 +47,6 @@ function App() {
           </Layout>
         </BrowserRouter>
       </QueryClientProvider>
-
     </div>
   );
 }

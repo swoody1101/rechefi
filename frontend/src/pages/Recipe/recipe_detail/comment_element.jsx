@@ -31,7 +31,7 @@ const RecipeDetailCommentElement = ({ comment, reCommentPush }) => {
     <RecipeDetailCommentElementWraper>
       <RecipeDetailCommentCreateWrapperDiv>
         <RecipeDetailCommentElementNameDiv>
-          {comment.member_nickname}
+          {comment.nickname}
         </RecipeDetailCommentElementNameDiv>
         <RecipeDetailCommentCreateAtDiv>
           {comment.create_at}

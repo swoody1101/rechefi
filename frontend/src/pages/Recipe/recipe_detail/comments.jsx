@@ -1,5 +1,6 @@
 import { useRef } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useFetchComments } from "../../../hooks/useFetch";
 import {
   RecipeDetailCommentButton,
   RecipeDetailCommentContentInputWrapper,
@@ -12,34 +13,21 @@ import {
   RecipeDetailRecommentElementWrapper,
 } from "../recipe_detail_styles/styles";
 import RecipeDetailCommentElement from "./comment_element";
-import { dummyDetailComment } from "./dummy";
+import { useParams } from "react-router-dom";
+import { useAddComment } from "../../../hooks/useAddComments";
 
 const RecipeDetailComments = ({ aiButton }) => {
-  const [comment, setComment] = useState([]);
+  const handle = useParams();
   const commentContentRef = useRef(null);
 
-  useEffect(() => {
-    dummyDetailComment.sort(function (a, b) {
-      if (a.group > b.group) {
-        return 1;
-      }
-      if (a.group === b.group) {
-        if (a.sequence > b.sequence) {
-          return 1;
-        }
-        if (a.sequence < b.sequence) {
-          return -1;
-        }
-      }
-      if (a.group < b.group) {
-        return -1;
-      }
-      return 0;
-    });
-    setComment(dummyDetailComment);
-  }, []);
+  const { data, isLoading } = useFetchComments({
+    queryKey: "recipeComments",
+    articleId: handle.detail,
+    uri: "/recipe/comment/",
+  });
+  const { mutate } = useAddComment(handle.detail);
   const reCommentPush = (reComment) => {
-    let commentList = comment;
+    let commentList = data;
     const lastIndex = commentList.filter((e) => {
       return e.group === reComment.group;
     });
@@ -50,79 +38,59 @@ const RecipeDetailComments = ({ aiButton }) => {
         return -1;
       }
     });
-    setComment((prev) => {
-      return [
-        ...prev,
-        {
-          member_id: 1,
-          member_nickname: "기타치는이현태",
-          content: reComment.content,
-          create_at: "2022-09-07",
-          root: 1,
-          group: reComment.group,
-          sequence: lastIndex[lastIndex.length - 1].sequence + 1,
-        },
-      ].sort(function (a, b) {
-        if (a.group > b.group) {
-          return 1;
-        }
-        if (a.group === b.group) {
-          if (a.sequence > b.sequence) {
-            return 1;
-          }
-          if (a.sequence < b.sequence) {
-            return -1;
-          }
-        }
-        if (a.group < b.group) {
-          return -1;
-        }
-        return 0;
-      });
+    mutate({
+      uri: "/recipe/comment/",
+      articleId: handle.detail,
+      sendData: {
+        content: reComment.content,
+        root: 1,
+        group: reComment.group,
+        sequence: lastIndex[lastIndex.length - 1].sequence + 1,
+      },
     });
     commentContentRef.current.value = "";
   };
   const commentPush = (e) => {
     e.preventDefault();
-    let commentList = comment;
+    let commentList = data;
     const lastIndex = commentList[commentList.length - 1].group + 1;
     const content = commentContentRef.current.value;
-    setComment((prev) => {
-      return [
-        ...prev,
-        {
-          member_id: 1,
-          member_nickname: "기타치는이현태",
-          content: content,
-          create_at: "2022-09-07",
-          root: 0,
-          group: lastIndex,
-          sequence: 1,
-        },
-      ];
+    mutate({
+      uri: "/recipe/comment/",
+      articleId: handle.detail,
+      sendData: {
+        content,
+        root: 0,
+        group: lastIndex,
+        sequence: 1,
+      },
     });
     commentContentRef.current.value = "";
   };
+  if (isLoading) {
+    return <div>로딩중...</div>;
+  }
+
   return (
     <RecipeDetailCommentWraper aiButton={aiButton}>
-      {Object.keys(comment).map((e, i) => (
+      {Object.keys(data).map((e, i) => (
         <RecipeDetailCommentElementBox key={i}>
-          {comment[e].root === 0 ? (
+          {data[e].root === 0 ? (
             <RecipeDetailCommentElement
-              comment={comment[e]}
+              comment={data[e]}
               reCommentPush={reCommentPush}
             />
           ) : (
             <RecipeDetailRecommentElementWrapper>
               <RecipeDetailCommentCreateWrapperDiv>
                 <RecipeDetailCommentElementNameDiv>
-                  {comment[e].member_nickname}
+                  {data[e].nickname}
                 </RecipeDetailCommentElementNameDiv>
                 <RecipeDetailCommentCreateAtDiv>
-                  {comment[e].create_at}
+                  {data[e].create_at}
                 </RecipeDetailCommentCreateAtDiv>
               </RecipeDetailCommentCreateWrapperDiv>
-              <div>{comment[e].content}</div>
+              <div>{data[e].content}</div>
             </RecipeDetailRecommentElementWrapper>
           )}
         </RecipeDetailCommentElementBox>

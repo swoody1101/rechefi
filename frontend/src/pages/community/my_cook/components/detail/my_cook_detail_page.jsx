@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   MyCookDetailContent,
   MyCookDetailContentWithCommentWrapper,
@@ -8,26 +8,9 @@ import {
 } from "../../styles/list/list_style";
 import { createPortal } from "react-dom";
 import RecipeDetailComments from "../../../../Recipe/recipe_detail/comments";
-import { useQuery } from "react-query";
 import { useFetchDetail } from "../../../../../hooks/useFetch";
-// const fetchMyCookDetail = async (param) => {
-//   const res = await axios.get(
-//     `http://localhost:8000/community/gallery/detail/100`
-//   );
-//   return res.data;
-// };
 
 export const MyCookDetail = ({ postId }) => {
-  const [post, setPost] = useState({
-    id: postId,
-    title: "",
-    likes: 0,
-    date: "",
-    member_id: 0,
-    member_nickname: "",
-    comments: [],
-    image_url: "",
-  });
   useEffect(() => {
     document.body.style.cssText = `
       position: fixed; 
@@ -45,31 +28,7 @@ export const MyCookDetail = ({ postId }) => {
     articleId: postId,
     uri: "/community/gallery/detail/",
   });
-  // const { isLoading, isError, data, error } = useQuery(
-  //   "myCookDetail",
-  //   fetchMyCookDetail,
-  //   {
-  //     onSuccess: (data) => {
-  //       console.log(data.data);
-  //       const temp = data.data;
-  //       setPost({
-  //         id: 100,
-  //         title: temp.title,
-  //         likes: temp.like_users,
-  //         date: temp.create_at,
-  //         member_id: temp.user_id,
-  //         member_nickname: temp.nickname,
-  //         comments: temp.comments,
-  //         image_url: temp.img_url,
-  //         views: temp.views,
-  //         content: temp.content,
-  //       });
-  //     },
-  //     onError: (e) => {
-  //       console.log(e.message);
-  //     },
-  //   }
-  // );
+
   if (isLoading) {
     return <div>로딩중...</div>;
   }
@@ -87,7 +46,7 @@ export const MyCookDetail = ({ postId }) => {
         <MyCookDetailContent>{data.data.content}</MyCookDetailContent>
       </MyCookDetailImageWrapper>
       <MyCookDetailContentWithCommentWrapper>
-        <RecipeDetailComments aiButton={false} />
+        <RecipeDetailComments aiButton={false} postId={postId} />
       </MyCookDetailContentWithCommentWrapper>
     </MyCookDetailWrapper>,
     document.getElementById("myCookDetail")
