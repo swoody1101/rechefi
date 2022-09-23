@@ -8,7 +8,7 @@ import React from "react";
 import { Palette } from "../styles/palette";
 
 function TitleWithDivider({
-  variant,
+  textVariant,
   title,
   onClick,
   icon,
@@ -24,7 +24,7 @@ function TitleWithDivider({
     >
       <Box sx={{ display: "flex" }}>
         <Typography
-          variant={variant}
+          variant={textVariant}
           fontWeight={"bold"}
           color={Palette.black3}
           flexGrow={1}
