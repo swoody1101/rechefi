@@ -172,22 +172,19 @@ async def get_recipe_list(recipe_id: int,
                           mid: Union[int, None] = None,
                           tag: Union[str, None] = None,
                           ingredient: Union[str, None] = None):
-
-    query = Recipe.filter(id__gte=recipe_id).select_related('tags', 'ingredients')
-    #
-    # if mid:
-    #     print(f'member: {mid}')
-    #     query = query.filter(user_id=mid)
-    # if tag:
-    #     tags = tag.split(',')
-    #     for t in tags:
-    #         query = query.filter(tags__id__in=tags)
-    #
-    # if ingredient:
-    #     ingredients = ingredient.split(',')
-    #     for igd in ingredients:
-    #         query = query.filter(ingredients__name__in=igd)
-    recipes = await query.limit(100).order_by('-id')
+    query = Recipe.filter(id__gte=recipe_id).prefetch_related('tags', 'ingredients').select_related('user')
+    if mid:
+        query = query.filter(user_id=mid).order_by('-id')
+    recipes = list(await query)
+    if tag:
+        tags = list(map(int, tag.split(',')))
+        recipes = [recipe for recipe in recipes
+                   if set(tags).issubset(await recipe.tags.all().values_list("id", flat=True))]
+    if ingredient:
+        ingredients = ingredient.split(',')
+        recipes = [recipe for recipe in recipes
+                   if set(ingredients).issubset(await recipe.ingredients.all().values_list("name", flat=True))]
+    recipes = recipes[:100]
     data = [
         {
             "id": recipe.id,
@@ -195,7 +192,7 @@ async def get_recipe_list(recipe_id: int,
             "date": recipe.created_at,
             "user_id": recipe.user_id,
             "img_url": recipe.img_url,
-            "nickname": (await recipe.user).nickname,
+            "nickname": recipe.user.nickname,
             "tags": await recipe.tags.all(),
             "ingredients": await recipe.ingredients.all(),
             "likes": len(await recipe.like_users.all()),
