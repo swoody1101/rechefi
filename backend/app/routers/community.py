@@ -298,8 +298,13 @@ async def delete_cooking(article_id: int, user: User = Depends(get_current_user)
 
 
 @router.get("/free-board/{article_id}", description="게시물 목록 조회", response_model=MultipleObjectResponse)
-async def get_article_list(article_id: int, q: Union[str, None] = None):
-    articles = await Article.filter(id__gte=article_id).select_related('user').limit(100).order_by('-id')
+async def get_article_list(article_id: int, title: Union[str, None] = None, author: Union[str, None] = None):
+    query = Article.filter(id__gte=article_id).select_related('user')
+    if title:
+        query = query.filter(title__contains=title)
+    if author:
+        query = query.filter(user__nickname__contains=author)
+    articles = await query.limit(100).order_by('-id')
     data = [
         {
             "id": article.id,
@@ -317,8 +322,13 @@ async def get_article_list(article_id: int, q: Union[str, None] = None):
 
 
 @router.get("/notice-board/{article_id}", description="공지사항 목록 조회", response_model=MultipleObjectResponse)
-async def get_notice_list(article_id: int, q: Union[str, None] = None):
-    articles = await Notice.filter(id__gte=article_id).select_related('user').limit(100).order_by('-id')
+async def get_notice_list(article_id: int, title: Union[str, None] = None, author: Union[str, None] = None):
+    query = Notice.filter(id__gte=article_id).select_related('user')
+    if title:
+        query = query.filter(title__contains=title)
+    if author:
+        query = query.filter(user__nickname__contains=author)
+    articles = await query.limit(100).order_by('-id')
     data = [
         {
             "id": article.id,
@@ -334,8 +344,13 @@ async def get_notice_list(article_id: int, q: Union[str, None] = None):
 
 
 @router.get("/gallery/{article_id}", description="갤러리 목록 조회", response_model=MultipleObjectResponse)
-async def get_cooking_list(cooking_id: int, q: Union[str, None] = None):
-    cookings = await Cooking.filter(id__gte=cooking_id).select_related('user').limit(100).order_by('-id')
+async def get_cooking_list(cooking_id: int, title: Union[str, None] = None, author: Union[str, None] = None):
+    query = Cooking.filter(id__gte=cooking_id).select_related('user')
+    if title:
+        query = query.filter(title__contains=title)
+    if author:
+        query = query.filter(user__nickname__contains=author)
+    cooking = await query.limit(100).order_by('-id')
     data = [
         {
             "id": article.id,
@@ -347,7 +362,7 @@ async def get_cooking_list(cooking_id: int, q: Union[str, None] = None):
             "likes": len(await article.like_users.all()),
             "comments_count": len(await CookingComment.filter(cooking_id=cooking_id))
         }
-        for article in cookings
+        for article in cooking
     ]
     return MultipleObjectResponse(data=data)
 
