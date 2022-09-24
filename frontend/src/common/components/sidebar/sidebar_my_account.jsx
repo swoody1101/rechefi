@@ -10,13 +10,20 @@ import { useNavigate } from "react-router-dom";
 const SidebarMyAccount = ({ sidebarClose }) => {
   const loginInfo = useSelector((store) => store.account);
   const navigate = useNavigate();
+
+  const mypageTransitionHandler = () => {
+    navigate(`/mypage`);
+  };
+
   return (
     <SidebarMyAccountWrapper>
       <SidebarMyProfileImage>
         <AccountCircleIcon sx={{ fontSize: 75 }} />
       </SidebarMyProfileImage>
       {loginInfo.auth ? (
-        <SidebarMyNicknameDiv>{loginInfo.nickname}</SidebarMyNicknameDiv>
+        <SidebarMyNicknameDiv onClick={mypageTransitionHandler}>
+          {loginInfo.nickname}
+        </SidebarMyNicknameDiv>
       ) : (
         <div
           onClick={() => {
