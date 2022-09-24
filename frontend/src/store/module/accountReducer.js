@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import axios from "axios";
+import http from "../../utils/http-commons";
 import { getToken, saveToken } from "../../utils/JWT-token";
 
 const initialState = {
@@ -56,6 +57,17 @@ export const loginThunk = createAsyncThunk(
     }
   }
 );
+
+export const mypageThunk = createAsyncThunk("mypage/mypageThunks", async () => {
+  try {
+    const response = await http.get("/members");
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return error.response;
+  }
+});
 
 export const loginSlice = createSlice({
   name: "login",
