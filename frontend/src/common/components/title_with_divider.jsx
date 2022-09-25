@@ -13,7 +13,7 @@ function TitleWithDivider({
   onClick,
   icon,
   marginBottom,
-  Style,
+  style,
 }) {
   return (
     <Box
@@ -21,7 +21,7 @@ function TitleWithDivider({
         display: "flex",
         flexDirection: "column",
         mb: `${marginBottom}rem`,
-        ...Style,
+        ...style,
       }}
     >
       <Box sx={{ display: "flex" }}>
