@@ -6,8 +6,8 @@ function FreeBoardListItemContainer({ children, style }) {
   return (
     <Container
       sx={{
-        // background: Palette.mainColor1,
-        borderRadius: 3,
+        background: Palette.mainColor1,
+        borderRadius: 1,
         ...style,
       }}
     >

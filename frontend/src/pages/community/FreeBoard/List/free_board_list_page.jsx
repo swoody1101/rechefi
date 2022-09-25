@@ -64,7 +64,7 @@ function FreeBoardPage() {
 
       {/* freeboard Items */}
       <FreeBoardListItemContainer
-        style={{ py: 1, px: 1.2 }}
+        style={{ py: 1, mt: 1, px: 1.2 }}
       >
         {data.map((item, index) => (
           <FreeBoardListItem
