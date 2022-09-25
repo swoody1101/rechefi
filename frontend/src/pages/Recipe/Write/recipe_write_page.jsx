@@ -18,27 +18,13 @@ import {
   Warn,
 } from "../../../common/components/sweatAlert";
 import { useSelectedTag } from "../../../hooks/Recipe/tag/useSelectedTags";
+import { useTitle } from "../../../hooks/Recipe/write/useTitle";
 
 function RecipeWritePage() {
   // control title data
-  const [title, setTitle] = useState(null);
+  const [title, setTitle, titleValidation] = useTitle();
 
-  // for helper message
-  const titleValidation = () => {
-    // dismiss value at first
-    if (title === null) return true;
-    if (0 < title.length && title.length < 17) return true;
-    else return false;
-  };
-
-  // control tag information
-  const [selectedTags, addTag, deleteTag] =
-    useSelectedTag();
-
-  // ingredients for recipe
-  const [ingreds, setIngred] = useState([]);
-
-  // recipe contentss
+  // recipe contents
   const [contents, setContents] = useState([
     // DEBUG
     {
@@ -47,6 +33,12 @@ function RecipeWritePage() {
         "https://cdn.discordapp.com/attachments/733699779179184308/992697011780472944/IMG_0758.png",
     },
   ]);
+
+  // control tag information
+  const [selectedTags, addTag, deleteTag] =
+    useSelectedTag();
+  // ingredients for recipe
+  const [ingreds, setIngred] = useState([]);
 
   // add text or image block
   const imageInput = useRef();
@@ -112,7 +104,6 @@ function RecipeWritePage() {
 
   // text edited update
   const updateTextContent = (index, updated) => {
-    console.log(JSON.stringify(updated));
     setContents(
       contents.map((ele, idx) =>
         idx === index
