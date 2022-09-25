@@ -1,8 +1,10 @@
-import { Box, Container } from "@mui/material";
+import { Container } from "@mui/material";
 import React from "react";
 import { useLocation } from "react-router-dom";
 import TitleWithDivider from "../../../../common/components/title_with_divider";
-import FreeBoardListItem from "./components/free_board_list_item";
+import FreeBoardListItem from "./components/item/free_board_list_item";
+import FreeBoardListItemContainer from "./components/free_board_list_items_container";
+import FreeBoardListItemNotices from "./components/free_board_list_notices_items";
 import FreeBoardPagination from "./components/free_board_list_pagination";
 
 function FreeBoardPage() {
@@ -41,29 +43,43 @@ function FreeBoardPage() {
   const page = parseInt(query.get("page") || "1", 30);
 
   return (
-    <>
-      <Container sx={{ pt: 2, px: 1, pb: 1 }}>
-        <TitleWithDivider
-          textVariant={"h5"}
-          title="자유 게시판"
-        ></TitleWithDivider>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          {data.map((item) => (
-            <FreeBoardListItem post={item} />
-          ))}
-          <FreeBoardPagination
-            totalPages={30}
-            urlLink="/community/free-board"
+    <Container
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <TitleWithDivider
+        textVariant={"h5"}
+        title="자유 게시판"
+        style={{ px: 1, pt: 3 }}
+      ></TitleWithDivider>
+
+      {/* notice Items */}
+      <FreeBoardListItemContainer
+        style={{ py: 1, px: 1.2 }}
+      >
+        <FreeBoardListItemNotices />
+      </FreeBoardListItemContainer>
+
+      {/* freeboard Items */}
+      <FreeBoardListItemContainer
+        style={{ py: 1, px: 1.2 }}
+      >
+        {data.map((item, index) => (
+          <FreeBoardListItem
+            key={item.id}
+            post={item}
+            isLast={data.length - 1 === index}
           />
-        </Box>
-      </Container>
-    </>
+        ))}
+      </FreeBoardListItemContainer>
+
+      <FreeBoardPagination
+        totalPages={30}
+        urlLink="/community/free-board"
+      />
+    </Container>
   );
 }
 
