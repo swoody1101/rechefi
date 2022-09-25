@@ -1,11 +1,12 @@
 import { Container } from "@mui/material";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TitleWithDivider from "../../../../common/components/title_with_divider";
 import FreeBoardListItem from "./components/item/free_board_list_item";
 import FreeBoardListItemContainer from "./components/free_board_list_items_container";
 import FreeBoardListItemNotices from "./components/free_board_list_notices_items";
 import FreeBoardPagination from "./components/free_board_list_pagination";
+import RecipeListFab from "../../../Recipe/List/components/recipe_list_fab";
 
 function FreeBoardPage() {
   const data = [
@@ -42,6 +43,8 @@ function FreeBoardPage() {
   const query = new URLSearchParams(location.search);
   const page = parseInt(query.get("page") || "1", 30);
 
+  const navigate = useNavigate();
+
   return (
     <Container
       sx={{
@@ -54,14 +57,12 @@ function FreeBoardPage() {
         title="자유 게시판"
         style={{ px: 1, pt: 3 }}
       ></TitleWithDivider>
-
       {/* notice Items */}
       <FreeBoardListItemContainer
         style={{ py: 1, px: 1.2 }}
       >
         <FreeBoardListItemNotices />
       </FreeBoardListItemContainer>
-
       {/* freeboard Items */}
       <FreeBoardListItemContainer
         style={{ py: 1, mt: 1, px: 1.2 }}
@@ -74,10 +75,15 @@ function FreeBoardPage() {
           />
         ))}
       </FreeBoardListItemContainer>
-
       <FreeBoardPagination
         totalPages={30}
         urlLink="/community/free-board"
+      />
+
+      <RecipeListFab
+        onClick={() => {
+          navigate("/community/free-board/write");
+        }}
       />
     </Container>
   );
