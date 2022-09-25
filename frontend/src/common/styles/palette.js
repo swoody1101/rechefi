@@ -14,6 +14,6 @@ export const Palette = {
   gray3: "#9c9b9a",
 
   white1: "#FEFEFE",
-  white2: "#F3F2F0",
-  white3: "#D3D2D1",
+  white2: "#FaFbFc",
+  white3: "#F9F8F7",
 };
