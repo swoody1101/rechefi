@@ -49,6 +49,7 @@ export const MyCookDetail = ({ postId }) => {
           aiButton={false}
           postId={postId}
           uri={"community/gallery/comment/"}
+          queryKey="myCookComments"
         />
       </MyCookDetailContentWithCommentWrapper>
     </MyCookDetailWrapper>,

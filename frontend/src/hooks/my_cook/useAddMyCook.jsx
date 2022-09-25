@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
+import { Success } from "../../common/components/sweatAlert";
 import http from "../../utils/http-commons";
 
 export default function useAddMyCook(uniqueKey) {
@@ -15,7 +16,7 @@ export default function useAddMyCook(uniqueKey) {
       return data;
     },
     {
-      onMutate: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries(uniqueKey);
       },
     }

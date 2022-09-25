@@ -89,7 +89,11 @@ const RecipeDetail = () => {
           </RecipeDetailLikeBorderDiv>
         </RecipeDetailLikeWrppaerDiv>
         <RecipeDetailIngredinetsContentDiv>
-          <Comments uri={"/recipe/comment/"} aiButton={aiButton} />
+          <Comments
+            uri={"/recipe/comment/"}
+            aiButton={aiButton}
+            queryKey="recipeComments"
+          />
         </RecipeDetailIngredinetsContentDiv>
       </RecipeDetailAllContentWrapper>
     </RecipteDetailWrapperDiv>

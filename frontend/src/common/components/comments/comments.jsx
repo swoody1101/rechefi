@@ -15,16 +15,15 @@ import {
   RecommentElementWrapper,
 } from "../../styles/comments/comments_styles";
 
-const Comments = ({ aiButton, postId, uri }) => {
+const Comments = ({ aiButton, postId, uri, queryKey }) => {
   const handle = useParams();
   const commentContentRef = useRef(null);
-
   const { data, isLoading } = useFetchComments({
-    queryKey: "recipeComments",
+    queryKey: queryKey,
     articleId: postId !== undefined ? postId : handle.detail,
     uri,
   });
-  const { mutate } = useAddComment(handle.detail);
+  const { mutate } = useAddComment(handle.detail, queryKey);
   const reCommentPush = (reComment) => {
     let commentList = data;
     const lastIndex = commentList.filter((e) => {
@@ -39,7 +38,7 @@ const Comments = ({ aiButton, postId, uri }) => {
     });
     mutate({
       uri: uri,
-      articleId: handle.detail,
+      articleId: handle.detail === undefined ? postId : handle.detail,
       sendData: {
         content: reComment.content,
         root: 1,
@@ -52,18 +51,34 @@ const Comments = ({ aiButton, postId, uri }) => {
   const commentPush = (e) => {
     e.preventDefault();
     let commentList = data;
-    const lastIndex = commentList[commentList.length - 1].group + 1;
-    const content = commentContentRef.current.value;
-    mutate({
-      uri,
-      articleId: handle.detail,
-      sendData: {
-        content,
-        root: 0,
-        group: lastIndex,
-        sequence: 1,
-      },
-    });
+    if (commentList.length === 0) {
+      const lastIndex = 1;
+      const content = commentContentRef.current.value;
+      const sendData = {
+        uri,
+        articleId: handle.detail === undefined ? postId : handle.detail,
+        sendData: {
+          content,
+          root: 0,
+          group: lastIndex,
+          sequence: 1,
+        },
+      };
+      mutate(sendData);
+    } else {
+      const lastIndex = commentList[commentList.length - 1].group + 1;
+      const content = commentContentRef.current.value;
+      mutate({
+        uri,
+        articleId: handle.detail === undefined ? postId : handle.detail,
+        sendData: {
+          content,
+          root: 0,
+          group: lastIndex,
+          sequence: 1,
+        },
+      });
+    }
     commentContentRef.current.value = "";
   };
   if (isLoading) {

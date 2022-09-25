@@ -16,7 +16,7 @@ const UploadImageArea = ({ uploadHandler }) => {
     //   console.log();
     // const temp = imgInput.current.files[0].name;
     const temp =
-      "https://cdn.discordapp.com/attachments/433506654009425921/1021418121933885460/unknown.png";
+      "https://cdn.discordapp.com/attachments/433506654009425921/1021417880207753237/unknown.png";
     uploadHandler(temp);
     setImageFile(temp);
     // console.log(e.target.files[0]);

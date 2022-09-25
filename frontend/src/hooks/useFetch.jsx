@@ -3,7 +3,7 @@ import http from "../utils/http-commons";
 
 export default function useFetchList({ queryKey, articleId, uri }) {
   return useInfiniteQuery(
-    [queryKey],
+    queryKey,
     async ({ pageParam = articleId }) => {
       const response = await http.get(uri + pageParam);
       return {
@@ -13,8 +13,10 @@ export default function useFetchList({ queryKey, articleId, uri }) {
       };
     },
     {
-      getNextPageParam: (lastPage) =>
-        !lastPage.isLast ? lastPage.nextPage : undefined,
+      getNextPageParam: (lastPage) => {
+        console.log(lastPage);
+        return lastPage.isLast === undefined ? undefined : lastPage.nextPage;
+      },
     }
   );
 }
@@ -27,7 +29,6 @@ export function useFetchDetail({ queryKey, articleId, uri }) {
 }
 
 export function useFetchComments({ queryKey, articleId, uri }) {
-  console.log(queryKey);
   return useQuery(
     [queryKey, articleId],
     async () => {
