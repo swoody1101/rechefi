@@ -32,7 +32,7 @@ TORTOISE_ORM = {
 }
 
 pool = redis.ConnectionPool(
-    host='localhost',
+    host='host.docker.internal',
     port=6379,
     # password=configs.REDIS_PASSWORD,
     decode_responses=True
