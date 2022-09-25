@@ -1,4 +1,8 @@
-import { Pagination, PaginationItem } from "@mui/material";
+import {
+  Box,
+  Pagination,
+  PaginationItem,
+} from "@mui/material";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -13,7 +17,14 @@ function FreeBoardPagination({ totalPages, urlLink }) {
     <Pagination
       page={page}
       count={totalPages}
-      sx={{ mt: 1.5 }}
+      siblingCount={1}
+      sx={{
+        mt: 1.5,
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+      }}
+      size={"small"}
       renderItem={(item) => (
         <PaginationItem
           component={Link}
