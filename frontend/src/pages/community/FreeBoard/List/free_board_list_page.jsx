@@ -58,15 +58,11 @@ function FreeBoardPage() {
         style={{ px: 1, pt: 3 }}
       ></TitleWithDivider>
       {/* notice Items */}
-      <FreeBoardListItemContainer
-        style={{ py: 1, px: 1.2 }}
-      >
+      <FreeBoardListItemContainer isNotice={true}>
         <FreeBoardListItemNotices />
       </FreeBoardListItemContainer>
       {/* freeboard Items */}
-      <FreeBoardListItemContainer
-        style={{ py: 1, mt: 1, px: 1.2 }}
-      >
+      <FreeBoardListItemContainer style={{ mt: 1 }}>
         {data.map((item, index) => (
           <FreeBoardListItem
             key={item.id}
