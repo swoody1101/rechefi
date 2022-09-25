@@ -36,7 +36,7 @@ docker run --add-host=host.docker.internal:host-gateway --env-file ./.env -d --n
 # 초기 세팅
 docker exec (api 컨테이너 id) aerich init -t app.config.TORTOISE_ORM
 docker exec (api 컨테이너 id) aerich upgrade
-
+gunicorn --access-logfile ./gunicorn-access.log -R app.main:app --bind 0.0.0.0:8000 --workers 4 --worker-class uvicorn.workers.UvicornWorker
 ```
 # 프론트
 docker pull supermilktank8/b303frontend:(ver)
@@ -44,6 +44,9 @@ docker pull supermilktank8/b303frontend:(ver)
 docker run -p 3000:3000 --name frontend supermilktank8/b303frontend:(ver)
 이후 데이터 베이스 상황에 따라 마이그레이션 명령어들을 이용하여 DB 테이블 생성하면 완료. 
 이미 데이터베이스를 켜두고 테이블을 만들어두었으면 그대로 OK.
+
+DB 켜고 끄기 (켜기 up )
+docker-compose -f db-docker-compose.yaml --env-file ./.env up -d
 
 
 # backend
@@ -58,6 +61,11 @@ pip install -r requirements.txt
 
 uvicorn app.main:app --reload
 -> 서버 실행
+
+# 도커 내부 백엔드 서버 액세스 및 에러 로그 파일 사본 가져오기
+
+docker cp -a api:backend/errors.log ./
+docker cp -a api:backend/gunicorn-access.log ./
 
 # migration
 
