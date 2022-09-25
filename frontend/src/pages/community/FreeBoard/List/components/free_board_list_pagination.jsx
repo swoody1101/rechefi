@@ -13,6 +13,7 @@ function FreeBoardPagination({ totalPages, urlLink }) {
     <Pagination
       page={page}
       count={totalPages}
+      sx={{ mt: 1.5 }}
       renderItem={(item) => (
         <PaginationItem
           component={Link}
