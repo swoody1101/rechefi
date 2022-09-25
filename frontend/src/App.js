@@ -17,6 +17,7 @@ import NewPassword from "./pages/Account/Login/new_password_page";
 import MyPage from "./pages/Account/Mypage/mypage_page";
 import MyCookWriter from "./pages/community/my_cook/components/write/write";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ function App() {
             </Routes>
           </Layout>
         </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </div>
   );

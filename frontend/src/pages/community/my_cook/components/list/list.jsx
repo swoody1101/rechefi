@@ -15,7 +15,7 @@ import useFetchList from "../../../../../hooks/useFetch";
 
 const MyCookList = () => {
   const [imageState, setImageState] = useState([]);
-  const { data, isLoading, fetchNextPage } = useFetchList({
+  const { data, isLoading, fetchNextPage, hasNextPage } = useFetchList({
     queryKey: "myCookPosts",
     articleId: 1,
     uri: `/community/gallery/{article_id}?cooking_id=`,
@@ -25,11 +25,13 @@ const MyCookList = () => {
   const [ref, inView] = useInView();
 
   useEffect(() => {
-    if (inView) {
+    if (inView && hasNextPage) {
+      console.log("새로 불러오나요?");
       fetchNextPage();
     }
-  }, [fetchNextPage, inView]);
-
+  }, [hasNextPage, inView, fetchNextPage]);
+  console.log(hasNextPage);
+  console.log(data);
   if (isLoading) return <div>로딩중</div>;
   return (
     <MyCookGridWrapper>

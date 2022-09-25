@@ -1,5 +1,9 @@
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { TagElementButton, TagListDiv } from "../styles/tag_list_styles";
+import {
+  TagElementButton,
+  TagFoodImg,
+  TagListDiv,
+} from "../styles/tag_list_styles";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -41,7 +45,15 @@ const TagList = () => {
           }}
         >
           <div>
-            <AccountCircleIcon />
+            {tags[el].cookName === "기타" ? (
+              <AccountCircleIcon />
+            ) : (
+              <TagFoodImg
+                height="30vh"
+                src={`/img/icon/${el}.png`}
+                alt="아이콘"
+              />
+            )}
           </div>
           <div>{tags[el].cookName}</div>
         </TagElementButton>

@@ -12,12 +12,13 @@ import RecipeModal from "./recipe_modal";
 import WriteTextArea from "./write_text";
 import { useNavigate } from "react-router-dom";
 import useAddMyCook from "../../../../../hooks/my_cook/useAddMyCook";
+import { Confirm, Success } from "../../../../../common/components/sweatAlert";
+import WriteButtonBar from "./write_buttom_bar";
 
 const MyCookWriter = () => {
   const [searchModal, setSearchModal] = useState(false);
   const [imageUploadUrl, setImageUploadUrl] = useState("");
   const [content, setContent] = useState("");
-
   const navigate = useNavigate();
 
   const { mutate } = useAddMyCook("myCookPosts");
@@ -29,6 +30,35 @@ const MyCookWriter = () => {
 
   const textHandler = (keyword) => {
     setContent(keyword);
+  };
+
+  const vali = () => {
+    if (imageUploadUrl.length > 0 && content.length > 0) {
+      return false;
+    }
+    return true;
+  };
+  const nextPage = () => {
+    navigate("/community/my-cook");
+  };
+  const onConfirm = () => {
+    mutate(
+      {
+        uri: "/community/gallery",
+        sendData: { content, imageUploadUrl },
+      },
+      {
+        onSuccess: () => {
+          nextPage();
+        },
+      }
+    );
+  };
+
+  const onCancel = () => {
+    Confirm("작성을 중지합니까?", () => {
+      navigate(-1);
+    });
   };
 
   return (
@@ -66,7 +96,7 @@ const MyCookWriter = () => {
               sendData: { content, imageUploadUrl },
             },
             {
-              onSuccess: (data) => {
+              onSuccess: () => {
                 navigate("/community/my-cook");
               },
             }
@@ -75,6 +105,11 @@ const MyCookWriter = () => {
       >
         글 등록
       </WriteButton>
+      <WriteButtonBar
+        confirmDisabled={vali()}
+        onCancel={onCancel}
+        onConfirm={onConfirm}
+      />
     </WriteWrapper>
   );
 };

@@ -101,3 +101,9 @@ export const SidebarMyNicknameDiv = styled.div`
   font-size: large;
   font-weight: bold;
 `;
+
+export const SidebarLogout = styled.div`
+  position: absolute;
+  bottom: 2vh;
+  right: 3vw;
+`;
