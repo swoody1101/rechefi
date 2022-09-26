@@ -12,6 +12,8 @@
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
     "axios": "^0.27.2",
+    "draft-js": "^0.11.7",
+    "draft-js-export-html": "^1.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^9.4.0",
@@ -23,8 +25,6 @@
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-logger": "^3.0.6",
-    "slate": "^0.82.1",
-    "slate-react": "^0.82.2",
     "sweetalert2": "^11.4.33",
     "web-vitals": "^2.1.0"
   },
