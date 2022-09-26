@@ -79,13 +79,7 @@ function RecipeListPage() {
   // see recipe detail
   const onRecipeItemClicked = (id, title) => {
     // const postId = id;
-    navigate(`/recipe/postId=${id}`, {
-      // TODO : change with matching updated
-      // pathname: ,
-      state: {
-        postId: id,
-      },
-    });
+    navigate(`/recipe/postId=` + id);
   };
 
   return (

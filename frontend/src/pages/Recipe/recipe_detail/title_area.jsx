@@ -7,6 +7,7 @@ import {
 } from "../styles/recipe_detail_styles";
 
 const RecipedetailTitleArea = ({ post }) => {
+  console.log()
   return (
     <RecipeTitleAreaWrapperDiv>
       <RecipeTitleTitleAreaDiv>{post.title}</RecipeTitleTitleAreaDiv>
