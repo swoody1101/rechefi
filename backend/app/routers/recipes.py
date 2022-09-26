@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, status, Header, Depends
+from fastapi import APIRouter, Response, Depends
 from typing import Union
 
 from starlette.responses import JSONResponse
@@ -23,6 +23,19 @@ async def create_tag(req: TagForm, user: User = Depends(get_current_user)):
     else:
         return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
     return CommonResponse()
+
+
+@router.get("/tag", description="레시피 태그 리스트 조회", response_model=MultipleObjectResponse)
+async def get_tag_list():
+    return MultipleObjectResponse(data=await Tag.all())
+
+
+@router.get("/ingredient", description="레시피 재료 리스트 조회", response_model=MultipleObjectResponse)
+async def get_ingredient_list(name: Union[str, None] = None):
+    query = Ingredient.all()
+    if name is not None:
+        query = query.filter(name__contains=name)
+    return MultipleObjectResponse(data=await query)
 
 
 @router.post("/ingredient", description="레시피 재료 생성", response_model=CommonResponse)
@@ -52,6 +65,8 @@ async def recipe_detail(recipe_id: int):
     if recipe is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 레시피입니다.").dict())
     else:
+        recipe.views += 1
+        await recipe.save()
         ingredients = [
             IngredientRecipeForm(**dict(await ingredient.ingredient), amount=ingredient.amount)
             for ingredient in await RecipeIngredient.filter(recipe_id=recipe_id)
@@ -62,14 +77,13 @@ async def recipe_detail(recipe_id: int):
             "tags": await recipe.tags.all(),
             "ingredients": ingredients,
             "like_users": await recipe.like_users.all().values("id", "nickname"),
-            # comments = await RecipeComment.filter(recipe_id=recipe_id)
         }
     return ObjectResponse(data=data)
 
 
-@router.get("/comment/{recipe_id}", description="레시피 댓글 리스트", response_model=MultipleObjectResponse, status_code=200)
+@router.get("/comment/{recipe_id}", description="레시피 댓글 리스트", response_model=MultipleObjectResponse)
 async def get_comment_list(recipe_id: int):
-    comments = await RecipeComment.filter(recipe_id=recipe_id)
+    comments = await RecipeComment.filter(recipe_id=recipe_id).order_by('-id')
     data = [RecipeCommentList(**dict(comment), nickname=(await comment.user).nickname) for comment in comments]
     return MultipleObjectResponse(data=data)
 
@@ -158,18 +172,36 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
 
 
 @router.get("/{recipe_id}", description="레시피 목록 조회", response_model=MultipleObjectResponse)
-async def get_recipe_list(recipe_id: int, q: Union[str, None] = None):
-    recipes = await Recipe.filter(id__gte=recipe_id)
+async def get_recipe_list(recipe_id: int,
+                          mid: Union[int, None] = None,
+                          tag: Union[str, None] = None,
+                          ingredient: Union[str, None] = None):
+    query = Recipe.filter(id__gte=recipe_id).prefetch_related('tags', 'ingredients').select_related('user').order_by('-id')
+    if mid:
+        query = query.filter(user_id=mid)
+    filtered_recipes = list(await query)
+    if tag:
+        tags = set(map(int, tag.split(',')))
+        filtered_recipes = [recipe for recipe in filtered_recipes
+                            if tags.issubset(await recipe.tags.all().values_list("id", flat=True))]
+    if ingredient:
+        ingredients = set(ingredient.split(','))
+        filtered_recipes = [recipe for recipe in filtered_recipes
+                            if ingredients.issubset(await recipe.ingredients.all().values_list("name", flat=True))]
+    recipes = filtered_recipes[:100]
     data = [
         {
+            "id": recipe.id,
             "title": recipe.title,
             "date": recipe.created_at,
             "user_id": recipe.user_id,
             "img_url": recipe.img_url,
-            "nickname": (await recipe.user).nickname,
+            "nickname": recipe.user.nickname,
+            'views': recipe.views,
             "tags": await recipe.tags.all(),
+            "ingredients": await recipe.ingredients.all(),
             "likes": len(await recipe.like_users.all()),
-            "comments_count": len(await RecipeComment.filter(recipe_id=recipe_id))
+            "comments_count": len(await RecipeComment.filter(recipe_id=recipe.id))
         }
         for recipe in recipes
     ]
