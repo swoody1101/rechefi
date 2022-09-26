@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import { uploadImage } from "../../../utils/http-multipart";
 import http from "../../../utils/http-commons";
 import RecipeWriteTitleInput from "./components/title/recipe_write_title_input";
@@ -19,20 +19,12 @@ import {
 } from "../../../common/components/sweatAlert";
 import { useSelectedTag } from "../../../hooks/Recipe/tag/useSelectedTags";
 import { useTitle } from "../../../hooks/Recipe/write/useTitle";
+import { useContents } from "../../../hooks/Recipe/write/useContents";
+import InputImage from "../../../common/components/input_image";
 
 function RecipeWritePage() {
   // control title data
   const [title, setTitle, titleValidation] = useTitle();
-
-  // recipe contents
-  const [contents, setContents] = useState([
-    // DEBUG
-    {
-      type: "image",
-      content:
-        "https://cdn.discordapp.com/attachments/733699779179184308/992697011780472944/IMG_0758.png",
-    },
-  ]);
 
   // control tag information
   const [selectedTags, addTag, deleteTag] =
@@ -42,98 +34,66 @@ function RecipeWritePage() {
 
   // add text or image block
   const imageInput = useRef();
+
+  // recipe contents
+  const [
+    contents,
+    setContents,
+    addTextBlock,
+    addImageBlock,
+    deleteBlock,
+    updateTextContent,
+    downBlockPos,
+    upBlockPos,
+  ] = useContents();
+
   const addBlock = (type) => {
     if (type === "text") {
-      setContents([
-        ...contents,
-        { type: "text", content: "" },
-      ]);
+      addTextBlock();
     } else if (type === "image") {
       // activate image input
       imageInput.current.click();
     }
   };
 
-  const deleteBlock = (index) => {
-    setContents(
-      contents.filter((ele, idx) => index !== idx)
-    );
-  };
+  // const deleteBlock = (index) => {
+  //   setContents(
+  //     contents.filter((ele, idx) => index !== idx)
+  //   );
+  // };
 
-  const inputLocalImage = async (e) => {
-    const image = e.target.files[0];
-    if (!!!image) return;
+  // // text edited update
+  // const updateTextContent = (index, updated) => {
+  //   setContents(
+  //     contents.map((ele, idx) =>
+  //       idx === index
+  //         ? { ...ele, content: JSON.stringify(updated) }
+  //         : ele
+  //     )
+  //   );
+  // };
 
-    // check image size
-    const maxAllowedSize = 5 * 1024 * 1024;
-    if (image.size > maxAllowedSize) {
-      Warn("파일 크기는 5MB를 넘을 수 없습니다");
-      return;
-    }
+  // // handle block position
+  // const downBlockPos = (index) => {
+  //   if (index === 0) return;
 
-    // check image name
-    let fileName = image.name;
-    let fileDot = fileName.lastIndexOf(".");
-    let fileType = fileName
-      .substring(fileDot + 1, fileName.length)
-      .toLowerCase();
+  //   setContents([
+  //     ...contents.slice(0, index - 1),
+  //     contents[index],
+  //     contents[index - 1],
+  //     ...contents.slice(index + 1),
+  //   ]);
+  // };
+  // const upBlockPos = (index) => {
+  //   if (index === contents.length - 1) return;
 
-    if (fileType !== "png" && fileType !== "jpg") {
-      Warn("지원하지 않는 확장자입니다");
-      return;
-    }
-
-    // upload to server
-    const formData = new FormData();
-    formData.append("image", image);
-    const res = await uploadImage(formData);
-
-    // add to content
-    if (!isNaN(res)) {
-      setContents([
-        ...contents,
-        { type: "image", content: res },
-      ]);
-    } else {
-      Warn("업로드 중 문제가 발생하였습니다");
-    }
-
-    // reset input
-    e.target.files[0] = "";
-  };
-
-  // text edited update
-  const updateTextContent = (index, updated) => {
-    setContents(
-      contents.map((ele, idx) =>
-        idx === index
-          ? { ...ele, content: JSON.stringify(updated) }
-          : ele
-      )
-    );
-  };
-
-  // handle block position
-  const downBlockPos = (index) => {
-    if (index === 0) return;
-
-    setContents([
-      ...contents.slice(0, index - 1),
-      contents[index],
-      contents[index - 1],
-      ...contents.slice(index + 1),
-    ]);
-  };
-  const upBlockPos = (index) => {
-    if (index === contents.length - 1) return;
-
-    setContents([
-      ...contents.slice(0, index),
-      contents[index + 1],
-      contents[index],
-      ...contents.slice(index + 2),
-    ]);
-  };
+  //   setContents([
+  //     ...contents.slice(0, index),
+  //     contents[index + 1],
+  //     contents[index],
+  //     ...contents.slice(index + 2),
+  //   ]);
+  // };
 
   // handle bottom bar buttons
   const navigate = useNavigate();
@@ -153,26 +113,27 @@ function RecipeWritePage() {
       img_url: "",
     };
 
-    http
-      .post("/recipe", recipe)
-      .then((response) => {
-        Success("레시피 작성이 완료되었습니다");
-        navigate("/recipe", { replace: true });
-      })
-      .catch((error) => {
-        Warn(
-          error +
-            " : " +
-            "레시피 작성 중 문제가 발생하였습니다"
-        );
-      });
+    console.log(recipe);
+
+    // http
+    //   .post("/recipe", recipe)
+    //   .then((response) => {
+    //     Success("레시피 작성이 완료되었습니다");
+    //     navigate("/recipe", { replace: true });
+    //   })
+    //   .catch((error) => {
+    //     Warn(
+    //       error +
+    //         " : " +
+    //         "레시피 작성 중 문제가 발생하였습니다"
+    //     );
+    //   });
   };
 
   // validation
   const inputValidation = () => {
     if (!title) return true;
     if (!titleValidation()) return true;
-
     return false;
   };
 
@@ -238,13 +199,9 @@ function RecipeWritePage() {
         onCancel={writeCancel}
       />
 
-      {/* hidden image input */}
-      <input
-        accept="image/jpeg, image/png"
-        type="file"
-        style={{ display: "none" }}
-        ref={imageInput}
-        onChange={(e) => inputLocalImage(e)}
+      <InputImage
+        setRef={imageInput}
+        onInput={addImageBlock}
       />
     </Container>
   );
