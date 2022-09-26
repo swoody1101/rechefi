@@ -64,7 +64,9 @@ function RecipeWritePage() {
     let tmp_contents = "";
     contents.forEach((item, index) => {
       tmp_contents = tmp_contents.concat(
-        convertToHTML(item.content.getCurrentContent())
+        item.type === "text"
+          ? convertToHTML(item.content.getCurrentContent())
+          : item.content
       );
 
       // add separator
