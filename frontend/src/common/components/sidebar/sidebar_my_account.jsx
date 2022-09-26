@@ -15,6 +15,8 @@ const SidebarMyAccount = ({ sidebarClose }) => {
     navigate(`/mypage`);
   };
 
+  console.log(loginInfo.auth);
+
   return (
     <SidebarMyAccountWrapper>
       <SidebarMyProfileImage>
