@@ -58,11 +58,11 @@ const ProfileModifyPage = () => {
     }
 
     // nicknameCheck() 백엔드 수정 중
-    // if (nicknameCheck()) {
-    //   alert("사용 불가능한 닉네임입니다.");
-    //   setNickname(loginInfo.nickname);
-    //   return;
-    // }
+    if (nicknameCheck()) {
+      alert("사용 불가능한 닉네임입니다.");
+      setNickname(loginInfo.nickname);
+      return;
+    }
 
     // 이미지 추가 필요
     const profileInfo = {

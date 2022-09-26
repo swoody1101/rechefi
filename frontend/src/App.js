@@ -20,10 +20,19 @@ import NotFound from "./pages/NotFound/not_found_page";
 
 import { QueryClientProvider, QueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { useDispatch } from "react-redux";
+import { getToken } from "./utils/JWT-token";
+import { loadProfileThunk } from "./store/module/accountReducer";
 
 const queryClient = new QueryClient();
 
 function App() {
+  const dispatch = useDispatch();
+
+  if (getToken()) {
+    dispatch(loadProfileThunk());
+  }
+
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
@@ -39,21 +48,12 @@ function App() {
               <Route path="/account" element={<MainPage />} />
               <Route path="/recipe/postId=:detail" element={<RecipeDetail />} />
               <Route path="/community">
-                <Route
-                  path="write"
-                  element={<MyCookWriter />}
-                />
-                <Route
-                  path="my-cook"
-                  element={<MyCook />}
-                />
+                <Route path="write" element={<MyCookWriter />} />
+                <Route path="my-cook" element={<MyCook />} />
               </Route>
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
-              <Route
-                path="/new-password"
-                element={<NewPassword />}
-              />
+              <Route path="/new-password" element={<NewPassword />} />
               <Route path="/mypage" element={<MyPage />} />
               <Route path="/profile-modify" element={<ProfileModifyPage />} />
               <Route path="*" element={<NotFound />} />
