@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   SidebarBoardDiv,
   SideBarCommunityDivWrapper,
@@ -11,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 const SidebarElementList = ({ sidebarClose }) => {
-  const [elements, setElements] = useState(["공지사항", "자랑", "잡담"]);
+  const loginInfo = useSelector((store) => store.account);
   const navigate = useNavigate();
 
   return (
@@ -32,7 +33,6 @@ const SidebarElementList = ({ sidebarClose }) => {
       </SidebarRecipeElement>
       <div>
         <SideBarCommunityDivWrapper>커뮤니티</SideBarCommunityDivWrapper>
-
         <SideBarCommunityElementDiv
           onClick={() => {
             navigate("/community/my-cook");
@@ -42,6 +42,26 @@ const SidebarElementList = ({ sidebarClose }) => {
           요리자랑
         </SideBarCommunityElementDiv>
       </div>
+
+      {loginInfo.auth ? (
+        <>
+          <SideBarCommunityDivWrapper>설정</SideBarCommunityDivWrapper>
+          <SideBarCommunityElementDiv
+            onClick={() => {
+              navigate("/profile-modify");
+              sidebarClose();
+            }}
+          >
+            프로필 수정
+          </SideBarCommunityElementDiv>
+          <SideBarCommunityElementDiv onClick={() => {}}>
+            회원 탈퇴
+          </SideBarCommunityElementDiv>
+        </>
+      ) : (
+        <></>
+      )}
+
       <div
         onClick={() => {
           navigate("/");
