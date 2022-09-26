@@ -295,13 +295,13 @@ async def get_article_list(page: int, q: Union[str, None] = None, opt: Union[str
     elif opt == "author":
         query = query.filter(user__nickname__contains=q)
     articles = await query
-    pages = 1 + len(articles) // 50
+    pages = 1 + len(articles) // 10
     current_page = page
     if 1 <= page <= pages:
-        articles = articles[(page - 1) * 50:page * 50]
+        articles = articles[(page - 1) * 10:page * 10]
     else:
         current_page = 1
-        articles = articles[:50]
+        articles = articles[:10]
     post = [
         {
             "id": article.id,
@@ -332,13 +332,13 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
     elif opt == "author":
         query = query.filter(user__nickname__contains=q)
     articles = await query
-    pages = 1 + len(articles) // 50
+    pages = 1 + len(articles) // 10
     current_page = page
     if 1 <= page <= pages:
-        articles = articles[(page - 1) * 50:page * 50]
+        articles = articles[(page - 1) * 10:page * 10]
     else:
         current_page = 1
-        articles = articles[:50]
+        articles = articles[:10]
 
     post = [
         {
