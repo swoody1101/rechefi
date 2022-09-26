@@ -1,17 +1,14 @@
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import BackgroundTasks
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
+from app.config import settings
 
 conf = ConnectionConfig(
-    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
-    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
-    MAIL_FROM="ssafy303@naver.com",
-    MAIL_PORT=587,
-    MAIL_SERVER="smtp.naver.com",
-    MAIL_FROM_NAME="Project_name",
+    MAIL_USERNAME=settings.MAIL_USERNAME,
+    MAIL_PASSWORD=settings.MAIL_PASSWORD,
+    MAIL_FROM=settings.MAIL_FROM,
+    MAIL_PORT=settings.MAIL_PORT,
+    MAIL_SERVER=settings.MAIL_SERVER,
+    MAIL_FROM_NAME=settings.MAIL_FROM_NAME,
     MAIL_TLS=True,
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
