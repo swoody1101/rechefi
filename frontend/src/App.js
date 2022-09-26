@@ -20,11 +20,14 @@ import Login from "./pages/Account/Login/login_page";
 import NewPassword from "./pages/Account/Login/new_password_page";
 import MyPage from "./pages/Account/Mypage/mypage_page";
 import MyCookWriter from "./pages/community/my_cook/components/write/write";
+
+import { ReactQueryDevtools } from "react-query/devtools";
 import NotFound from "./pages/NotFound/not_found_page";
 import {
   QueryClientProvider,
   QueryClient,
 } from "react-query";
+
 
 const queryClient = new QueryClient();
 
@@ -39,19 +42,10 @@ function App() {
               <Route path="/" element={<MainPage />} />
               <Route path="/recipe">
                 <Route index element={<RecipeList />} />
-                <Route
-                  path="write"
-                  element={<RecipeWrite />}
-                />
+                <Route path="write" element={<RecipeWrite />} />
               </Route>
-              <Route
-                path="/account"
-                element={<MainPage />}
-              />
-              <Route
-                path="/recipe/detail"
-                element={<RecipeDetail />}
-              />
+              <Route path="/account" element={<MainPage />} />
+              <Route path="/recipe/postId=:detail" element={<RecipeDetail />} />
               <Route path="/community">
                 <Route
                   path="write"
@@ -73,6 +67,7 @@ function App() {
             </Routes>
           </Layout>
         </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </div>
   );
