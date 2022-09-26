@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Container } from "@mui/material";
-import { uploadImage } from "../../../utils/http-multipart";
+import { Container } from "@mui/material";
 import http from "../../../utils/http-commons";
+import { convertToHTML } from "draft-convert";
 import RecipeWriteTitleInput from "./components/title/recipe_write_title_input";
 import RecipeListFilterTags from "../List/components/filter/tag/recipe_list_filter_tags";
 import RecipeWriteBox from "./components/recipe_write_box";
@@ -62,10 +62,15 @@ function RecipeWritePage() {
   // handle bottom bar buttons
   const writeComplete = () => {
     let tmp_contents = "";
-    contents.forEach((item) => {
-      tmp_contents = tmp_contents
-        .concat(JSON.stringify(item.content))
-        .concat("```");
+    contents.forEach((item, index) => {
+      tmp_contents = tmp_contents.concat(
+        convertToHTML(item.content.getCurrentContent())
+      );
+
+      // add separator
+      if (index !== contents.length - 1) {
+        tmp_contents = tmp_contents.concat("```");
+      }
     });
 
     let recipe = {
