@@ -1,40 +1,27 @@
 import { useState } from "react";
 import { Backdrop } from "../../../../../common/styles/sidebar_styles";
-import { WriteAreaWrapper } from "../../styles/write_page_styles";
+import { WriteAreaWrapper } from "../../styles/write/write_page_styles";
 import {
   RecipeListSearchResultButton,
   RecipeListSearchWithResultDiv,
   WriteButton,
   WriteWrapper,
-} from "../../styles/write_styles";
-import EmptyWriteImage from "./empty_write_image";
+} from "../../styles/write/write_styles";
+import UploadImageArea from "./UploadImageArea";
 import RecipeModal from "./recipe_modal";
 import WriteTextArea from "./write_text";
-import http from "../../../../../utils/http-commons";
-import { useMutation, useQueryClient } from "react-query";
-// import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
-const postWrite = async ({ content, imageUploadUrl }) => {
-  console.log(imageUploadUrl);
-  const { data } = await http.post("/community/gallery", {
-    title: "타이틀",
-    content: content,
-    img_url: imageUploadUrl,
-    category: 0,
-    recipe_id: 0,
-  });
-  console.log(data);
-  return data;
-};
+import useAddMyCook from "../../../../../hooks/my_cook/useAddMyCook";
+import { Confirm, Success } from "../../../../../common/components/sweatAlert";
+import WriteButtonBar from "./write_buttom_bar";
 
 const MyCookWriter = () => {
   const [searchModal, setSearchModal] = useState(false);
   const [imageUploadUrl, setImageUploadUrl] = useState("");
   const [content, setContent] = useState("");
-
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+
+  const { mutate } = useAddMyCook("myCookPosts");
 
   const uploadHandler = (keyword) => {
     setImageUploadUrl(keyword);
@@ -45,17 +32,34 @@ const MyCookWriter = () => {
     setContent(keyword);
   };
 
-  const { mutate, isSuccess } = useMutation(postWrite, {
-    onMutate: () => {
-      queryClient.invalidateQueries("myCookPosts");
-    },
-    onSuccess: (data) => {
-      navigate("/community/my-cook");
-    },
-  });
+  const vali = () => {
+    if (imageUploadUrl.length > 0 && content.length > 0) {
+      return false;
+    }
+    return true;
+  };
+  const nextPage = () => {
+    navigate("/community/my-cook");
+  };
+  const onConfirm = () => {
+    mutate(
+      {
+        uri: "/community/gallery",
+        sendData: { content, imageUploadUrl },
+      },
+      {
+        onSuccess: () => {
+          nextPage();
+        },
+      }
+    );
+  };
 
-  if (isSuccess) {
-  }
+  const onCancel = () => {
+    Confirm("작성을 중지합니까?", () => {
+      navigate(-1);
+    });
+  };
 
   return (
     <WriteWrapper>
@@ -81,16 +85,31 @@ const MyCookWriter = () => {
         </RecipeListSearchResultButton>
       </RecipeListSearchWithResultDiv>
       <WriteAreaWrapper>
-        <EmptyWriteImage uploadHandler={uploadHandler} />
+        <UploadImageArea uploadHandler={uploadHandler} />
         <WriteTextArea textHandler={textHandler} />
       </WriteAreaWrapper>
       <WriteButton
         onClick={() => {
-          mutate({ content, imageUploadUrl });
+          mutate(
+            {
+              uri: "/community/gallery",
+              sendData: { content, imageUploadUrl },
+            },
+            {
+              onSuccess: () => {
+                navigate("/community/my-cook");
+              },
+            }
+          );
         }}
       >
         글 등록
       </WriteButton>
+      <WriteButtonBar
+        confirmDisabled={vali()}
+        onCancel={onCancel}
+        onConfirm={onConfirm}
+      />
     </WriteWrapper>
   );
 };

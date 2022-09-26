@@ -3,7 +3,7 @@ import {
   RecipeDetailAIRemoteBox,
   RecipeDetailAIRemoteWrapper,
   ReForwardBox,
-} from "../recipe_detail_styles/styles";
+} from "../styles/recipe_detail_styles";
 
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import FastForwardIcon from "@mui/icons-material/FastForward";

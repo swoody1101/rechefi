@@ -1,6 +1,7 @@
 import { Backdrop, SideBarWrapper } from "../../styles/sidebar_styles";
 import SidebarElementList from "./sidebar_list";
 
+
 const SideBar = ({ sidebarClose }) => {
   return (
     <div>

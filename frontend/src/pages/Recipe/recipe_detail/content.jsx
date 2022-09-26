@@ -1,4 +1,4 @@
-import { RecipeDetailContentElementDiv } from "../recipe_detail_styles/styles";
+import { RecipeDetailContentElementDiv } from "../styles/recipe_detail_styles";
 
 const RecipeDetailContent = ({ content }) => {
   return (
