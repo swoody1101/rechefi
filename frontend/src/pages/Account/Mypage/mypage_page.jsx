@@ -1,14 +1,10 @@
 import React from "react";
+import { Box, Container } from "@mui/material";
 import MyPageProfile from "./components/mypage_profile";
 import MyPageFollow from "./components/mypage_follow";
 import MyPageProfileGallery from "./components/mypage_gallery";
 
-import { Box, Container } from "@mui/material";
-import { useEffect } from "react";
-
 const MyPage = () => {
-  const myInfo = useEffect;
-
   return (
     <Container
       sx={{
