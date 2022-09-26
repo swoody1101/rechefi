@@ -2,7 +2,7 @@ from fastapi import APIRouter, BackgroundTasks
 
 # from app.enums.accounts import COLOR, UserRegion
 from app.models.accounts import User
-from app.schemas.accounts import UserSignupForm, CurrentUser, MyPageForm
+from app.schemas.accounts import UserSignupForm, CurrentUser, MyPageForm, Mypage
 from app.schemas.common import CommonResponse
 
 # 로그인
@@ -38,7 +38,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
 ####### JWT 토큰 #######
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 
 
 
@@ -180,15 +180,15 @@ async def social_login():
 async def email_check(email, response: Response):
     user = await User.get_or_none(email=email)
     if user is None:
-        response.status_code = status.HTTP_201_CREATED
-        return {"message": "success"}
+        response.status_code = status.HTTP_200_OK
+        return {"duplicate": False}
 
 @router.get("/validation/2/{nickname}", description="닉네임 중복체크")
 async def nickname_check(nickname, response: Response):
     user = await User.get_or_none(nickname=nickname)
     if user is None:
-        response.status_code = status.HTTP_201_CREATED
-        return {"message": "success"}
+        response.status_code = status.HTTP_200_OK
+        return {"duplicate": False }
 
 
 @router.get("/logout", description="로그아웃") 
@@ -200,9 +200,15 @@ def logout():
 
 
 
-@router.get("/", description="마이페이지 조회", response_model=CurrentUser)
+@router.get("/", description="마이페이지 조회")
 async def get_my_page(current_user: User = Depends(get_current_user)):
-    return current_user
+    # follower: 나를 팔로우한 사람 수, following: 내가 팔로우하고있는 사람 수
+    follower = await current_user.followers.all().count()
+    following = await current_user.following.all().count()
+    response = Mypage(follower=follower, following=following, **dict(current_user))
+    return response
+
+
 
 @router.put("/", description="마이페이지 수정", response_model=CurrentUser)
 async def edit_my_page(req: MyPageForm, current_user: User = Depends(get_current_user)):
@@ -216,19 +222,24 @@ async def edit_my_page(req: MyPageForm, current_user: User = Depends(get_current
     await current_user.save()
     return current_user
 
-@router.get("/{member_id}", description="다른사람 페이지 조회", response_model=CurrentUser)
+@router.get("/{member_id}", description="다른사람 페이지 조회")
 async def get_other_page(member_id, other_user: User = Depends(get_other_user)):
-    return other_user
+    follower = await other_user.followers.all().count()
+    following = await other_user.following.all().count()
+    response = Mypage(follower=follower, following=following, **dict(other_user))
+    return response
 
 
 @router.get("/follow/{member_id}", description="해당 유저의 팔로워/팔로우 조회")
 async def get_follow(member_id, user: User = Depends(get_other_user)):
-    followers = await user.followers
-    followers = list(map(lambda followers: followers.email, followers))
-    follows = await user.following
-    follows = list(map(lambda follows: follows.email, follows))
+    # follower: 나를 팔로우한 사람, following: 내가 팔로우 하고있는 사람
+    follower = await user.followers
+    follower = list(map(lambda followers: followers.email, follower))
 
-    return {"followers": followers, "follows": follows}
+    following = await user.following
+    following = list(map(lambda follows: follows.email, following))
+
+    return {"follower": follower, "following": following}
 
 
 @router.post("/follow/{member_id}", description="해당 유저를 팔로우/팔로우 취소")
