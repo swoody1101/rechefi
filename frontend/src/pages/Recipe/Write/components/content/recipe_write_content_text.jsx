@@ -1,53 +1,32 @@
-import { Box } from "@mui/material";
-import React, {
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import { createEditor } from "slate";
-import { Slate, Editable, withReact } from "slate-react";
+import React, { useState, useEffect } from "react";
+import { Editor, EditorState } from "draft-js";
 
-function RecipeWriteContentText({ index, onUpdated }) {
-  // currently not used
-  const preventedKey = [
-    { key: "&", converted: "&amp" },
-    { key: "<", converted: "&lt" },
-    { key: ">", converted: "&gt" },
-  ];
+function RecipeWriteContentText({
+  index,
+  initValue,
+  onChange,
+}) {
+  const [editorState, setEditorState] = useState(initValue);
 
-  const initialValue = [
-    {
-      type: "paragraph",
-      children: [{ text: "" }],
-    },
-  ];
-
-  const [editor] = useState(() =>
-    withReact(createEditor())
-  );
-
-  const renderElement = useCallback((props) => {
-    switch (props.element.type) {
-      default:
-        return <DefaultElement {...props} />;
-    }
-  }, []);
+  useEffect(() => {
+    setEditorState(initValue);
+  }, [initValue]);
 
   return (
-    <Box sx={{ mx: 2, my: 1 }}>
-      <Slate
-        editor={editor}
-        value={initialValue}
-        onChange={(value) => onUpdated(index, value)}
-      >
-        <Editable renderElement={renderElement} />
-      </Slate>
-    </Box>
+    <>
+      <Editor
+        editorState={editorState}
+        onChange={setEditorState}
+        onBlur={() => {
+          onChange(index, editorState);
+        }}
+      />
+    </>
   );
 }
 
-const DefaultElement = (props) => {
-  return <p {...props.attributes}>{props.children}</p>;
+RecipeWriteContentText.defaultProps = {
+  initValue: EditorState.createEmpty(),
 };
 
 export default RecipeWriteContentText;
