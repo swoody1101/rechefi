@@ -1,4 +1,146 @@
-# docker
+<!-- TOC -->
+* [0. 백엔드 구조](#0--)
+* [1. 개발 환경 세팅](#1---)
+  * [1-1. 가상환경](#1-1-)
+  * [1-2. 환경변수](#1-2-)
+  * [1-3. DB 연결](#1-3-db-)
+  * [1-4. 마이그레이션](#1-4-)
+  * [1-5. 서버 실행](#1-5--)
+* [docker](#docker)
+* [프론트](#)
+* [backend](#backend)
+* [도커 내부 백엔드 서버 액세스 및 에러 로그 파일 사본 가져오기](#----------)
+* [migration](#migration)
+<!-- TOC -->
+
+# 0. 백엔드 구조
+(/backend)
+- /app
+  - /enums
+    - (not used)
+  - /models : DB 모델 및 관련 메소드 정의
+    - accounts.py
+    - community.py
+    - recipes.py
+  - /routers : api 함수 정의
+    - accounts.py
+    - community.py
+    - image.py
+    - index.py
+    - recipes.py
+  - /schemas : pydantic schema 정의 (serializer)
+    - accounts.py
+    - common.py
+    - community.py
+    - recipes.py
+  - /tests
+    - (not used)
+  - main.py
+  - config.py
+  - mail_config.py
+- /migrations
+  - /b303
+    - (.sql files)
+- requirements.txt
+- dockerfile
+
+# 1. 개발 환경 세팅
+
+## 1-1. 가상환경
+- python 3.9 버전 기준
+- backend 경로의 터미널에서 시작하기
+```commandline
+python -m venv vnev
+
+source venv/Scripts/activate
+```
+- bash에서는 source 윈도우 cmd에서는 source 대신 call 사용.
+```commandline
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+- pip 버전 업그레이드는 필수 X
+
+## 1-2. 환경변수 
+```dotenv
+# Main DB(Mysql)
+DB_URL={DB URL}
+ROOT_PASSWORD={DB Root Password}
+PYTHONUNBUFFERED=TRUE
+
+# Sub DB(Redis)
+REDIS_HOST={redis host url}
+REDIS_PORT={redis port number}
+
+# 메일링
+MAIL_USERNAME={official mail name}
+MAIL_PASSWORD={mail password}
+MAIL_FROM={mail}
+MAIL_PORT={mail port}
+MAIL_SERVER={mail server, ex: naver.com}
+MAIL_FROM_NAME={mail from name (project name)}
+
+# S3
+S3_BUCKET_NAME={S3 bucket name}
+AWS_ACCESS_KEY_ID={aws access key id}
+AWS_SECRET_ACCESS_KEY={aws secret access key}
+REGION_NAME={region name}
+
+# JWT
+SECRET_KEY={jwt secret key}
+ALGORITHM={encoding algorithm}
+ACCESS_TOKEN_EXPIRE_MINUTES={expire minutes}
+```
+
+## 1-3. DB 연결
+- 도커 db 이미지를 이용한다.
+- 프로젝트 내의 db-docker-compose.yaml 파일과 환경변수 .env 파일 필요
+- DB 이미지, 컨테이너 생성 및 실행
+```commandline
+docker-compose -f db-docker-compose.yaml --env-file {PATH/.env} -d
+```
+- .env 파일이 docker-compose 파일과 같은 경로에 있는 경우
+```commandline
+docker-compose -f db-docker-compose.yaml --env-file ./.env up -d
+```
+- DB 컨테이너 종료 시
+```commandline
+docker-compose down
+# OR
+docker stop {container name}
+```
+
+
+## 1-4. 마이그레이션
+tortoise_orm을 데이터 베이스에 연결한다.
+```commandline
+aerich init -t app.config.TORTOISE_ORM
+```
+마이그레이션의 업데이트 내용을 데이터베이스에 적용한다. 
+```commandline
+aerich upgrade
+```
+- 마이그레이션 폴더가 없는 경우.
+```commandline
+aerich init-db
+```
+- 개발 중 models의 내용을 변경한 경우(새 sql문 작성)
+```commandline
+aerich migrate
+aerich upgrade
+```
+- aerich migrate를 실행할 때 새로운 테이블들이 다른 테이블을 참조하게 되는 경우 참조할 테이블의 sql문이 먼저 작성되야 하므로 migrate는 순차적으로 진행하거나 마이그레이션의 sql 파일을 직접 확인하여 순서상 오류가 없도록 해야한다.
+
+
+## 1-5. 서버 실행
+- 백엔드 경로의 터미널에서 가상환경을 실행 후 다음 명령어를 입력한다.
+```commandline
+uvicorn app.main:app --reload
+```
+- 터미널에 뜨는 로컬호스트에 /docs 주소로 들어가면 swagger 화면이 자동으로 생성된다.
+
+
+# 2. 도커라이징
 
 docker 실행
 
