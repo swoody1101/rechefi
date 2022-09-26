@@ -6,9 +6,6 @@ const DefaultInputElement = (props) => {
   const id = props.label;
   const label = props.label;
   const type = props.type;
-  const value = props.value;
-  const setValue = props.setValue;
-  const accessEmpty = props.accessEmpty;
 
   const EMPTY_VALUE = props.emptyValueText;
   const VALID_VALUE = props.validValueText;
@@ -16,12 +13,13 @@ const DefaultInputElement = (props) => {
 
   const inputValidation = props.inputValidation;
 
-  const [isValue, setIsValue] = useState(true);
+  const [value, setValue] = useState(props.value);
+  const [isValue, setIsValue] = useState();
   const [helperText, setHelperText] = useState("");
 
   const inputChangeHandler = (event) => {
     setValue(event.target.value);
-    if (event.target.value === "" && !accessEmpty) {
+    if (event.target.value === "") {
       setIsValue(false);
       setHelperText(EMPTY_VALUE);
     } else {

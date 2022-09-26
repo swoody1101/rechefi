@@ -11,11 +11,11 @@ export const uploadImage = (formdata) => {
       .post("http://localhost:8000/image", formdata, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: loginToken,
+          Authorization: `Bearer ${loginToken}`,
         },
       })
       .then((response) => {
-        resolve(response.data.image_id);
+        resolve(response.data);
       })
       .catch((error) => {
         reject(error);
