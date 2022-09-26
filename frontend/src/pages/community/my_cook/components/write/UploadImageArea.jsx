@@ -6,17 +6,17 @@ import {
   ImageUploadText,
   ImageUploadWrapper,
   UploadImageImg,
-} from "../../styles/write_page_styles";
+} from "../../styles/write/write_page_styles";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
-const EmptyWriteImage = ({ uploadHandler }) => {
+const UploadImageArea = ({ uploadHandler }) => {
   const [imageFile, setImageFile] = useState("");
   const imgInput = useRef(null);
   const onImgChange = () => {
     //   console.log();
     // const temp = imgInput.current.files[0].name;
     const temp =
-      "https://cdn.discordapp.com/attachments/433506654009425921/1021418121933885460/unknown.png";
+      "https://cdn.discordapp.com/attachments/433506654009425921/1021417880207753237/unknown.png";
     uploadHandler(temp);
     setImageFile(temp);
     // console.log(e.target.files[0]);
@@ -50,4 +50,4 @@ const EmptyWriteImage = ({ uploadHandler }) => {
   );
 };
 
-export default EmptyWriteImage;
+export default UploadImageArea;
