@@ -4,12 +4,13 @@ import React from "react";
 import DefaultInputElement from "./default_input_element";
 import regex from "../../../utils/regex";
 
-const NicknameInputElement = () => {
+const NicknameInputElement = (props) => {
   const EMPTY_NICKNAME = "닉네임을 입력해주세요.";
   const VAILD_NICKNAME = "사용 가능한 닉네임입니다.";
   const WRONG_NICKNAME = "사용 불가능한 닉네임입니다.";
 
-  const nickname = "김싸피";
+  const nickname = props.value;
+  const setNickname = props.setValue;
 
   const nicknameValidation = (props) => {
     const regexCheck = regex.nickname;
@@ -25,6 +26,7 @@ const NicknameInputElement = () => {
         label="닉네임"
         type="text"
         value={nickname}
+        setValue={setNickname}
         emptyValueText={EMPTY_NICKNAME}
         validValueText={VAILD_NICKNAME}
         wrongValueText={WRONG_NICKNAME}
