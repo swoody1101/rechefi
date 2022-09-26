@@ -151,26 +151,6 @@ async def email_authentication(background_tasks: BackgroundTasks, req: UserSignu
 
     return f'{req.email}로 인증 메일이 발송되었습니다.'
 
-@router.get("/{email}/{token}", description="인증 확인 후 회원가입")
-async def signup(email, token):
-    tmp_email = redis_session.lindex(token, 0)
-    if tmp_email is None or tmp_email != email:
-        return '잘못된 인증입니다.'
-
-    # redis로부터 임시데이터 받아옴
-    tmp_password = redis_session.lindex(token, 1)
-    tmp_password = get_password_hash(tmp_password)
-    tmp_nickname = redis_session.lindex(token, 2)
-    
-    await User.create(email=tmp_email, password=tmp_password, nickname=tmp_nickname)
-    
-    # DB에 저장이 된 임시데이터는 삭제
-    redis_session.delete(token)
-
-    # 우리 메인 페이지로 리다이렉트
-    return RedirectResponse("https://naver.com")
-
-
 
 
 @router.post("/login/1", description="로그인")
@@ -262,6 +242,24 @@ async def do_follow(member_id, me: User = Depends(get_current_user), user: User 
         return 'follow'
     return '본인은 팔로우 할 수 없음'
 
+@router.get("/{email}/{token}", description="인증 확인 후 회원가입")
+async def signup(email, token):
+    tmp_email = redis_session.lindex(token, 0)
+    if tmp_email is None or tmp_email != email:
+        return '잘못된 인증입니다.'
+
+    # redis로부터 임시데이터 받아옴
+    tmp_password = redis_session.lindex(token, 1)
+    tmp_password = get_password_hash(tmp_password)
+    tmp_nickname = redis_session.lindex(token, 2)
+    
+    await User.create(email=tmp_email, password=tmp_password, nickname=tmp_nickname)
+    
+    # DB에 저장이 된 임시데이터는 삭제
+    redis_session.delete(token)
+
+    # 우리 메인 페이지로 리다이렉트
+    return RedirectResponse("https://naver.com")
 
 @router.delete("/", description="회원탈퇴")
 async def delete_user(current_user: User = Depends(get_current_user)):
