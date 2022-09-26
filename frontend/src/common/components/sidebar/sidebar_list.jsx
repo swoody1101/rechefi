@@ -3,10 +3,12 @@ import {
   SidebarBoardDiv,
   SideBarCommunityDivWrapper,
   SideBarCommunityElementDiv,
+  SidebarLogout,
   SidebarRecipeElement,
 } from "../../styles/sidebar_styles";
 import SidebarMyAccount from "./sidebar_my_account";
 import { useNavigate } from "react-router-dom";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const SidebarElementList = ({ sidebarClose }) => {
   const [elements, setElements] = useState(["공지사항", "자랑", "잡담"]);
@@ -48,6 +50,9 @@ const SidebarElementList = ({ sidebarClose }) => {
       >
         홈
       </div>
+      <SidebarLogout>
+        <LogoutIcon />
+      </SidebarLogout>
     </SidebarBoardDiv>
   );
 };
