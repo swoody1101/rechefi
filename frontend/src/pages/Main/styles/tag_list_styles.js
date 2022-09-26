@@ -14,7 +14,12 @@ export const TagElementButton = styled.button`
   margin-left: 2.5%;
   margin-right: 2.5%;
   text-align: center;
-  height: 12vh;
+  height: 15vh;
   border: none;
   background: none;
+`;
+
+export const TagFoodImg = styled.img`
+  height: 5vh;
+  width: auto; ;
 `;

@@ -4,7 +4,7 @@ import {
   WriteText,
   WriteTextInput,
   WriteTextLidArea,
-} from "../../styles/write_styles";
+} from "../../styles/write/write_styles";
 
 const WriteTextArea = ({ textHandler }) => {
   const onChange = (e) => {
