@@ -49,6 +49,7 @@ class RecipeLikeUser(BaseModel):
 
 class RecipeList(BaseModel):
     user_id: int
+    id: int
     nickname: str
     title: str
     content: str
