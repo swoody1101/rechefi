@@ -66,6 +66,7 @@ const SignUp = () => {
     dispatch(signupThunk(signupInfo))
       .unwrap()
       .then(() => {
+        alert("회원가입이 완료되었습니다.");
         navigate(`/login`);
       })
       .catch((err) => {

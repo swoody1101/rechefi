@@ -1,5 +1,4 @@
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   SidebarBoardDiv,
   SideBarCommunityDivWrapper,
