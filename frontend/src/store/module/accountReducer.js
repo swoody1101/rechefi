@@ -29,11 +29,8 @@ export const signupThunk = createAsyncThunk(
         signupInfo,
         { headers: { "Content-Type": `application/json` } }
       );
-
-      // console.log(response.data);
       return response.data;
     } catch (error) {
-      console.error(error);
       return error.response;
     }
   }
@@ -47,15 +44,17 @@ export const loginThunk = createAsyncThunk(
       loginInfo.append("username", email);
       loginInfo.append("password", password);
 
-      const response = await axios.post(
+      const responseTemp = await axios.post(
         "http://localhost:8000/members/login/1",
         loginInfo
       );
+      const response = {
+        data: responseTemp.data,
+        status: responseTemp.status,
+      };
 
-      // console.log(response.data);
-      return response.data;
+      return response;
     } catch (error) {
-      console.error(error);
       return error.response;
     }
   }
@@ -123,20 +122,25 @@ export const authSlice = createSlice({
     },
     [loginThunk.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      state.auth = true;
 
-      // data recieved
-      state.loginToken = payload.access_token;
-      state.email = payload.email;
-      state.nickname = payload.nickname;
+      if (payload.data.access_token) {
+        state.auth = true;
 
-      // save in local storage
-      saveToken(state.loginToken);
+        console.log("fulfilled: " + state.auth);
+        // data recieved
+        state.loginToken = payload.data.access_token;
+        state.email = payload.data.email;
+        state.nickname = payload.data.nickname;
+
+        // save in local storage
+        saveToken(state.loginToken);
+      }
     },
     [loginThunk.rejected]: (state, { payload }) => {
+      console.log("rejected");
       // error
       state.loading = false;
-      state.error = payload;
+      state.error = payload.data;
     },
     [loadProfileThunk.pending]: (state) => {
       // loading
@@ -146,10 +150,12 @@ export const authSlice = createSlice({
     [loadProfileThunk.fulfilled]: (state, { payload }) => {
       // loading
       state.loading = false;
+      state.auth = true;
+
+      state.email = payload.email;
       state.nickname = payload.nickname;
       state.img_url = payload.img_url;
       state.introduce = payload.about_me;
-      console.log(state.nickname);
     },
   },
 });
