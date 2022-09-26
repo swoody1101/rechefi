@@ -9,7 +9,7 @@ import RecipeList from "./components/recipe_list";
 import RecipeListFab from "./components/recipe_list_fab";
 import { Container } from "@mui/material";
 
-function RecipeListView() {
+function RecipeListPage() {
   // DEBUG
   const data = useMemo(
     () => [
@@ -183,13 +183,25 @@ function RecipeListView() {
     setBestRecipes(data.slice(0, 5));
   }, [data]);
 
+  // see recipe detail
+  const onRecipeItemClicked = (id, title) => {
+    // TODO : replace with navigation
+    console.log(
+      "recipe id: " + id + ", recipe title : " + title
+    );
+  };
+
   return (
-    <Container sx={{ p: 1 }}>
+    <Container sx={{ pt: 2, px: 1, pb: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
-      <RecipeList recipes={recipes} loading={loading} />
+      <RecipeList
+        recipes={recipes}
+        loading={loading}
+        onRecipeItemClicked={onRecipeItemClicked}
+      />
       <RecipeListFab />
     </Container>
   );
 }
 
-export default RecipeListView;
+export default RecipeListPage;

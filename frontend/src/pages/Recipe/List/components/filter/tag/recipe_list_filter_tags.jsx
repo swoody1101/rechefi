@@ -1,58 +1,36 @@
-import {
-  Box,
-  Chip,
-  Divider,
-  Typography,
-} from "@mui/material";
-import React, { useState } from "react";
+import { Box } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Warn } from "../../../../../../common/components/sweatAlert";
+import TitleWithDivider from "../../../../../../common/components/title_with_divider";
+import http from "../../../../../../utils/http-commons";
+import RecipeListFilterTagChip from "./recipe_list_filter_tag_item";
 
 function RecipeListFilterTags({
   onTagAdded,
   onTagDeleted,
 }) {
-  // DEBUG
-  const data = [
-    {
-      id: 1,
-      name: "중식",
-    },
-    {
-      id: 2,
-      name: "한식",
-    },
-    {
-      id: 3,
-      name: "양식",
-    },
-    {
-      id: 4,
-      name: "일식",
-    },
-    {
-      id: 5,
-      name: "월식",
-    },
-    {
-      id: 6,
-      name: "잡식",
-    },
-    {
-      id: 7,
-      name: "육식",
-    },
-    {
-      id: 8,
-      name: "채식",
-    },
-    {
-      id: 9,
-      name: "오태식",
-    },
-  ];
+  // TODO : remove dummy and change state init
+  const [tags, setTags] = useState([]);
 
-  const [tags, setTags] = useState(
-    data.map((tag) => ({ ...tag, selected: false }))
-  );
+  // get tags from server
+  useEffect(() => {
+    http
+      .get("/recipe/tag")
+      .then((response) => {
+        let tagList = response.data.data;
+        setTags(
+          tagList.map((tag) => ({
+            ...tag,
+            selected: false,
+          }))
+        );
+      })
+      .catch(
+        Warn(
+          "태그 목록을 불러오는 중 문제가 발생하였습니다"
+        )
+      );
+  }, []);
 
   /**
    * add or delete tag to selected tags
@@ -81,13 +59,9 @@ function RecipeListFilterTags({
   };
 
   const tagItems = tags.map((tag) => (
-    <Chip
+    <RecipeListFilterTagChip
       key={tag.id}
-      label={tag.name}
-      color={tag.selected ? "success" : "primary"}
-      sx={{
-        mx: 1,
-      }}
+      tag={tag}
       onClick={(e) => toggleTagSelected(tag.id)}
     />
   ));
@@ -100,15 +74,12 @@ function RecipeListFilterTags({
         flexDirection: "column",
       }}
     >
-      <Typography variant="h6" fontWeight={"bold"}>
-        요리 분류
-      </Typography>
-      <Divider sx={{ mb: 2 }} />
+      <TitleWithDivider variant="h6" title="요리 태그" />
       <Box
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "space-evenly",
+          justifyContent: "space-between",
           rowGap: 1,
         }}
       >

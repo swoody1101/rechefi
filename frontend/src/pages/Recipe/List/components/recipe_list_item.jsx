@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import RecipeListItemLikeBtn from "./recipe_list_item_like_btn";
 
-function RecipeListItem({ recipe }) {
+function RecipeListItem({ recipe, onClick }) {
   return (
     <Card
       sx={{
@@ -20,6 +20,7 @@ function RecipeListItem({ recipe }) {
       }}
     >
       <CardActionArea
+        onClick={onClick}
         sx={{
           display: "flex",
           height: "100%",
@@ -71,9 +72,7 @@ function RecipeListItem({ recipe }) {
                 src="/assets/img/food_example_2.jpg"
                 sx={{ width: 24, height: 24, mr: 1 }}
               /> */}
-              <Typography varaint="h6">
-                {recipe.author}
-              </Typography>
+              <Typography varaint="h6">{recipe.author}</Typography>
             </Box>
           </Box>
 
@@ -85,8 +84,7 @@ function RecipeListItem({ recipe }) {
             }}
           >
             <Typography variant="caption">
-              조회수 :
-              {" " + recipe.views.toLocaleString(undefined)}
+              조회수 :{" " + recipe.views.toLocaleString(undefined)}
             </Typography>
             <RecipeListItemLikeBtn likes={recipe.likes} />
           </Box>
