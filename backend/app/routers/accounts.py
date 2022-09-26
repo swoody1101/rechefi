@@ -2,7 +2,7 @@ from fastapi import APIRouter, BackgroundTasks
 
 # from app.enums.accounts import COLOR, UserRegion
 from app.models.accounts import User
-from app.schemas.accounts import UserSignupForm, CurrentUser, MyPageForm
+from app.schemas.accounts import UserSignupForm, CurrentUser, MyPageForm, Mypage
 from app.schemas.common import CommonResponse
 
 # 로그인
@@ -19,21 +19,21 @@ from app.schemas.accounts import TokenData
 import string, secrets
 
 # rdis
-from app.config import redis_session
+from app.config import settings, redis_session
 # redis_db = redis.Redis(host='localhost', port='6379', charset='utf-8', decode_responses=True)
 
 
 # 메일 인증 서비스
-from app.mail_config import send_in_background
+from app.mail_config import signup_mail, password_mail
 
 
 router = APIRouter(prefix="/members", tags=["members"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
 
 ####### JWT 토큰 #######
-SECRET_KEY = "788d89c0cc2378247a4157f6fb1745cab6b3243df21b8e3047a73401a6a25fe2"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+SECRET_KEY=settings.SECRET_KEY
+ALGORITHM=settings.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES=settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 
 
@@ -46,8 +46,6 @@ def create_random():
         and sum(c.isdigit() for c in signup_token) >= 3):
             break    
     return signup_token
-
-
 
 
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
@@ -115,6 +113,20 @@ async def get_other_user(member_id, current_user: User = Depends(get_current_use
     return other_user
 
 ##################여기서부터 API입니다#################################
+##################여기서부터 API입니다#################################
+##################여기서부터 API입니다#################################
+
+@router.get("/new-password/{email}", description="새로운 비밀번호 발급")
+async def create_new_password(background_tasks: BackgroundTasks, email, new_password: str = Depends(create_random)):
+    user = await User.get_or_none(email=email)
+    if user is None:
+        return "가입되지 않은 이메일입니다."
+    user.password = get_password_hash(new_password)
+    await user.save()
+    await password_mail(background_tasks, email=email, password=new_password)
+
+    return f'{email}로 임시 비밀번호가 발송되었습니다.'
+
 @router.post("/", description="인증 메일 발송") 
 async def email_authentication(background_tasks: BackgroundTasks, req: UserSignupForm, signup_token: str = Depends(create_random)):
     # 아이디 중복체크
@@ -122,7 +134,7 @@ async def email_authentication(background_tasks: BackgroundTasks, req: UserSignu
     if user:
         return "사용중인 이메일입니다."
     # 이메일로 인증링크 발송
-    send = await send_in_background(background_tasks, email=req.email, token=signup_token)
+    send = await signup_mail(background_tasks, email=req.email, token=signup_token)
     if send is False:
         return "이메일 형식이 올바르지 않습니다."
     
@@ -133,26 +145,6 @@ async def email_authentication(background_tasks: BackgroundTasks, req: UserSignu
     redis_session.expire(signup_token, 300)
 
     return f'{req.email}로 인증 메일이 발송되었습니다.'
-
-@router.get("/{email}/{token}", description="인증 확인 후 회원가입")
-async def signup(email, token):
-    tmp_email = redis_session.lindex(token, 0)
-    if tmp_email is None or tmp_email != email:
-        return '잘못된 인증입니다.'
-
-    # redis로부터 임시데이터 받아옴
-    tmp_password = redis_session.lindex(token, 1)
-    tmp_password = get_password_hash(tmp_password)
-    tmp_nickname = redis_session.lindex(token, 2)
-    
-    await User.create(email=tmp_email, password=tmp_password, nickname=tmp_nickname)
-    
-    # DB에 저장이 된 임시데이터는 삭제
-    redis_session.delete(token)
-
-    # 우리 메인 페이지로 리다이렉트
-    return RedirectResponse("https://naver.com")
-
 
 
 
@@ -172,7 +164,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "email": user.email, "nickname": user.nickname}
 
 #나중에 구현
 @router.post("/login/2", description="소셜로그인") 
@@ -183,15 +175,15 @@ async def social_login():
 async def email_check(email, response: Response):
     user = await User.get_or_none(email=email)
     if user is None:
-        response.status_code = status.HTTP_201_CREATED
-        return {"message": "success"}
+        response.status_code = status.HTTP_200_OK
+        return {"duplicate": False}
 
 @router.get("/validation/2/{nickname}", description="닉네임 중복체크")
 async def nickname_check(nickname, response: Response):
     user = await User.get_or_none(nickname=nickname)
     if user is None:
-        response.status_code = status.HTTP_201_CREATED
-        return {"message": "success"}
+        response.status_code = status.HTTP_200_OK
+        return {"duplicate": False }
 
 
 @router.get("/logout", description="로그아웃") 
@@ -199,45 +191,50 @@ def logout():
     # redis 연동되면 블랙리스트 처리하고, 안되면 프론트에서 토큰삭제만
     pass
 
-@router.get("/new-password/{email}", description="새로운 비밀번호 발급")
-async def create_new_password():
-    string_pool = string.ascii_letters + string.digits
-    while True:
-        temp_password = ''.join(secrets.choice(string_pool) for i in range(10))
-        if (any(c.islower() for c in temp_password) 
-        and any(c.isupper() for c in temp_password)
-        and sum(c.isdigit() for c in temp_password) >= 3):
-            break    
-    return temp_password
 
 
-@router.get("/", description="마이페이지 조회", response_model=CurrentUser)
+
+
+@router.get("/", description="마이페이지 조회")
 async def get_my_page(current_user: User = Depends(get_current_user)):
-    return current_user
+    # follower: 나를 팔로우한 사람 수, following: 내가 팔로우하고있는 사람 수
+    follower = await current_user.followers.all().count()
+    following = await current_user.following.all().count()
+    response = Mypage(follower=follower, following=following, **dict(current_user))
+    return response
+
+
 
 @router.put("/", description="마이페이지 수정", response_model=CurrentUser)
 async def edit_my_page(req: MyPageForm, current_user: User = Depends(get_current_user)):
     current_user.nickname = req.nickname
     current_user.about_me = req.about_me
-    if len(req.password):
+    current_user.img_url = req.img_url
+    if req.password:
         current_user.password = get_password_hash(req.password)
+        
 
     await current_user.save()
     return current_user
 
-@router.get("/{member_id}", description="다른사람 페이지 조회", response_model=CurrentUser)
+@router.get("/{member_id}", description="다른사람 페이지 조회")
 async def get_other_page(member_id, other_user: User = Depends(get_other_user)):
-    return other_user
+    follower = await other_user.followers.all().count()
+    following = await other_user.following.all().count()
+    response = Mypage(follower=follower, following=following, **dict(other_user))
+    return response
 
 
 @router.get("/follow/{member_id}", description="해당 유저의 팔로워/팔로우 조회")
 async def get_follow(member_id, user: User = Depends(get_other_user)):
-    followers = await user.followers
-    followers = list(map(lambda followers: followers.email, followers))
-    follows = await user.following
-    follows = list(map(lambda follows: follows.email, follows))
+    # follower: 나를 팔로우한 사람, following: 내가 팔로우 하고있는 사람
+    follower = await user.followers
+    follower = list(map(lambda followers: followers.email, follower))
 
-    return {"followers": followers, "follows": follows}
+    following = await user.following
+    following = list(map(lambda follows: follows.email, following))
+
+    return {"follower": follower, "following": following}
 
 
 @router.post("/follow/{member_id}", description="해당 유저를 팔로우/팔로우 취소")
@@ -251,6 +248,24 @@ async def do_follow(member_id, me: User = Depends(get_current_user), user: User 
         return 'follow'
     return '본인은 팔로우 할 수 없음'
 
+@router.get("/{email}/{token}", description="인증 확인 후 회원가입")
+async def signup(email, token):
+    tmp_email = redis_session.lindex(token, 0)
+    if tmp_email is None or tmp_email != email:
+        return '잘못된 인증입니다.'
+
+    # redis로부터 임시데이터 받아옴
+    tmp_password = redis_session.lindex(token, 1)
+    tmp_password = get_password_hash(tmp_password)
+    tmp_nickname = redis_session.lindex(token, 2)
+    
+    await User.create(email=tmp_email, password=tmp_password, nickname=tmp_nickname)
+    
+    # DB에 저장이 된 임시데이터는 삭제
+    redis_session.delete(token)
+
+    # 우리 메인 페이지로 리다이렉트
+    return RedirectResponse("https://naver.com")
 
 @router.delete("/", description="회원탈퇴")
 async def delete_user(current_user: User = Depends(get_current_user)):

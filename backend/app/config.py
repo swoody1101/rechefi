@@ -5,6 +5,19 @@ class Settings(BaseSettings):
     DB_URL : str = ""
     ROOT_PASSWORD: str = ""
 
+    # mail_config
+    MAIL_USERNAME: str = ""
+    MAIL_PASSWORD: str = ""
+    MAIL_FROM: str = ""
+    MAIL_PORT: int
+    MAIL_SERVER: str = ""
+    MAIL_FROM_NAME: str = ""
+
+    # JWT
+    SECRET_KEY: str = ""
+    ALGORITHM: str = ""
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
@@ -32,7 +45,7 @@ TORTOISE_ORM = {
 }
 
 pool = redis.ConnectionPool(
-    host='localhost',
+    host='host.docker.internal',
     port=6379,
     # password=configs.REDIS_PASSWORD,
     decode_responses=True

@@ -1,13 +1,8 @@
-from typing import List, Union
+from typing import List
 
 from pydantic import BaseModel, Field
 
 from datetime import datetime
-# from app.schemas.accounts import *
-# from ..models.recipes import *
-# from tortoise.contrib.pydantic import pydantic_model_creator
-#
-# Recipe_Pydantic = pydantic_model_creator(Recipe)
 
 
 class RecipeCommentForm(BaseModel):
@@ -20,6 +15,8 @@ class RecipeCommentForm(BaseModel):
 class RecipeCommentList(RecipeCommentForm):
     user_id: int
     nickname: str
+    created_at: datetime
+    updated_at: datetime
 
 
 class TagForm(BaseModel):
@@ -52,15 +49,13 @@ class RecipeLikeUser(BaseModel):
 
 class RecipeList(BaseModel):
     user_id: int
+    id: int
     nickname: str
     title: str
     content: str
     img_url: str = Field(nullable=True)
     tags: List[TagList]
-    # ingredients: List[IngredientRecipeForm]
     likes: int
     comment_count: int
     created_at: datetime
     updated_at: datetime
-
-

@@ -1,5 +1,5 @@
 # 
-FROM python:3.9
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
 # 
 WORKDIR /backend
@@ -14,6 +14,6 @@ RUN pip install --no-cache-dir --upgrade -r /backend/requirements.txt
 # 
 COPY ./app /backend/app
 COPY ./migrations /backend/migrations
-
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+#CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+#
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--access-logfile", "./gunicorn-access.log", "--error-logfile", "./errors.log", "-R", "app.main:app", "--bind", "0.0.0.0:8000", "--workers", "4"]
