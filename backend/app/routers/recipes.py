@@ -145,6 +145,7 @@ async def like_recipe(recipe_id: int, response: Response, user: User = Depends(g
             data["method"] = 'delete'
             data["like"] = False
             response.status_code = 200
+        data["likes_count"] = await LikeRecipe.filter(recipe_id=recipe_id).count()
         return ObjectResponse(data=data)
 
 
