@@ -29,11 +29,6 @@ async def notice_detail(article_id: int):
     await article.save()
     data = NoticeDetail(
         nickname=article.user.nickname,
-        # like_users=await article.like_users.all().values("id", "nickname"),
-        # comments=[
-        #     ArticleCommentList(nickname=comment.user.nickname, **dict(comment))
-        #     for comment in await article.comments.all().select_related('user')
-        # ],
         **dict(article)
     )
     return ObjectResponse(data=data)
@@ -81,10 +76,6 @@ async def article_detail(article_id: int):
     data = ArticleDetail(
         nickname=article.user.nickname,
         like_users=await article.like_users.all().values("id", "nickname"),
-        # comments=[
-        #     ArticleCommentList(nickname=comment.user.nickname, **dict(comment))
-        #     for comment in await article.comments.all().select_related('user')
-        # ],
         **dict(article)
     )
     return ObjectResponse(data=data)
@@ -199,10 +190,6 @@ async def cooking_detail(article_id: int):
     data = ArticleDetail(
         nickname=article.user.nickname,
         like_users=await article.like_users.all().values("id", "nickname"),
-        # comments=[
-        #     ArticleCommentList(nickname=comment.user.nickname, **dict(comment))
-        #     for comment in await article.comments.all().select_related('user')
-        # ],
         **dict(article)
     )
     return ObjectResponse(data=data)
@@ -300,19 +287,22 @@ async def delete_cooking(article_id: int, user: User = Depends(get_current_user)
     return CommonResponse()
 
 
-@router.get("/free-board/{article_id}", description="게시물 목록 조회", response_model=MultipleObjectResponse)
-async def get_article_list(article_id: int, q: Union[str, None] = None, opt: Union[str, None] = None):
-    query = Article.filter(id__gte=article_id).select_related('user')
-    # if title:
-    #     query = query.filter(title__contains=title)
-    # if author:
-    #     query = query.filter(user__nickname__contains=author)
+@router.get("/free-board/{page}", description="게시물 목록 조회", response_model=ObjectResponse)
+async def get_article_list(page: int, q: Union[str, None] = None, opt: Union[str, None] = None):
+    query = Article.all().select_related('user').order_by('-id')
     if opt == "title":
         query = query.filter(title__contains=q)
     elif opt == "author":
         query = query.filter(user__nickname__contains=q)
-    articles = await query.limit(100).order_by('-id')
-    data = [
+    articles = await query
+    pages = 1 + len(articles) // 10
+    current_page = page
+    if 1 <= page <= pages:
+        articles = articles[(page - 1) * 10:page * 10]
+    else:
+        current_page = 1
+        articles = articles[:10]
+    post = [
         {
             "id": article.id,
             "title": article.title,
@@ -322,26 +312,35 @@ async def get_article_list(article_id: int, q: Union[str, None] = None, opt: Uni
             "nickname": article.user.nickname,
             'views': article.views,
             "likes": len(await article.like_users.all()),
-            "comments_count": len(await ArticleComment.filter(article_id=article_id))
+            "comments_count": len(await ArticleComment.filter(article_id=article.id))
         }
         for article in articles
     ]
-    return MultipleObjectResponse(data=data)
+    data = {
+        'posts': post,
+        'total_pages': pages,
+        'current_page': current_page
+    }
+    return ObjectResponse(data=data)
 
 
-@router.get("/notice-board/{article_id}", description="공지사항 목록 조회", response_model=MultipleObjectResponse)
-async def get_notice_list(article_id: int, q: Union[str, None] = None, opt: Union[str, None] = None):
-    query = Notice.filter(id__gte=article_id).select_related('user')
-    # if title:
-    #     query = query.filter(title__contains=title)
-    # if author:
-    #     query = query.filter(user__nickname__contains=author)
+@router.get("/notice-board/{page}", description="공지사항 목록 조회", response_model=ObjectResponse)
+async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str, None] = None):
+    query = Notice.all().select_related('user').order_by('-id')
     if opt == "title":
         query = query.filter(title__contains=q)
     elif opt == "author":
         query = query.filter(user__nickname__contains=q)
-    articles = await query.limit(100).order_by('-id')
-    data = [
+    articles = await query
+    pages = 1 + len(articles) // 10
+    current_page = page
+    if 1 <= page <= pages:
+        articles = articles[(page - 1) * 10:page * 10]
+    else:
+        current_page = 1
+        articles = articles[:10]
+
+    post = [
         {
             "id": article.id,
             "title": article.title,
@@ -353,22 +352,31 @@ async def get_notice_list(article_id: int, q: Union[str, None] = None, opt: Unio
         }
         for article in articles
     ]
-    return MultipleObjectResponse(data=data)
+    data = {
+        'posts': post,
+        'total_pages': pages,
+        'current_page': current_page
+    }
+    return ObjectResponse(data=data)
 
 
-@router.get("/gallery/{article_id}", description="갤러리 목록 조회", response_model=MultipleObjectResponse)
-async def get_cooking_list(cooking_id: int, q: Union[str, None] = None, opt: Union[str, None] = None):
-    query = Cooking.filter(id__gte=cooking_id).select_related('user')
-    # if title:
-    #     query = query.filter(title__contains=title)
-    # if author:
-    #     query = query.filter(user__nickname__contains=author)
+@router.get("/gallery/{page}", description="갤러리 목록 조회", response_model=ObjectResponse)
+async def get_cooking_list(page: int, q: Union[str, None] = None, opt: Union[str, None] = None):
+    query = Cooking.all().select_related('user').order_by('-id')
     if opt == "title":
         query = query.filter(title__contains=q)
     elif opt == "author":
         query = query.filter(user__nickname__contains=q)
-    cooking = await query.limit(100).order_by('-id')
-    data = [
+    cooking = await query
+    pages = 1 + len(cooking)//50
+    current_page = page
+    if 1 <= page <= pages:
+        cooking = cooking[(page-1)*50:page*50]
+    else:
+        current_page = 1
+        cooking = cooking[:50]
+
+    post = [
         {
             "id": article.id,
             "title": article.title,
@@ -378,9 +386,14 @@ async def get_cooking_list(cooking_id: int, q: Union[str, None] = None, opt: Uni
             "nickname": article.user.nickname,
             'views': article.views,
             "likes": len(await article.like_users.all()),
-            "comments_count": len(await CookingComment.filter(cooking_id=cooking_id))
+            "comments_count": len(await CookingComment.filter(cooking_id=article.id)),
         }
         for article in cooking
     ]
-    return MultipleObjectResponse(data=data)
+    data = {
+        'posts': post,
+        'total_pages': pages,
+        'current_page': current_page
+    }
+    return ObjectResponse(data=data)
 

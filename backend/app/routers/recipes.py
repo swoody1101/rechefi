@@ -31,8 +31,11 @@ async def get_tag_list():
 
 
 @router.get("/ingredient", description="레시피 재료 리스트 조회", response_model=MultipleObjectResponse)
-async def get_ingredient_list():
-    return MultipleObjectResponse(data=await Ingredient.all())
+async def get_ingredient_list(name: Union[str, None] = None):
+    query = Ingredient.all()
+    if name is not None:
+        query = query.filter(name__contains=name)
+    return MultipleObjectResponse(data=await query)
 
 
 @router.post("/ingredient", description="레시피 재료 생성", response_model=CommonResponse)
@@ -74,12 +77,11 @@ async def recipe_detail(recipe_id: int):
             "tags": await recipe.tags.all(),
             "ingredients": ingredients,
             "like_users": await recipe.like_users.all().values("id", "nickname"),
-            # "comments": await RecipeComment.filter(recipe_id=recipe_id).order_by('-id')
         }
     return ObjectResponse(data=data)
 
 
-@router.get("/comment/{recipe_id}", description="레시피 댓글 리스트", response_model=MultipleObjectResponse, status_code=200)
+@router.get("/comment/{recipe_id}", description="레시피 댓글 리스트", response_model=MultipleObjectResponse)
 async def get_comment_list(recipe_id: int):
     comments = await RecipeComment.filter(recipe_id=recipe_id).order_by('-id')
     data = [RecipeCommentList(**dict(comment), nickname=(await comment.user).nickname) for comment in comments]
@@ -199,7 +201,7 @@ async def get_recipe_list(recipe_id: int,
             "tags": await recipe.tags.all(),
             "ingredients": await recipe.ingredients.all(),
             "likes": len(await recipe.like_users.all()),
-            "comments_count": len(await RecipeComment.filter(recipe_id=recipe_id))
+            "comments_count": len(await RecipeComment.filter(recipe_id=recipe.id))
         }
         for recipe in recipes
     ]
