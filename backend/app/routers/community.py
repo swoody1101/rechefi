@@ -145,6 +145,7 @@ async def like_article(article_id: int, response: Response, user: User = Depends
             data["method"] = 'delete'
             data["like"] = False
             response.status_code = 200
+        data["likes_count"] = await LikeArticle.filter(article_id=article_id).count()
         return ObjectResponse(data=data)
 
 
@@ -259,6 +260,7 @@ async def like_cooking(article_id: int, response: Response, user: User = Depends
             data["method"] = 'delete'
             data["like"] = False
             response.status_code = 200
+        data["likes_count"] = await LikeCooking.filter(cooking_id=article_id).count()
         return ObjectResponse(data=data)
 
 
