@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { Palette } from "../../../../../../common/styles/palette";
 
 function RecipeFilterIngredItem({
   ingredId,
@@ -14,6 +15,7 @@ function RecipeFilterIngredItem({
   onInclude,
   onDelete,
 }) {
+  // for filter options
   const [isIncluded, setIsIncluded] = useState(true);
 
   const handleIncluded = (e, flag) => {
@@ -38,9 +40,10 @@ function RecipeFilterIngredItem({
               aria-label="include"
               sx={{
                 borderRadius: "50%",
+                background: Palette.gray1,
                 border: 0,
                 "&.Mui-selected, &.Mui-selected:hover": {
-                  // TODO : backgroundcolor setting
+                  background: Palette.mainColor3,
                 },
                 "&.MuiToggleButton-root": {
                   color: "black",

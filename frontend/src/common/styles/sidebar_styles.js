@@ -28,6 +28,12 @@ export const SideBarWrapper = styled.div`
   height: 100%;
   z-index: 15;
   animation: ${moveSideBar} 0.3s ease;
+  @media only screen and (min-width: 1025px) {
+    width: 25%;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    width: 35%;
+  }
 `;
 
 export const Backdrop = styled.div`
@@ -61,13 +67,16 @@ export const SideBarCommunityElementDiv = styled.div`
 export const SidebarBoardDiv = styled.div``;
 
 export const SidebarRecipeElement = styled.div`
-  font-size: 10vw;
+  font-size: 7vw;
   font-weight: bolder;
   text-align: center;
   border-top: 2px solid;
   border-bottom: 2px solid;
   padding: 5%;
   margin-top: 5%;
+  @media screen and (min-width: 1024px) {
+    font-size: 3vw;
+  }
 `;
 
 export const SidebarMyAccountWrapper = styled.div`
@@ -91,4 +100,10 @@ export const SidebarMyNicknameDiv = styled.div`
   left: -5%;
   font-size: large;
   font-weight: bold;
+`;
+
+export const SidebarLogout = styled.div`
+  position: absolute;
+  bottom: 2vh;
+  right: 3vw;
 `;
