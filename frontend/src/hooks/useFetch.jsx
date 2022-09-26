@@ -8,7 +8,7 @@ export default function useFetchList({ queryKey, articleId, uri }) {
       const response = await http.get(uri + pageParam);
       return {
         result: response.data,
-        nextPage: pageParam + 100,
+        nextPage: pageParam + 1,
         isLast: response.data.isLast,
       };
     },
