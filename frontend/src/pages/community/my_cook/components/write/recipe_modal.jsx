@@ -6,7 +6,7 @@ import {
   RecipeListModal,
   RecipeListSearchWrapper,
   RecipeListWrapper,
-} from "../../styles/write_styles";
+} from "../../styles/write/write_styles";
 import SearchIcon from "@mui/icons-material/Search";
 
 const RecipeModal = () => {

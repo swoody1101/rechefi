@@ -44,8 +44,6 @@ const SearchBar = () => {
           <SearchIcon />
         </SearchButton>
       </SearchWrapperDiv>
-      {/* <div> 검색어 {searchWord}</div> */}
-      {/* <div>선택된 값 {selectMenu}</div> */}
     </div>
   );
 };

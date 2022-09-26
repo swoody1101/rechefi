@@ -8,118 +8,21 @@ import RecipeListBests from "./components/bests/recipe_list_bests";
 import RecipeList from "./components/recipe_list";
 import RecipeListFab from "./components/recipe_list_fab";
 import { Container } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useBestRecipes } from "../../../hooks/Recipe/list/useBestRecipes";
+import { useRecipes } from "../../../hooks/Recipe/list/useRecipes";
 
 function RecipeListPage() {
-  // DEBUG
-  const data = useMemo(
-    () => [
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 1,
-        tags: [{ id: 1 }, { id: 2 }],
-        ingredients: [{ name: "파" }, { name: "양파" }],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 2,
-        tags: [{ id: 2 }],
-        ingredients: [{ name: "양파" }],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 3,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 4,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 5,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 11,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 12,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 13,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 14,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 15,
-        tags: [],
-        ingredients: [],
-      },
-    ],
-    []
-  );
+  const [recipes, getRecipes] = useRecipes();
 
+  const [shownRecipes, setShownRecipes] = useState([]);
+  const [bestRecipes] = useBestRecipes([]);
   const [loading, setLoading] = useState(false);
-  const [recipes, setRecipes] = useState([]);
-  const [bestRecipes, setBestRecipes] = useState([]);
+
+  // list Value init
+  useEffect(() => {
+    setShownRecipes(recipes.slice(0, 5));
+  }, [recipes]);
 
   /**
    * add recipe list item
@@ -130,22 +33,28 @@ function RecipeListPage() {
       // for spinner UI
       setLoading(true);
 
-      if (recipes.length + nAddedRecipes <= data.length) {
+      if (
+        shownRecipes.length + nAddedRecipes <=
+        recipes.length
+      ) {
         await setTimeout(() => {
-          setRecipes(
-            recipes.concat(
-              data.slice(
-                recipes.length,
-                recipes.length + nAddedRecipes
+          setShownRecipes(
+            shownRecipes.concat(
+              recipes.slice(
+                shownRecipes.length,
+                shownRecipes.length + nAddedRecipes
               )
             )
           );
         }, 1000);
+      } else {
+        // TODO
+        getRecipes();
       }
 
       setLoading(false);
     },
-    [recipes, setLoading, data]
+    [shownRecipes, setLoading, recipes]
   );
 
   let ticking = false;
@@ -177,29 +86,30 @@ function RecipeListPage() {
     };
   }, [onScroll]);
 
-  // list Value init
-  useEffect(() => {
-    setRecipes(data.slice(0, 5));
-    setBestRecipes(data.slice(0, 5));
-  }, [data]);
+  const navigate = useNavigate();
 
   // see recipe detail
   const onRecipeItemClicked = (id, title) => {
-    // TODO : replace with navigation
-    console.log(
-      "recipe id: " + id + ", recipe title : " + title
-    );
+    navigate({
+      // TODO : change with matching updated
+      pathname: "/recipe/detail",
+      hash: `${id}`,
+    });
   };
 
   return (
     <Container sx={{ pt: 2, px: 1, pb: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
       <RecipeList
-        recipes={recipes}
+        recipes={shownRecipes}
         loading={loading}
         onRecipeItemClicked={onRecipeItemClicked}
       />
-      <RecipeListFab />
+      <RecipeListFab
+        onClick={() => {
+          navigate("/recipe/write");
+        }}
+      />
     </Container>
   );
 }
