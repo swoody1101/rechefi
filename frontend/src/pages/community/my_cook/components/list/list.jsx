@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import { dummyItems } from "./dummyItems";
 import {
   MyCookGridButton,
   MyCookGridImage,
@@ -8,44 +7,32 @@ import {
   MyCookGridUl,
   MyCookGridUlWrapperDiv,
   MyCookGridWrapper,
-} from "./list_style";
+} from "../../styles/list/list_style";
 import { useInView } from "react-intersection-observer";
-import { MyCookDetail } from "../my_cook_detail/my_cook_detail_page";
+import { MyCookDetail } from "../detail/my_cook_detail_page";
 import { Backdrop } from "../../../../../common/styles/sidebar_styles";
-import { useInfiniteQuery } from "react-query";
-import axios from "axios";
+import useFetchList from "../../../../../hooks/useFetch";
 
-const fetchPostList = async (pageParam) => {
-  const res = await axios.get(
-    `http://localhost:8000/community/gallery/{article_id}?cooking_id=${pageParam}`
-    // `https://j7b303.p.ssafy.io/api/community/gallery/{article_id}?cooking_id=${pageParam}`
-  );
-  return {
-    result: res.data,
-    nextPage: pageParam + 100,
-    isLast: res.data.isLast,
-  };
-};
 const MyCookList = () => {
   const [imageState, setImageState] = useState([]);
+  const { data, isLoading, fetchNextPage, hasNextPage } = useFetchList({
+    queryKey: "myCookPosts",
+    articleId: 1,
+    uri: `/community/gallery/{article_id}?cooking_id=`,
+  });
   const [openDetail, setOpenDetail] = useState(false);
   const [postId, setPostId] = useState(0);
   const [ref, inView] = useInView();
 
-  const { data, status, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-    "myCookPosts",
-    ({ pageParam = 1 }) => fetchPostList(pageParam),
-    {
-      getNextPageParam: (lastPage) =>
-        !lastPage.isLast ? lastPage.nextPage : undefined,
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      console.log("새로 불러오나요?");
+      fetchNextPage();
     }
-  );
-  // useEffect(() => {
-  //   if (inView) {
-  //     fetchNextPage();
-  //   }
-  // }, [fetchNextPage, inView]);
-  if (status === "loading") return <div>로딩중</div>;
+  }, [hasNextPage, inView, fetchNextPage]);
+  console.log(hasNextPage);
+  console.log(data);
+  if (isLoading) return <div>로딩중</div>;
   return (
     <MyCookGridWrapper>
       {openDetail && (
@@ -70,7 +57,7 @@ const MyCookList = () => {
                     setOpenDetail((prev) => {
                       return !prev;
                     });
-                    setPostId(page.result.data[e].user_id);
+                    setPostId(page.result.data[e].id);
                   }}
                 ></MyCookGridImage>
               </MyCookGridLi>

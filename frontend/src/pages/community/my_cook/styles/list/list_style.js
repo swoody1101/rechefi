@@ -45,16 +45,14 @@ export const MyCookDetailWrapper = styled.div`
   height: 85vh;
   background-color: ${Palette.mainColor3};
   border-radius: 14px;
+  overflow-y: scroll;
 `;
 
 export const MyCookDetailImageWrapper = styled.div`
   width: 100%;
-  max-height: 50%;
-  overflow-y: scroll;
 `;
 
 export const MyCookDetailImage = styled.img`
-  display: block;
   border-radius: 14px;
   width: 100%;
   object-fit: cover;
@@ -69,9 +67,8 @@ export const MyCookDetailContent = styled.div`
 `;
 
 export const MyCookDetailContentWithCommentWrapper = styled.div`
-  position: fixed;
   bottom: 3px;
   margin-top: 1%;
-  max-height: 40%;
-  overflow-y: scroll;
+
+  width: 100%;
 `;
