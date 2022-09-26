@@ -23,12 +23,15 @@ import { useContents } from "../../../hooks/Recipe/write/useContents";
 import InputImage from "../../../common/components/input_image";
 
 function RecipeWritePage() {
+  const navigate = useNavigate();
+
   // control title data
   const [title, setTitle, titleValidation] = useTitle();
 
   // control tag information
   const [selectedTags, addTag, deleteTag] =
     useSelectedTag();
+
   // ingredients for recipe
   const [ingreds, setIngred] = useState([]);
 
@@ -56,47 +59,7 @@ function RecipeWritePage() {
     }
   };
 
-  // const deleteBlock = (index) => {
-  //   setContents(
-  //     contents.filter((ele, idx) => index !== idx)
-  //   );
-  // };
-
-  // // text edited update
-  // const updateTextContent = (index, updated) => {
-  //   setContents(
-  //     contents.map((ele, idx) =>
-  //       idx === index
-  //         ? { ...ele, content: JSON.stringify(updated) }
-  //         : ele
-  //     )
-  //   );
-  // };
-
-  // // handle block position
-  // const downBlockPos = (index) => {
-  //   if (index === 0) return;
-
-  //   setContents([
-  //     ...contents.slice(0, index - 1),
-  //     contents[index],
-  //     contents[index - 1],
-  //     ...contents.slice(index + 1),
-  //   ]);
-  // };
-  // const upBlockPos = (index) => {
-  //   if (index === contents.length - 1) return;
-
-  //   setContents([
-  //     ...contents.slice(0, index),
-  //     contents[index + 1],
-  //     contents[index],
-  //     ...contents.slice(index + 2),
-  //   ]);
-  // };
-
   // handle bottom bar buttons
-  const navigate = useNavigate();
   const writeComplete = () => {
     let tmp_contents = "";
     contents.forEach((item) => {
@@ -113,21 +76,19 @@ function RecipeWritePage() {
       img_url: "",
     };
 
-    console.log(recipe);
-
-    // http
-    //   .post("/recipe", recipe)
-    //   .then((response) => {
-    //     Success("레시피 작성이 완료되었습니다");
-    //     navigate("/recipe", { replace: true });
-    //   })
-    //   .catch((error) => {
-    //     Warn(
-    //       error +
-    //         " : " +
-    //         "레시피 작성 중 문제가 발생하였습니다"
-    //     );
-    //   });
+    http
+      .post("/recipe", recipe)
+      .then((response) => {
+        Success("레시피 작성이 완료되었습니다");
+        navigate("/recipe", { replace: true });
+      })
+      .catch((error) => {
+        Warn(
+          error +
+            " : " +
+            "레시피 작성 중 문제가 발생하였습니다"
+        );
+      });
   };
 
   // validation
@@ -137,7 +98,7 @@ function RecipeWritePage() {
     return false;
   };
 
-  const writeCancel = () => {
+  const cancleWrite = () => {
     Confirm("작성을 중지합니까?", () => {
       navigate(-1);
     });
@@ -196,7 +157,7 @@ function RecipeWritePage() {
       <RecipeWriteBottombar
         confirmDisabled={inputValidation()}
         onConfirm={writeComplete}
-        onCancel={writeCancel}
+        onCancel={cancleWrite}
       />
 
       <InputImage
