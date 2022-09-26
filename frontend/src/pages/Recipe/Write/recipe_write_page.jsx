@@ -64,7 +64,7 @@ function RecipeWritePage() {
     let tmp_contents = "";
     contents.forEach((item) => {
       tmp_contents = tmp_contents
-        .concat(item.content)
+        .concat(JSON.stringify(item.content))
         .concat("```");
     });
 
@@ -147,7 +147,7 @@ function RecipeWritePage() {
               <RecipeWriteContentText
                 index={index}
                 initValue={block.content}
-                onUpdated={updateTextContent}
+                onChange={updateTextContent}
               />
             )}
           </RecipeWriteContentBlock>

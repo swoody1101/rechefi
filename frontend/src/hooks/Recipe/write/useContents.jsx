@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { EditorState } from "draft-js";
 
 export function useContents() {
   const [contents, setContents] = useState([]);
@@ -6,14 +7,17 @@ export function useContents() {
   const addTextBlock = () => {
     setContents([
       ...contents,
-      { type: "text", content: "" },
+      {
+        type: "text",
+        content: EditorState.createEmpty(),
+      },
     ]);
   };
 
-  const addImageBlock = (res) => {
+  const addImageBlock = (link) => {
     setContents([
       ...contents,
-      { type: "image", content: res },
+      { type: "image", content: link },
     ]);
   };
 
@@ -27,9 +31,7 @@ export function useContents() {
   const updateTextContent = (index, updated) => {
     setContents(
       contents.map((ele, idx) =>
-        idx === index
-          ? { ...ele, content: JSON.stringify(updated) }
-          : ele
+        idx === index ? { ...ele, content: updated } : ele
       )
     );
   };
