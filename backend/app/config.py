@@ -5,6 +5,14 @@ class Settings(BaseSettings):
     DB_URL : str = ""
     ROOT_PASSWORD: str = ""
 
+    # mail_config
+    MAIL_USERNAME: str = ""
+    MAIL_PASSWORD: str = ""
+    MAIL_FROM: str = ""
+    MAIL_PORT: int
+    MAIL_SERVER: str = ""
+    MAIL_FROM_NAME: str = ""
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
