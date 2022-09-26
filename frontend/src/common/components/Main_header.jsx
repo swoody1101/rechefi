@@ -63,7 +63,7 @@ const Header = ({ sidebarHandler }) => {
           )}
         </LayoutSearchParent>
       ) : (
-        <h1>B303</h1>
+        <LayoutHeaderLogo>B303</LayoutHeaderLogo>
       )}
     </LayoutStyledHeader>
   );
