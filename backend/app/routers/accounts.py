@@ -19,7 +19,7 @@ from app.schemas.accounts import TokenData
 import string, secrets
 
 # rdis
-from app.config import redis_session
+from app.config import settings, redis_session
 # redis_db = redis.Redis(host='localhost', port='6379', charset='utf-8', decode_responses=True)
 
 
@@ -27,18 +27,13 @@ from app.config import redis_session
 from app.mail_config import signup_mail, password_mail
 
 
-from dotenv import load_dotenv
-import os
-load_dotenv()
-
-
 router = APIRouter(prefix="/members", tags=["members"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="members/login/1")
 
 ####### JWT 토큰 #######
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440
+SECRET_KEY=settings.SECRET_KEY
+ALGORITHM=settings.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES=settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 
 
