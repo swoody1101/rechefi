@@ -1,19 +1,19 @@
-from lib2to3.pytree import convert
 import boto3
 from fastapi import APIRouter, UploadFile, Depends
 from dotenv import load_dotenv
 import os, uuid
 
 from app.routers.accounts import get_current_user
+from app.config import settings
 
 load_dotenv()
 
 router = APIRouter(prefix="/image", tags=["image"])
 
-S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-REGION_NAME = os.getenv("REGION_NAME")
+S3_BUCKET_NAME=settings.S3_BUCKET_NAME
+AWS_ACCESS_KEY_ID=settings.AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY=settings.AWS_SECRET_ACCESS_KEY
+REGION_NAME=settings.REGION_NAME
 
 # S3 연결 및 버킷 할당
 async def s3_bucket_connect():
@@ -42,9 +42,9 @@ async def test(file: UploadFile, User = Depends(get_current_user)):
     # 이미지 사이즈 및 확장자 확인
     file_content = await file.read()
     await file.seek(0)
-    if len(file_content) >= 1e+6:
+    if len(file_content) >= 5e+6:
         size = convert_size(len(file_content))
-        return f'파일의 크기가 {size}입니다. 1 MB 이하의 파일만 허용됩니다.'
+        return f'파일의 크기가 {size}입니다. 5 MB 이하의 파일만 허용됩니다.'
     if "image" not in file.content_type:
         return  '지원되는 이미지 확장자가 아닙니다.'
 
