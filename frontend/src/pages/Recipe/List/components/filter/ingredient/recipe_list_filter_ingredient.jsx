@@ -1,141 +1,33 @@
-import {
-  Box,
-  Divider,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Box } from "@mui/material";
 import React, { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import RecipeListFilterSearch from "./recipe_list_filter_ingredient_search";
 import RecipeFilterIngredItem from "./recipe_list_filter_ingredient_item";
 import AlertSnackbar from "../../../../../../common/components/alert_snackbar";
-import { Palette } from "../../../../../../common/styles/palette";
 import TitleWithDivider from "../../../../../../common/components/title_with_divider";
+import { useSearchedIngreds } from "../../../../../../hooks/Recipe/ingredient/useSearchedIngreds";
 
 function RecipeListFilterIngredients({
-  onIngredAdded,
-  onIngredDeleted,
-  onIngredChanged,
+  onSelectedIngredAdded,
+  onSelectedIngredDeleted,
+  onSelectedIngredChanged,
   selectedIngred,
 }) {
+  // for control search modal
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchedIngred, setSearchedIngred] = useState([]);
-
-  const openSearchDialog = () => {
-    setSearchOpen(true);
-  };
-
-  // DEBUG
-  const addDummy = (keyword) => {
-    // TODO : replace with REST API
-    setSearchedIngred([
-      {
-        id: 1,
-        name: "양파양파양파양파양파양파양파",
-      },
-      {
-        id: 2,
-        name: "마파",
-      },
-      {
-        id: 3,
-        name: "대파",
-      },
-      {
-        id: 4,
-        name: "파",
-      },
-      {
-        id: 5,
-        name: "에너르기파",
-      },
-      {
-        id: 11,
-        name: "양파",
-      },
-      {
-        id: 21,
-        name: "마파",
-      },
-      {
-        id: 31,
-        name: "대파",
-      },
-      {
-        id: 41,
-        name: "파",
-      },
-      {
-        id: 51,
-        name: "에너르기파",
-      },
-      {
-        id: 111,
-        name: "양파",
-      },
-      {
-        id: 211,
-        name: "마파",
-      },
-      {
-        id: 311,
-        name: "대파",
-      },
-      {
-        id: 411,
-        name: "파",
-      },
-      {
-        id: 511,
-        name: "에너르기파",
-      },
-      {
-        id: 1111,
-        name: "양파",
-      },
-      {
-        id: 2111,
-        name: "마파",
-      },
-      {
-        id: 3111,
-        name: "대파",
-      },
-      {
-        id: 4111,
-        name: "파",
-      },
-      {
-        id: 5111,
-        name: "에너르기파",
-      },
-    ]);
-  };
 
   // for control alert
   const ALERT_MESSAGE = "이미 추가된 재료입니다";
   const [alertOpen, setAlertOpen] = useState(false);
 
-  const alertClose = () => {
-    setAlertOpen(false);
-  };
-
   // searched ingredients list item clicked
-  const addIngred = (ingred) => {
-    let isDup = false;
-
-    // check duplicated
-    selectedIngred.forEach((ele) => {
-      if (ele.id === ingred.id) {
-        setAlertOpen(true);
-        isDup = true;
-      }
-    });
-
-    if (!!!isDup) {
-      onIngredAdded(ingred);
-    }
+  const selectSearchedIngred = (ingred) => {
+    // show alert if adding is failed
+    if (!onSelectedIngredAdded(ingred)) setAlertOpen(true);
   };
+
+  const [searchedIngred, searchIngred] =
+    useSearchedIngreds();
 
   // shown result
   const selectedIngredItems = selectedIngred.map((item) => (
@@ -143,8 +35,8 @@ function RecipeListFilterIngredients({
       key={item.id}
       ingredId={item.id}
       ingredName={item.name}
-      onInclude={onIngredChanged}
-      onDelete={onIngredDeleted}
+      onInclude={onSelectedIngredChanged}
+      onDelete={onSelectedIngredDeleted}
     ></RecipeFilterIngredItem>
   ));
 
@@ -159,7 +51,7 @@ function RecipeListFilterIngredients({
       <TitleWithDivider
         variant="h6"
         title="재료 검색"
-        onClick={openSearchDialog}
+        onClick={() => setSearchOpen(true)}
         icon={<SearchIcon />}
       ></TitleWithDivider>
       <Box
@@ -172,14 +64,14 @@ function RecipeListFilterIngredients({
       <RecipeListFilterSearch
         dialogOpen={searchOpen}
         setDialogOpen={setSearchOpen}
-        handleSearch={addDummy}
+        handleSearch={searchIngred}
         searchResult={searchedIngred}
-        addSearchedItem={addIngred}
+        addSearchedItem={selectSearchedIngred}
       ></RecipeListFilterSearch>
 
       <AlertSnackbar
         open={alertOpen}
-        handleClose={alertClose}
+        handleClose={() => setAlertOpen(false)}
         message={ALERT_MESSAGE}
       />
     </Box>
