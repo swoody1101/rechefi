@@ -1,1 +1,0 @@
-docker-compose -f db-docker-compose.yaml --env-file ./.env up -d
