@@ -55,7 +55,7 @@ function RecipeWriteIngredList({
       }}
     >
       <TitleWithDivider
-        variant="h6"
+        textVariant="h6"
         title="준비물"
         onClick={addIngred}
         icon={<AddBoxIcon />}
