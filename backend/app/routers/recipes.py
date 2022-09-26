@@ -201,7 +201,7 @@ async def get_recipe_list(recipe_id: int,
             "tags": await recipe.tags.all(),
             "ingredients": await recipe.ingredients.all(),
             "likes": len(await recipe.like_users.all()),
-            "comments_count": len(await RecipeComment.filter(recipe_id=recipe_id))
+            "comments_count": len(await RecipeComment.filter(recipe_id=recipe.id))
         }
         for recipe in recipes
     ]
