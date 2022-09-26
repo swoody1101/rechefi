@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
-import { loginThunk } from "../../../store/Account/account";
-
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -14,6 +13,7 @@ import {
   ThemeProvider,
   TextField,
 } from "@mui/material";
+import { loginThunk } from "../../../store/module/accountReducer";
 import { Palette } from "../../../common/styles/palette";
 
 const LoginView = () => {
@@ -21,13 +21,30 @@ const LoginView = () => {
   const refEmail = useRef(null);
   const refPassword = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const loginHandler = (event) => {
     event.preventDefault();
     const email = refEmail.current.value;
     const password = refPassword.current.value;
 
-    dispatch(loginThunk({ email, password }));
+    dispatch(loginThunk({ email, password }))
+      .unwrap() // 오류처리
+      .then(() => {
+        navigate("/");
+        alert("안녕하세요");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const signUpButtonClickHandler = (event) => {
+    navigate(`/signup`);
+  };
+
+  const findPasswordClickHandler = (event) => {
+    navigate(`/new-password`);
   };
 
   return (
@@ -75,8 +92,12 @@ const LoginView = () => {
               justifyContent="center"
               alignItems="center"
             >
-              <LinkButton>회원가입</LinkButton>
-              <LinkButton>비밀번호 찾기</LinkButton>
+              <LinkButton onClick={signUpButtonClickHandler}>
+                회원가입
+              </LinkButton>
+              <LinkButton onClick={findPasswordClickHandler}>
+                비밀번호 찾기
+              </LinkButton>
             </Stack>
           </FormControl>
         </Box>

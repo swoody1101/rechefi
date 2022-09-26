@@ -1,11 +1,18 @@
 import styled from "@emotion/styled";
-import { Palette } from "../../../../common/styles/palette";
+import { Palette } from "../../../../../common/styles/palette";
 
 export const MyCookGridUl = styled.ul`
   display: flex;
   flex-wrap: wrap;
-  width: 95%;
+  width: 100%;
   z-index: 1;
+`;
+
+export const MyCookGridUlWrapperDiv = styled.div`
+  width: 95%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 `;
 
 export const MyCookGridWrapper = styled.div`
@@ -18,6 +25,7 @@ export const MyCookGridWrapper = styled.div`
 export const MyCookGridLi = styled.li`
   height: 10vh;
   flex-grow: 1;
+  list-style-type: none;
 `;
 
 export const MyCookGridImage = styled.img`
@@ -41,7 +49,7 @@ export const MyCookDetailWrapper = styled.div`
 
 export const MyCookDetailImageWrapper = styled.div`
   width: 100%;
-  max-height: 55vh;
+  max-height: 50%;
   overflow-y: scroll;
 `;
 
@@ -61,7 +69,9 @@ export const MyCookDetailContent = styled.div`
 `;
 
 export const MyCookDetailContentWithCommentWrapper = styled.div`
+  position: fixed;
+  bottom: 3px;
   margin-top: 1%;
-  max-height: 34%;
-  overflow: scroll;
+  max-height: 40%;
+  overflow-y: scroll;
 `;

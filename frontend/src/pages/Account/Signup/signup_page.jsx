@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   createTheme,
   Box,
@@ -9,7 +10,7 @@ import {
   Grid,
   ThemeProvider,
 } from "@mui/material";
-
+import { signupThunk } from "../../../store/module/accountReducer";
 import InputElement from "../components/input_element";
 
 const SignUp = () => {
@@ -18,6 +19,8 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [nickname, setNickname] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const emailCheck = () => {
     if (!email) {
@@ -54,14 +57,20 @@ const SignUp = () => {
       return;
     }
 
-    const userObj = {
+    const signupInfo = {
       email: email,
       password: password,
       nickname: nickname,
     };
-    window.localStorage.setItem("userObj", JSON.stringify(userObj));
 
-    console.log(localStorage.getItem("userObj"));
+    dispatch(signupThunk(signupInfo))
+      .unwrap()
+      .then(() => {
+        navigate(`/login`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
