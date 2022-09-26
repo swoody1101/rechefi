@@ -16,7 +16,6 @@ import { useEffect } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 
 const Header = ({ sidebarHandler }) => {
-  console.log(process.env.REACT_APP_URL);
   const [openSearch, setOpenSearch] = useState(false);
   const [isMain, setIsMain] = useState(false);
   const matches = useMediaQuery("(min-width:768px)");

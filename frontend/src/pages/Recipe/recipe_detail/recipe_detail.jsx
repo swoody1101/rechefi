@@ -12,57 +12,70 @@ import {
   RecipteDetailWrapperDiv,
 } from "../styles/recipe_detail_styles";
 import RecipeDetailContent from "./content";
-import { dummyDetail } from "./dummy";
 import RecipeDetailIngredients from "./ingredients";
 import RecipedetailTitleArea from "./title_area";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import SpatialTrackingIcon from "@mui/icons-material/SpatialTracking";
 import RecipeDeatilAIvoiceControll from "./AIvoice_controll";
 import Comments from "../../../common/components/comments/comments";
+import { useFetchDetail } from "../../../hooks/useFetch";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import { useLike } from "../../../hooks/useLike";
 
 const RecipeDetail = () => {
-  const [post, setPost] = useState({});
-  const [ingredients, setIngredients] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [content, setContent] = useState("");
   const [aiButton, setAiButton] = useState(false);
-  useEffect(() => {
-    const {
-      title,
-      content,
-      ingredients,
-      member_id,
-      member_nickname,
-      tags,
-      likes,
-      date,
-      comment_count,
-      like_member_id,
-    } = dummyDetail;
-    setPost({
-      title,
-      member_id,
-      member_nickname,
-      date,
-      likes,
-      comment_count,
-      like_member_id,
-    });
-    setIngredients(ingredients);
-    setTags(tags);
-    setContent(content);
-  }, []);
+  const { detail } = useParams();
+  const { data, isLoading } = useFetchDetail({
+    queryKey: "recipeDetail",
+    articleId: detail,
+    uri: "/recipe/detail/",
+  });
+  const userInfo = useSelector((store) => store.account);
   const toggleAI = () => {
     setAiButton((prev) => {
       return !prev;
     });
   };
+  const [like, setLike] = useState(false);
+  const { mutate } = useLike("recipeDetail");
+
+  const likeHandler = () => {
+    if (userInfo.auth) {
+      mutate({ articleId: detail, uri: "/recipe/like/" });
+    }
+  };
+
+  useEffect(() => {
+    if (userInfo.auth && data && data.data.like_users.length >= 0) {
+      const like_users = data.data.like_users;
+      const clickedLike = like_users.filter((e) => {
+        return e.nickname === userInfo.nickname;
+      });
+      if (clickedLike.length === 0) {
+        setLike(false);
+      } else {
+        setLike(true);
+      }
+    }
+  }, [data, userInfo]);
+
+  if (isLoading) {
+    return <div>로딩중</div>;
+  }
   return (
     <RecipteDetailWrapperDiv>
       <RecipeDetailAllContentWrapper>
         {aiButton ? <RecipeDeatilAIvoiceControll /> : null}
         <RecipeDetailTitleWrapperDiv>
-          <RecipedetailTitleArea post={post} />
+          <RecipedetailTitleArea
+            post={{
+              title: data.data.recipe.title,
+              member_nickname: data.data.nickname,
+              date: data.data.recipe.created_at,
+            }}
+          />
         </RecipeDetailTitleWrapperDiv>
 
         <RecipeDetailAIButtonWrapper>
@@ -72,29 +85,40 @@ const RecipeDetail = () => {
         </RecipeDetailAIButtonWrapper>
 
         <RecipeDetailIngredinetsContentDiv>
-          <RecipeDetailIngredients ingredients={ingredients} />
+          <RecipeDetailIngredients ingredients={data.data.ingredients} />
         </RecipeDetailIngredinetsContentDiv>
         <RecipeDetailIngredinetsContentDiv>
           <RecipeDetailContentWrapper>
-            <RecipeDetailContent content={content} />
+            <RecipeDetailContent content={data.data.recipe.content} />
           </RecipeDetailContentWrapper>
         </RecipeDetailIngredinetsContentDiv>
-        <RecipeDetailLikeWrppaerDiv>
+
+        <RecipeDetailLikeWrppaerDiv onClick={likeHandler}>
           <div>추천하기</div>
           <RecipeDetailLikeBorderDiv>
-            <div>
-              <ThumbUpIcon />
-            </div>
-            <RecipeDetailLikeCount>{post.likes}</RecipeDetailLikeCount>
+            {like ? (
+              <div>
+                <ThumbUpIcon />
+              </div>
+            ) : (
+              <div>
+                <ThumbUpOffAltIcon />
+              </div>
+            )}
+            <RecipeDetailLikeCount>
+              {data.data.like_users.length}
+            </RecipeDetailLikeCount>
           </RecipeDetailLikeBorderDiv>
         </RecipeDetailLikeWrppaerDiv>
-        <RecipeDetailIngredinetsContentDiv>
-          <Comments
-            uri={"/recipe/comment/"}
-            aiButton={aiButton}
-            queryKey="recipeComments"
-          />
-        </RecipeDetailIngredinetsContentDiv>
+        {userInfo.auth ? (
+          <RecipeDetailIngredinetsContentDiv>
+            <Comments
+              uri={"/recipe/comment/"}
+              aiButton={aiButton}
+              queryKey="recipeComments"
+            />
+          </RecipeDetailIngredinetsContentDiv>
+        ) : null}
       </RecipeDetailAllContentWrapper>
     </RecipteDetailWrapperDiv>
   );

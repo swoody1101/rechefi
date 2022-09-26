@@ -14,8 +14,10 @@ export default function useFetchList({ queryKey, articleId, uri }) {
     },
     {
       getNextPageParam: (lastPage) => {
-        console.log(lastPage);
-        return lastPage.isLast === undefined ? undefined : lastPage.nextPage;
+        return lastPage.result.data.current_page <
+          lastPage.result.data.total_pages
+          ? lastPage.nextPage
+          : undefined;
       },
     }
   );

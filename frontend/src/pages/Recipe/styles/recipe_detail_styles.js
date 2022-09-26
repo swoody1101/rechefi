@@ -104,6 +104,11 @@ export const RecipeDetailContentElementDiv = styled(
   font-weight: bolder;
 `;
 
+export const RecipeDetailContentImage = styled.img`
+  width: 100%;
+  height: auto;
+`;
+
 export const RecipeDetailLikeWrppaerDiv = styled.div`
   display: flex;
   justify-content: center;
