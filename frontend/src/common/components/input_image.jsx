@@ -29,13 +29,13 @@ function InputImage({ setRef, onInput }) {
     // upload to server
     const formData = new FormData();
     formData.append("file", image);
-    const res = await uploadImage(formData);
-
-    // add to content
-    if (isNaN(res)) {
+    try {
+      const res = await uploadImage(formData);
       onInput(res);
-    } else {
-      Warn("업로드 중 문제가 발생하였습니다");
+    } catch (error) {
+      if (error.response.status === 401)
+        Warn("로그인이 필요합니다");
+      else Warn(`${error} 업로드 중 문제가 발생하였습니다`);
     }
 
     // reset input
