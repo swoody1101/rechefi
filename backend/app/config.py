@@ -2,8 +2,13 @@ from pydantic import BaseSettings
 import redis
 
 class Settings(BaseSettings):
+    # Main DB(Mysql)
     DB_URL : str = ""
     ROOT_PASSWORD: str = ""
+
+    # Sub DB(Redis)
+    REDIS_HOST: str = ""
+    REDIS_PORT: int
 
     # mail_config
     MAIL_USERNAME: str = ""
@@ -45,8 +50,8 @@ TORTOISE_ORM = {
 }
 
 pool = redis.ConnectionPool(
-    host='host.docker.internal',
-    port=6379,
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
     # password=configs.REDIS_PASSWORD,
     decode_responses=True
 )
