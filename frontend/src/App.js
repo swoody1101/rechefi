@@ -13,7 +13,7 @@ import RecipeWrite from "./pages/Recipe/Write/recipe_write_page";
 import SignUp from "./pages/Account/Signup/signup_page";
 import Login from "./pages/Account/Login/login_page";
 import NewPassword from "./pages/Account/Login/new_password_page";
-import MyPage from "./pages/Account/Mypage/mypage_page";
+import ProfilePage from "./pages/Account/Mypage/profile_page";
 import ProfileModifyPage from "./pages/Account/Mypage/profile_modify_page";
 
 import NotFound from "./pages/NotFound/not_found_page";
@@ -54,7 +54,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
               <Route path="/new-password" element={<NewPassword />} />
-              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile-modify" element={<ProfileModifyPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

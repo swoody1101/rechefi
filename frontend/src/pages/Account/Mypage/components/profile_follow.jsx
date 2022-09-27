@@ -1,10 +1,9 @@
 import React from "react";
-import { Button, Box, styled, Paper, Typography } from "@mui/material";
-import {} from "@mui/system";
+import { Button, Box, styled, Typography } from "@mui/material";
 
-const MyPageFollowButton = () => {
-  const followerCount = 100;
-  const folloingCount = 100;
+const ProfileFollow = (props) => {
+  const followerCount = props.follower;
+  const folloingCount = props.following;
 
   return (
     <Box
@@ -27,7 +26,7 @@ const MyPageFollowButton = () => {
   );
 };
 
-export default MyPageFollowButton;
+export default ProfileFollow;
 
 const FollowButton = styled(Button)({
   variant: "text",

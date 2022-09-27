@@ -12,7 +12,7 @@ const SidebarMyAccount = ({ sidebarClose }) => {
   const navigate = useNavigate();
 
   const mypageTransitionHandler = () => {
-    navigate(`/mypage`);
+    navigate("/profile", { state: loginInfo.email });
   };
 
   return (
