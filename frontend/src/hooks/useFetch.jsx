@@ -79,7 +79,8 @@ export function useFetch({ queryKey, param, uri }) {
     const response = await http.get(
       `${uri}${param ? `/${param}` : ""}`
     );
-    console.log(response.data);
-    return response.data;
+    if (response.data.message === "success")
+      return response.data;
+    else return undefined;
   });
 }
