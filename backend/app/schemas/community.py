@@ -41,6 +41,10 @@ class ArticleDetail(ArticleCreateForm):
     like_users: List[dict] = Field(Nullable=True)
 
 
+class CookingDetail(ArticleDetail):
+    recipe_id: int = Field(Nullable=True)
+
+
 class CookingCreateForm(ArticleCreateForm):
     recipe_id: int = Field(nullable=False)
 

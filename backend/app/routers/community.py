@@ -9,7 +9,7 @@ from app.models.community import Article, ArticleComment, LikeArticle, Notice, C
 from app.models.accounts import User
 
 from app.schemas.community import ArticleCreateForm, ArticleCommentForm, ArticleCommentList, ArticleDetail, \
-    CookingCreateForm, NoticeDetail
+    CookingCreateForm, NoticeDetail, CookingDetail
 from app.schemas.common import *
 
 router = APIRouter(prefix="/community", tags=["community"])
@@ -183,12 +183,12 @@ async def create_cooking(req: CookingCreateForm, user: User = Depends(get_curren
 
 @router.get("/gallery/detail/{article_id}", description="게시물 상세", response_model=ObjectResponse)
 async def cooking_detail(article_id: int):
-    article = await Cooking.get_or_none(id=article_id).select_related('user')
+    article = await Cooking.get_or_none(id=article_id).select_related('user', 'recipe')
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
     article.views += 1
     await article.save()
-    data = ArticleDetail(
+    data = CookingDetail(
         nickname=article.user.nickname,
         like_users=await article.like_users.all().values("id", "nickname"),
         **dict(article)
