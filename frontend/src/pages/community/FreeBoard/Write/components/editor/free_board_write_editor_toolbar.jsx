@@ -7,7 +7,7 @@ import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
 import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
-import InputImage from "../../../../../common/components/input_image";
+import InputImage from "../../../../../../common/components/input_image";
 import { useRef } from "react";
 
 function FreeBoardWriteEditorToolbar({ onUploadImage }) {
