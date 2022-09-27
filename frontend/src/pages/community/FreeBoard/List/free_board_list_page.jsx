@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import TitleWithDivider from "../../../../common/components/title_with_divider";
 import FreeBoardListItem from "./components/item/free_board_list_item";
 import FreeBoardListItemContainer from "./components/free_board_list_items_container";
-import FreeBoardListItemNotices from "./components/free_board_list_notices_items";
+import FreeBoardListItemNotices from "./components/notice/free_board_list_notices_items";
 import FreeBoardPagination from "./components/free_board_list_pagination";
 import RecipeListFab from "../../../Recipe/List/components/recipe_list_fab";
 import { useFetch } from "../../../../hooks/useFetch";
