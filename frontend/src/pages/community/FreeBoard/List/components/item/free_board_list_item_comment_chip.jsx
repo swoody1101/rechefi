@@ -6,7 +6,7 @@ function FreeBoardListItemCommentChip({ nComment }) {
   return (
     <Avatar
       sx={{
-        bgcolor: Palette.white2,
+        bgcolor: Palette.white1,
         color: Palette.black2,
         fontSize: "1rem",
         width: "2rem",
@@ -17,5 +17,9 @@ function FreeBoardListItemCommentChip({ nComment }) {
     </Avatar>
   );
 }
+
+FreeBoardListItemCommentChip.defaultProps = {
+  nComment: 0,
+};
 
 export default FreeBoardListItemCommentChip;
