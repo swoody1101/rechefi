@@ -19,7 +19,7 @@ function FreeBoardListItemBottomInfo({
     >
       {postWriter} {" - "}{" "}
       {new Date(postDate).toLocaleString()} {" - 조회수 :"}{" "}
-      {postViews}
+      {postViews.toLocaleString()}
     </Typography>
   );
 }
