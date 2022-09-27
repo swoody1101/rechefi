@@ -80,7 +80,7 @@ export function useFetch({ queryKey, param, uri }) {
       `${uri}${param ? `/${param}` : ""}`
     );
     if (response.data.message === "success")
-      return response.data;
+      return response.data.data;
     else return undefined;
   });
 }
