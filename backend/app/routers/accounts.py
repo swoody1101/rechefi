@@ -103,7 +103,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 ####### 타 유저정보 받아오기 #######
 async def get_other_user(member_id, current_user: User = Depends(get_current_user)):
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
+        status_code=status.HTTP_404_NOT_FOUND,
         detail="존재하지 않는 유저입니다.",
         headers={"WWW-Authenticate": "Bearer"},
     )    
@@ -166,7 +166,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     # }
 
     # return ObjectResponse(data=data)
-    return {"message": "success", "access_token": access_token, "token_type": "bearer", "email": user.email, "nickname": user.nickname}
+    return {"message": "success", "access_token": access_token, "token_type": "bearer", "email": user.email, "nickname": user.nickname, "is_admin": user.is_admin}
 
 
 #나중에 구현
@@ -206,7 +206,7 @@ async def get_my_page(current_user: User = Depends(get_current_user)):
     return ObjectResponse(data=data)
 
 
-@router.put("/", description="마이페이지 수정", response_model=ObjectResponse)
+@router.put("/", description="마이페이지 수정", response_model=ObjectResponse, status_code=201)
 async def edit_my_page(req: MyPageForm, current_user: User = Depends(get_current_user)):
     current_user.nickname = req.nickname
     current_user.about_me = req.about_me
@@ -245,7 +245,7 @@ async def get_follow(member_id, user: User = Depends(get_other_user)):
     return ObjectResponse(data=data)
 
 
-@router.post("/follow/{member_id}", description="해당 유저를 팔로우/팔로우 취소", response_model=MessageResponse)
+@router.post("/follow/{member_id}", description="해당 유저를 팔로우/팔로우 취소", response_model=MessageResponse, status_code=201)
 async def do_follow(member_id, me: User = Depends(get_current_user), user: User = Depends(get_other_user)):
     # 본인이 아닌경우에만 팔로우/언팔로우 가능
     if me != user:
@@ -273,23 +273,24 @@ async def signup(email, token):
     redis_session.delete(token)
 
     # 우리 메인 페이지로 리다이렉트
-    return RedirectResponse("https://naver.com")
+    return RedirectResponse("http://localhost:8000/")
 
-@router.delete("/", description="회원탈퇴")
+@router.delete("/", description="회원탈퇴", response_model=CommonResponse)
 async def delete_user(current_user: User = Depends(get_current_user)):
     await current_user.delete()
-    return {"message": "success"}
+    return CommonResponse()
+
 
 # 테스트 계정 생성용/인증없는 회원가입
-@router.post("/signup", description="테스트용 회원가입")
+@router.post("/signup", description="테스트용 회원가입", response_model=CommonResponse, status_code=201)
 async def signup(req: UserSignupForm):
     user = await User.get_or_none(email=req.email)
     if user:
-        return "사용중인 이메일입니다."
+        return JSONResponse(status_code=400, content=CommonFailedResponse(detail="사용중인 이메일입니다.").dict())
     req.password = get_password_hash(req.password)
     await User.create(**req.dict())
     # if not req.email.isalpha()
-    return {"message": "success"}
+    return CommonResponse()
 
 ####################################
 ####################################
