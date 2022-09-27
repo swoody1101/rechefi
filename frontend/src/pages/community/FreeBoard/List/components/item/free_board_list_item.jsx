@@ -25,12 +25,13 @@ function FreeBoardListItem({
     >
       <FreeBoardListItemTitle
         postTitle={post.title}
-        nComment={post.comment_count}
+        nComment={post.comments_count}
         isNotice={isNotice}
       />
       <FreeBoardListItemBottomInfo
         postDate={post.date}
-        postWriter={post.member_nickname}
+        postWriter={post.nickname}
+        postViews={post.views}
       />
     </ListItemButton>
   );
