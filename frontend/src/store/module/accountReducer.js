@@ -13,11 +13,12 @@ const initialState = {
 
   // user data
   loginToken: getToken(),
+  user_id: "",
   email: "",
   nickname: "",
   introduce: "",
   img_url: "",
-  data: "",
+  admin: "",
 };
 
 export const signupThunk = createAsyncThunk(
@@ -60,15 +61,24 @@ export const loginThunk = createAsyncThunk(
   }
 );
 
-export const loadProfileThunk = createAsyncThunk(
-  "auth/loadProfileThunk",
+export const loadMyProfileThunk = createAsyncThunk(
+  "auth/loadMyProfileThunk",
   async () => {
     try {
       const response = await http.get("/members");
-      console.log(response.data);
       return response.data;
     } catch (error) {
-      console.error(error);
+      return error.response;
+    }
+  }
+);
+export const loadProfileThunk = createAsyncThunk(
+  "auth/loadProfileThunk",
+  async (email) => {
+    try {
+      const response = await http.get(`/members/${email}`);
+      return response.data;
+    } catch (error) {
       return error.response;
     }
   }
@@ -79,10 +89,8 @@ export const checkNicknameThunk = createAsyncThunk(
   async (nickname) => {
     try {
       const response = await http.get(`/members/validation/2/${nickname}`);
-      console.log(response.data);
       return response.data;
     } catch (error) {
-      console.error(error);
       return error.response;
     }
   }
@@ -93,10 +101,8 @@ export const porfileModifyThunk = createAsyncThunk(
   async (profileInfo) => {
     try {
       const response = await http.put("/members", profileInfo);
-      console.log(response.data);
       return response.data;
     } catch (error) {
-      console.error(error);
       return error.response;
     }
   }
@@ -108,6 +114,9 @@ export const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.email = "";
+      state.nickname = "";
+      state.introduce = "";
+      state.img_url = "";
       state.auth = false;
       state.loading = false;
       state.error = null;
@@ -126,28 +135,23 @@ export const authSlice = createSlice({
       if (payload.data.access_token) {
         state.auth = true;
 
-        console.log("fulfilled: " + state.auth);
         // data recieved
         state.loginToken = payload.data.access_token;
+        state.user_id = payload.data.user_id;
         state.email = payload.data.email;
         state.nickname = payload.data.nickname;
+        state.admin = payload.data.is_admin;
 
         // save in local storage
         saveToken(state.loginToken);
       }
     },
     [loginThunk.rejected]: (state, { payload }) => {
-      console.log("rejected");
       // error
       state.loading = false;
       state.error = payload.data;
     },
-    [loadProfileThunk.pending]: (state) => {
-      // loading
-      state.loading = true;
-      state.error = null;
-    },
-    [loadProfileThunk.fulfilled]: (state, { payload }) => {
+    [loadMyProfileThunk.fulfilled]: (state, { payload }) => {
       // loading
       state.loading = false;
       state.auth = true;
