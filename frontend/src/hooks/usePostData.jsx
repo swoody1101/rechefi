@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
+import { Warn } from "../common/components/sweatAlert";
 import http from "../utils/http-commons";
 
 export default function usePostData(queryKey) {
@@ -11,6 +12,15 @@ export default function usePostData(queryKey) {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries(queryKey);
+      },
+      onError: (error) => {
+        if (error.response.status === 401) {
+          Warn("로그인이 필요합니다");
+        } else {
+          Warn(
+            `${error.code}\n 서버와 통신중 문제가 발생하였습니다`
+          );
+        }
       },
     }
   );
