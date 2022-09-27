@@ -48,8 +48,8 @@ class CurrentUser(BaseModel):
     is_active: bool
     is_admin: bool
 
-class Mypage(CurrentUser):
     # follower: 나를 팔로우한 사람 수, following: 내가 팔로우 하고있는 사람 수
     follower: int
     following: int
+
 

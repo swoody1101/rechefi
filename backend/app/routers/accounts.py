@@ -1,9 +1,10 @@
 from fastapi import APIRouter, BackgroundTasks
+from starlette.responses import JSONResponse
 
 # from app.enums.accounts import COLOR, UserRegion
 from app.models.accounts import User
-from app.schemas.accounts import UserSignupForm, CurrentUser, MyPageForm, Mypage
-from app.schemas.common import CommonResponse
+from app.schemas.accounts import UserSignupForm, CurrentUser, MyPageForm
+from app.schemas.common import *
 
 # 로그인
 from fastapi import Depends, HTTPException, Response, status
@@ -59,7 +60,6 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     return encoded_jwt
 
 
-
 ####### 비밀번호 해싱 #######
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -86,7 +86,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="권한이 없습니다.",
         headers={"WWW-Authenticate": "Bearer"},
-    )
+        )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
@@ -103,7 +103,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 ####### 타 유저정보 받아오기 #######
 async def get_other_user(member_id, current_user: User = Depends(get_current_user)):
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
+        status_code=status.HTTP_404_NOT_FOUND,
         detail="존재하지 않는 유저입니다.",
         headers={"WWW-Authenticate": "Bearer"},
     )    
@@ -116,36 +116,34 @@ async def get_other_user(member_id, current_user: User = Depends(get_current_use
 ##################여기서부터 API입니다#################################
 ##################여기서부터 API입니다#################################
 
-@router.get("/new-password/{email}", description="새로운 비밀번호 발급")
+@router.get("/new-password/{email}", description="새로운 비밀번호 발급", response_model=MessageResponse)
 async def create_new_password(background_tasks: BackgroundTasks, email, new_password: str = Depends(create_random)):
     user = await User.get_or_none(email=email)
     if user is None:
-        return "가입되지 않은 이메일입니다."
+        return JSONResponse(status_code=404, content=CommonFailedResponse(detail="가입되지 않은 이메일입니다.").dict())
     user.password = get_password_hash(new_password)
     await user.save()
     await password_mail(background_tasks, email=email, password=new_password)
 
-    return f'{email}로 임시 비밀번호가 발송되었습니다.'
+    return MessageResponse(detail=f'{email}로 임시 비밀번호가 발송되었습니다.')
+
 
 @router.post("/", description="인증 메일 발송") 
 async def email_authentication(background_tasks: BackgroundTasks, req: UserSignupForm, signup_token: str = Depends(create_random)):
     # 아이디 중복체크
     user = await User.get_or_none(email=req.email)
     if user:
-        return "사용중인 이메일입니다."
+        return JSONResponse(status_code=401, content=CommonFailedResponse(detail="사용중인 이메일입니다.").dict())
     # 이메일로 인증링크 발송
     send = await signup_mail(background_tasks, email=req.email, token=signup_token)
     if send is False:
-        return "이메일 형식이 올바르지 않습니다."
-    
+        return JSONResponse(status_code=400, content=CommonFailedResponse(detail="이메일 형식이 올바르지 않습니다.").dict())
     # redis에 임시로 정보 저장
     tmp_db = req.dict()
     redis_session.rpush(signup_token, tmp_db['email'], tmp_db['password'], tmp_db['nickname'])
     # 인증토큰의 유효시간 5분으로 설정
     redis_session.expire(signup_token, 300)
-
-    return f'{req.email}로 인증 메일이 발송되었습니다.'
-
+    return MessageResponse(detail=f'{req.email}로 인증 메일이 발송되었습니다.')
 
 
 @router.post("/login/1", description="로그인")
@@ -153,37 +151,44 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     ### 아이디 비밀번호 확인 ###
     user = await authenticate_user(form_data)
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="이메일 혹은 비밀번호 틀림",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        return JSONResponse(status_code=404, content=CommonFailedResponse(detail="이메일 또는 비밀번호가 올바르지 않습니다.").dict())
 
     ### 토큰 발행 ###
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer", "email": user.email, "nickname": user.nickname}
+    # data = {
+    #     "access_token": access_token,
+    #     "token_type": "bearer",
+    #     "email": user.email,
+    #     "nickname": user.nickname
+    # }
+
+    # return ObjectResponse(data=data)
+    return {"message": "success", "access_token": access_token, "token_type": "bearer", "user_id": user.id, "email": user.email, "nickname": user.nickname, "is_admin": user.is_admin}
+
 
 #나중에 구현
 @router.post("/login/2", description="소셜로그인") 
 async def social_login(): 
     pass
 
-@router.get("/validation/1/{email}", description="아이디 중복체크")
-async def email_check(email, response: Response):
+
+@router.get("/validation/1/{email}", description="아이디 중복체크", response_model=DuplicateResponse)
+async def email_check(email):
     user = await User.get_or_none(email=email)
     if user is None:
-        response.status_code = status.HTTP_200_OK
-        return {"duplicate": False}
+        return DuplicateResponse(duplicate=False)
+    return DuplicateResponse()
 
-@router.get("/validation/2/{nickname}", description="닉네임 중복체크")
-async def nickname_check(nickname, response: Response):
+
+@router.get("/validation/2/{nickname}", description="닉네임 중복체크", response_model=DuplicateResponse)
+async def nickname_check(nickname):
     user = await User.get_or_none(nickname=nickname)
     if user is None:
-        response.status_code = status.HTTP_200_OK
-        return {"duplicate": False }
+        return DuplicateResponse(duplicate=False)
+    return DuplicateResponse()
 
 
 @router.get("/logout", description="로그아웃") 
@@ -192,40 +197,39 @@ def logout():
     pass
 
 
-
-
-
-@router.get("/", description="마이페이지 조회")
+@router.get("/", description="마이페이지 조회", response_model=ObjectResponse)
 async def get_my_page(current_user: User = Depends(get_current_user)):
     # follower: 나를 팔로우한 사람 수, following: 내가 팔로우하고있는 사람 수
     follower = await current_user.followers.all().count()
     following = await current_user.following.all().count()
-    response = Mypage(follower=follower, following=following, **dict(current_user))
-    return response
+    data = CurrentUser(**dict(current_user), follower=follower, following=following)
+    return ObjectResponse(data=data)
 
 
-
-@router.put("/", description="마이페이지 수정", response_model=CurrentUser)
+@router.put("/", description="마이페이지 수정", response_model=ObjectResponse, status_code=201)
 async def edit_my_page(req: MyPageForm, current_user: User = Depends(get_current_user)):
     current_user.nickname = req.nickname
     current_user.about_me = req.about_me
     current_user.img_url = req.img_url
     if req.password:
         current_user.password = get_password_hash(req.password)
-        
-
     await current_user.save()
-    return current_user
 
-@router.get("/{member_id}", description="다른사람 페이지 조회")
-async def get_other_page(member_id, other_user: User = Depends(get_other_user)):
+    follower = await current_user.followers.all().count()
+    following = await current_user.following.all().count()
+    data = CurrentUser(**dict(current_user), follower=follower, following=following)
+    return ObjectResponse(data=data)
+
+
+@router.get("/{member_id}", description="다른사람 페이지 조회", response_model=ObjectResponse)
+async def get_other_page(other_user: User = Depends(get_other_user)):
     follower = await other_user.followers.all().count()
     following = await other_user.following.all().count()
-    response = Mypage(follower=follower, following=following, **dict(other_user))
-    return response
+    data = CurrentUser(**dict(other_user), follower=follower, following=following)
+    return ObjectResponse(data=data)
 
 
-@router.get("/follow/{member_id}", description="해당 유저의 팔로워/팔로우 조회")
+@router.get("/follow/{member_id}", description="해당 유저의 팔로워/팔로우 조회", response_model=ObjectResponse)
 async def get_follow(member_id, user: User = Depends(get_other_user)):
     # follower: 나를 팔로우한 사람, following: 내가 팔로우 하고있는 사람
     follower = await user.followers
@@ -233,26 +237,30 @@ async def get_follow(member_id, user: User = Depends(get_other_user)):
 
     following = await user.following
     following = list(map(lambda follows: follows.email, following))
+    data = {
+        "follower": follower, 
+        "following": following
+    }
 
-    return {"follower": follower, "following": following}
+    return ObjectResponse(data=data)
 
 
-@router.post("/follow/{member_id}", description="해당 유저를 팔로우/팔로우 취소")
+@router.post("/follow/{member_id}", description="해당 유저를 팔로우/팔로우 취소", response_model=MessageResponse, status_code=201)
 async def do_follow(member_id, me: User = Depends(get_current_user), user: User = Depends(get_other_user)):
     # 본인이 아닌경우에만 팔로우/언팔로우 가능
     if me != user:
         if await me.following.filter(pk=user.pk).exists():
             await me.following.remove(user)
-            return 'unfollow'
+            return MessageResponse(detail=f'{member_id}를 팔로우 취소 하였습니다.')
         await me.following.add(user)
-        return 'follow'
-    return '본인은 팔로우 할 수 없음'
+        return MessageResponse(detail=f'{member_id}를 팔로우 하였습니다.')
+    return JSONResponse(status_code=404, content=CommonFailedResponse(detail="자신은 팔로우 할 수 없습니다.").dict())
 
 @router.get("/{email}/{token}", description="인증 확인 후 회원가입")
 async def signup(email, token):
     tmp_email = redis_session.lindex(token, 0)
     if tmp_email is None or tmp_email != email:
-        return '잘못된 인증입니다.'
+        return JSONResponse(status_code=404, content=CommonFailedResponse(detail="잘못된 인증입니다.").dict())
 
     # redis로부터 임시데이터 받아옴
     tmp_password = redis_session.lindex(token, 1)
@@ -265,23 +273,24 @@ async def signup(email, token):
     redis_session.delete(token)
 
     # 우리 메인 페이지로 리다이렉트
-    return RedirectResponse("https://naver.com")
+    return RedirectResponse("http://localhost:8000/")
 
-@router.delete("/", description="회원탈퇴")
+@router.delete("/", description="회원탈퇴", response_model=CommonResponse)
 async def delete_user(current_user: User = Depends(get_current_user)):
     await current_user.delete()
-    return {"message": "success"}
+    return CommonResponse()
+
 
 # 테스트 계정 생성용/인증없는 회원가입
-@router.post("/signup", description="테스트용 회원가입")
+@router.post("/signup", description="테스트용 회원가입", response_model=CommonResponse, status_code=201)
 async def signup(req: UserSignupForm):
     user = await User.get_or_none(email=req.email)
     if user:
-        return "사용중인 이메일입니다."
+        return JSONResponse(status_code=400, content=CommonFailedResponse(detail="사용중인 이메일입니다.").dict())
     req.password = get_password_hash(req.password)
     await User.create(**req.dict())
     # if not req.email.isalpha()
-    return {"message": "success"}
+    return CommonResponse()
 
 ####################################
 ####################################
