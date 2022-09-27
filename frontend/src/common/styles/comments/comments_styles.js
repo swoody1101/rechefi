@@ -9,6 +9,7 @@ export const CommentWraper = styled.div`
   align-items: center;
   flex-direction: column;
   margin-bottom: ${(props) => (props.aiButton ? "7vh" : "2vh")};
+  height: 100%;
 `;
 
 export const CommentElementWraper = styled(RecipeDetailIngredientsWrapper)`
@@ -29,9 +30,13 @@ export const RecommentElementWrapper = styled(RecipeDetailIngredientsWrapper)`
 export const CommentElementBox = styled.div`
   width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
+`;
+
+export const CommentElementInputBox = styled(CommentElementBox)`
+  margin-top: auto;
+  bottom: 2%;
 `;
 
 export const CommentElementNameDiv = styled.div`
@@ -64,7 +69,7 @@ export const CommentContentInputWrapper = styled.div`
 `;
 
 export const CommentInput = styled.input`
-  width: 75%;
+  width: 65%;
   margin-right: auto;
   border-top: none;
   border-left: none;
@@ -80,6 +85,7 @@ export const CommentButton = styled.button`
   padding: 2%;
   text-align: center;
   font-weight: bolder;
+  margin-left: auto;
   :active {
   }
   cursor: pointer;

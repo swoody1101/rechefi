@@ -16,7 +16,6 @@ const RecipeDetailContent = ({ content }) => {
             </RecipeDetailContentElementDiv>
           ) : (
             <RecipeDetailContentElementDiv>
-              {console.log(e)}
               <RecipeDetailContentImage src={e} alt="이미지" />
             </RecipeDetailContentElementDiv>
           )}

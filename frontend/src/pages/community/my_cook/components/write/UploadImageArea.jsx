@@ -8,18 +8,16 @@ import {
   UploadImageImg,
 } from "../../styles/write/write_page_styles";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import InputImage from "../../../../../common/components/input_image";
 
 const UploadImageArea = ({ uploadHandler }) => {
   const [imageFile, setImageFile] = useState("");
   const imgInput = useRef(null);
-  const onImgChange = () => {
-    //   console.log();
-    // const temp = imgInput.current.files[0].name;
-    const temp =
-      "https://cdn.discordapp.com/attachments/433506654009425921/1021417880207753237/unknown.png";
+  const onImgChange = (res) => {
+    console.log(res);
+    const temp = res;
     uploadHandler(temp);
     setImageFile(temp);
-    // console.log(e.target.files[0]);
   };
   const onImgInputBtnClick = (e) => {
     e.preventDefault();
@@ -38,14 +36,7 @@ const UploadImageArea = ({ uploadHandler }) => {
           <UploadImageImg src={imageFile} alt="test" />
         )}
       </ImageArea>
-      <input
-        style={{ display: "none" }}
-        ref={imgInput}
-        type="file"
-        accept="image/*"
-        name="imageFile"
-        onChange={onImgChange}
-      />
+      <InputImage setRef={imgInput} onInput={onImgChange} />
     </ImageUploadArea>
   );
 };

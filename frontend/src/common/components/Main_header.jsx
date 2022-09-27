@@ -11,7 +11,7 @@ import { SideBarOpenButton } from "../styles/sidebar_styles";
 import { useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 
@@ -19,13 +19,18 @@ const Header = ({ sidebarHandler }) => {
   const [openSearch, setOpenSearch] = useState(false);
   const [isMain, setIsMain] = useState(false);
   const matches = useMediaQuery("(min-width:768px)");
+  const navigate = useNavigate();
   const openSidebarHandler = () => {
     sidebarHandler();
   };
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname !== "/") {
+    if (
+      location.pathname !== "/" &&
+      location.pathname !== "/community/my-cook" &&
+      location.pathname !== "/community/write"
+    ) {
       setIsMain(true);
       setOpenSearch(false);
     } else {
@@ -55,14 +60,29 @@ const Header = ({ sidebarHandler }) => {
               <SearchIcon sx={{ fontSize: 40 }} />
             </LayoutSearchWrapper>
           ) : (
-            <LayoutSearchWrapper onClick={openSearchBar}>
-              <LayoutHeaderLogo>B303</LayoutHeaderLogo>
-              <SearchIcon sx={{ fontSize: 40 }}></SearchIcon>
+            <LayoutSearchWrapper>
+              <LayoutHeaderLogo
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                B303
+              </LayoutHeaderLogo>
+              <SearchIcon
+                sx={{ fontSize: 40 }}
+                onClick={openSearchBar}
+              ></SearchIcon>
             </LayoutSearchWrapper>
           )}
         </LayoutSearchParent>
       ) : (
-        <LayoutHeaderLogo>B303</LayoutHeaderLogo>
+        <LayoutHeaderLogo
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          B303
+        </LayoutHeaderLogo>
       )}
     </LayoutStyledHeader>
   );
