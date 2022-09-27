@@ -60,6 +60,11 @@ function FreeBoardPage() {
               key={item.id}
               post={item}
               isLast={data.length - 1 === index}
+              onClick={() =>
+                navigate(
+                  `/community/free-board/detail/${item.id}`
+                )
+              }
             />
           ))
         )}
