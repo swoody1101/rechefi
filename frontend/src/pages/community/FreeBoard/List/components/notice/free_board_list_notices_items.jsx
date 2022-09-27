@@ -1,5 +1,5 @@
 import React from "react";
-import FreeBoardListItem from "./item/free_board_list_item";
+import FreeBoardListItem from "../item/free_board_list_item";
 
 function FreeBoardListNoticeItems() {
   const data = [
