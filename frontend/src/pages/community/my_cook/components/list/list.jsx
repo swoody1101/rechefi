@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import {
+  MyCookDetailListLoadingWrapper,
   MyCookGridButton,
   MyCookGridImage,
   MyCookGridLi,
@@ -12,6 +13,7 @@ import { useInView } from "react-intersection-observer";
 import { MyCookDetail } from "../detail/my_cook_detail_page";
 import { Backdrop } from "../../../../../common/styles/sidebar_styles";
 import useFetchList from "../../../../../hooks/useFetch";
+import RecipeListLoadingSpinner from "../../../../Recipe/List/components/recipe_list_loading_spinner";
 
 const MyCookList = () => {
   const { data, isLoading, fetchNextPage, hasNextPage } = useFetchList({
@@ -28,12 +30,22 @@ const MyCookList = () => {
       fetchNextPage();
     }
   }, [hasNextPage, inView, fetchNextPage]);
-  if (isLoading) return <div>로딩중</div>;
+
+  const modalClose = () => {
+    setOpenDetail(false);
+  };
+
+  if (isLoading)
+    return (
+      <MyCookDetailListLoadingWrapper>
+        <RecipeListLoadingSpinner loading={isLoading} />
+      </MyCookDetailListLoadingWrapper>
+    );
   return (
     <MyCookGridWrapper>
       {openDetail && (
         <div>
-          <MyCookDetail postId={postId} />
+          <MyCookDetail postId={postId} modalClose={modalClose} />
           <Backdrop
             onClick={() => {
               setOpenDetail(false);
@@ -53,7 +65,7 @@ const MyCookList = () => {
                     setOpenDetail((prev) => {
                       return !prev;
                     });
-                    setPostId(page.result.data[e].id);
+                    setPostId(page.result.data.posts[e].id);
                   }}
                 ></MyCookGridImage>
               </MyCookGridLi>

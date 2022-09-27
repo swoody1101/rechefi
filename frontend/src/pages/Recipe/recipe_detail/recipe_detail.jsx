@@ -23,6 +23,10 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import { useLike } from "../../../hooks/useLike";
+import { MyCookDetailListLoadingWrapper } from "../../community/my_cook/styles/list/list_style";
+import RecipeListLoadingSpinner from "../List/components/recipe_list_loading_spinner";
+import AiArea from "./ai_area";
+import { Backdrop } from "../../../common/styles/sidebar_styles";
 
 const RecipeDetail = () => {
   const [aiButton, setAiButton] = useState(false);
@@ -62,12 +66,21 @@ const RecipeDetail = () => {
   }, [data, userInfo]);
 
   if (isLoading) {
-    return <div>로딩중</div>;
+    return (
+      <MyCookDetailListLoadingWrapper>
+        <RecipeListLoadingSpinner loading={isLoading} />
+      </MyCookDetailListLoadingWrapper>
+    );
   }
   return (
     <RecipteDetailWrapperDiv>
       <RecipeDetailAllContentWrapper>
-        {aiButton ? <RecipeDeatilAIvoiceControll /> : null}
+        {aiButton ? (
+          <div>
+            <AiArea content={data.data.recipe.content} toggleAI={toggleAI} />
+            <Backdrop onClick={toggleAI} />
+          </div>
+        ) : null}
         <RecipeDetailTitleWrapperDiv>
           <RecipedetailTitleArea
             post={{
@@ -110,15 +123,13 @@ const RecipeDetail = () => {
             </RecipeDetailLikeCount>
           </RecipeDetailLikeBorderDiv>
         </RecipeDetailLikeWrppaerDiv>
-        {userInfo.auth ? (
-          <RecipeDetailIngredinetsContentDiv>
-            <Comments
-              uri={"/recipe/comment/"}
-              aiButton={aiButton}
-              queryKey="recipeComments"
-            />
-          </RecipeDetailIngredinetsContentDiv>
-        ) : null}
+        <RecipeDetailIngredinetsContentDiv>
+          <Comments
+            uri={"/recipe/comment/"}
+            aiButton={aiButton}
+            queryKey="recipeComments"
+          />
+        </RecipeDetailIngredinetsContentDiv>
       </RecipeDetailAllContentWrapper>
     </RecipteDetailWrapperDiv>
   );

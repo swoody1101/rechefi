@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useFetchComments } from "../../../hooks/useFetch";
 import { useParams } from "react-router-dom";
-import { useAddComment } from "../../../hooks/useAddComments";
+import { useAddComment } from "../../../hooks/comments/useAddComments";
 import CommentElement from "./comment_element";
 import {
   CommentButton,
@@ -9,11 +9,13 @@ import {
   CommentCreateAtDiv,
   CommentCreateWrapperDiv,
   CommentElementBox,
+  CommentElementInputBox,
   CommentElementNameDiv,
   CommentInput,
   CommentWraper,
   RecommentElementWrapper,
 } from "../../styles/comments/comments_styles";
+import { useSelector } from "react-redux/es/exports";
 
 const Comments = ({ aiButton, postId, uri, queryKey }) => {
   const handle = useParams();
@@ -24,6 +26,7 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
     uri,
   });
   const { mutate } = useAddComment(handle.detail, queryKey);
+  const auth = useSelector((store) => store.account.auth);
   const reCommentPush = (reComment) => {
     let commentList = data;
     const lastIndex = commentList.filter((e) => {
@@ -104,12 +107,14 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
           )}
         </CommentElementBox>
       ))}
-      <CommentElementBox>
-        <CommentContentInputWrapper>
-          <CommentInput ref={commentContentRef} />
-          <CommentButton onClick={commentPush}>댓글 달기</CommentButton>
-        </CommentContentInputWrapper>
-      </CommentElementBox>
+      {auth && (
+        <CommentElementInputBox>
+          <CommentContentInputWrapper>
+            <CommentInput ref={commentContentRef} />
+            <CommentButton onClick={commentPush}>댓글 달기</CommentButton>
+          </CommentContentInputWrapper>
+        </CommentElementInputBox>
+      )}
     </CommentWraper>
   );
 };

@@ -42,7 +42,9 @@ export const MyCookDetailWrapper = styled.div`
   transform: translate(-50%, -50%);
   top: 50%;
   width: 85%;
-  height: 85vh;
+  /* height: 85vh; */
+  height: max-content;
+  max-height: 85vh;
   background-color: ${Palette.mainColor3};
   border-radius: 14px;
   overflow-y: scroll;
@@ -71,4 +73,12 @@ export const MyCookDetailContentWithCommentWrapper = styled.div`
   margin-top: 1%;
 
   width: 100%;
+`;
+
+export const MyCookDetailListLoadingWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 `;
