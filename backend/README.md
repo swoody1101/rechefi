@@ -6,11 +6,15 @@
   * [1-3. DB 연결](#1-3-db-)
   * [1-4. 마이그레이션](#1-4-)
   * [1-5. 서버 실행](#1-5--)
-* [docker](#docker)
-* [프론트](#)
-* [backend](#backend)
-* [도커 내부 백엔드 서버 액세스 및 에러 로그 파일 사본 가져오기](#----------)
-* [migration](#migration)
+* [2. 도커라이징](#2-)
+  * [2-1. 이미지 생성](#2-1--)
+  * [2-2. 도커 컨테이너 생성 및 실행](#2-2-----)
+  * [2-3. 도커 이미지 허브에 올리기](#2-3----)
+  * [2-4. 도커 이미지 허브에서 받아오기.](#2-4----)
+* [3. 도커 사용 시 명령어](#3----)
+  * [3-1. 이미지, 컨테이너 관련 명령어](#3-1----)
+  * [3-2. 도커로 실행중인 서버 관리하기](#3-2----)
+* [4. EC2 접속하기](#4-ec2-)
 <!-- TOC -->
 
 # 0. 백엔드 구조
@@ -61,7 +65,8 @@ pip install -r requirements.txt
 ```
 - pip 버전 업그레이드는 필수 X
 
-## 1-2. 환경변수 
+## 1-2. 환경변수
+- for backend / DB
 ```dotenv
 # Main DB(Mysql)
 DB_URL={DB URL}
@@ -142,79 +147,98 @@ uvicorn app.main:app --reload
 
 # 2. 도커라이징
 
-docker 실행
-
-.env 파일, docker파일 설정
-
-docker-compose --env-file ../.env up -d
-
+## 2-1. 이미지 생성
+- docker desktop 실행
+- .env 파일, docker파일 가져오기
+- DB
 ```commandline
-# backend 폴더 기준, 데이터베이스 이미지 및 컨테이너 생성
 docker-compose -f db-docker-compose.yaml --env-file ./.env up -d
 ```
+/backend 이미지 생성
 ```commandline
-# backend 폴더 기준, api 서버 빌드 & 실행
-# 이미지 생성
-docker build -t fastapi(임의의 이미지 이름) .
-
-# build example
-docker build -t fastapi .
-# 최종 빌드 명령어
-docker build -t hamelin92/b303:(ver) .
-
-
-# 컨테이너 생성
-docker run --env-file ./.env -d --name api(임의의 컨테이너 이름) -p 80:80(포트번호) fastapi(이미지 명)
-
-# run example
-docker run --env-file ./.env -d --name api -p 8000:8000 hamelin92/b303:0.1(뒤에 수는 버전)
-
-# ec2 환경에서 api 컨테이너 생성하기
-docker pull hamelin92/b303:(ver)
-
-docker run --add-host=host.docker.internal:host-gateway --env-file ./.env -d --name api -p 8000:8000 hamelin92/b303:(ver)
-# 리눅스에서는 docker.internal을 제대로 읽을 수 없어서 설정해줘야함.
-
-# 초기 세팅
-docker exec (api 컨테이너 id) aerich init -t app.config.TORTOISE_ORM
-docker exec (api 컨테이너 id) aerich upgrade
-gunicorn --access-logfile ./gunicorn-access.log -R app.main:app --bind 0.0.0.0:8000 --workers 4 --worker-class uvicorn.workers.UvicornWorker
+docker build -t {image 이름} .
+docker build -t hamelin92/b303:ver .
 ```
-# 프론트
-docker pull supermilktank8/b303frontend:(ver)
 
-docker run -p 3000:3000 --name frontend supermilktank8/b303frontend:(ver)
-이후 데이터 베이스 상황에 따라 마이그레이션 명령어들을 이용하여 DB 테이블 생성하면 완료. 
-이미 데이터베이스를 켜두고 테이블을 만들어두었으면 그대로 OK.
+## 2-2. 도커 컨테이너 생성 및 실행
 
-DB 켜고 끄기 (켜기 up )
-docker-compose -f db-docker-compose.yaml --env-file ./.env up -d
+fastapi 이미지 기반 컨테이너 생성 및 실행
+```commandline
+docker run --env-file ./.env -d --name api -p 8000:8000 hamelin92/b303:ver
+```
+- -p : 포트 넘버 지정, --env-file : 환경변수 파일 지정, -d : 백그라운드에서 실행
+- 위 명령어에서 api => 컨테이너 이름(임의로 지정) 
+- hamelin92/b303:ver => 이미지 이름
+- 받아오거나 빌드한 이미지의 이름대로, : 뒤에 붙는 건 태그
 
+## 2-3. 도커 이미지 허브에 올리기
+- 먼저 로그인
+```commandline
+docker login
+```
+- 터미널에서 로그인 작업 ( 또는 gui로 작업 실행 )
+- 이후 도커 허브에 푸시하기.
+```commandline
+docker push hamelin92/b303:ver
+```
 
-# backend
+## 2-4. 도커 이미지 허브에서 받아오기.
+- 터미널에 다음 명령어 입력
+```commandline
+docker pull supermilktank8/b303frontend:ver
+docker pull  hamelin92/b303:ver
+```
+이후 각 이미지에 맞게 컨테이너 생성 및 실행하기 ( docker run )
 
-python -m venv venv
+# 3. 도커 사용 시 명령어
+## 3-1. 이미지, 컨테이너 관련 명령어
+- docker build -t [image_name] [도커파일_위치] : 이미지 빌드
+- docker run [options] [image_name] : 컨테이너 생성 및 실행
+- docker-compose [options] up/down : docker-compose.yaml 기반으로 이미지 생성 및 컨테이너 생성.
+- docker start [container_id] : 컨테이너 실행
+- docker stop [container_id] : 컨테이너 중지
+- docker ps -a : 모든 컨테이너 확인
+- docker images -a : 모든 이미지 확인
+- -a : 모든
+- docker rm [option] [container_id] : 해당 컨테이너 삭제
+- docker rmi [option] [image_id] : 해당 이미지 삭제
+- [option] / --force : 강제실행 
+- docker exec [container_id] [명령어] : 해당 컨테이너 내에서 명령어 실행
+- docker cp -a [container_name]:[path]/대상 ./ : 해당 컨테이너 안의 파일을 현재 로컬 경로에 복사하기.
 
-source venv/Scripts/activate
--> 가상환경 설정
+## 3-2. 도커로 실행중인 서버 관리하기
 
-pip install -r requirements.txt
--> 가상환경에 패키지 설치
-
-uvicorn app.main:app --reload
--> 서버 실행
-
-# 도커 내부 백엔드 서버 액세스 및 에러 로그 파일 사본 가져오기
-
+- 서버 액세스, 에러 로그 파일 현재 로컬 경로로 가져오기
+```commandline
 docker cp -a api:backend/errors.log ./
 docker cp -a api:backend/gunicorn-access.log ./
+```
+- DB 마이그레이션 관련 세팅
+- 마이그레이션(aerich migrate) 과정은 개발 과정에서 시행.
+```commandline
+docker exec my_container_id aerich init -t app.config.TORTOISE_ORM
+docker exec my_container_id aerich upgrade
+```
+- 이미지 받기
+```commandline
+docker pull supermilktank8/b303frontend:ver
+docker pull  hamelin92/b303:ver
+```
+- 컨테이너 생성
+- 작업 시 미리 이전 컨테이너 삭제 해놓기.
+```commandline
+docker run -p 3000:3000 --name frontend supermilktank8/b303frontend:(ver)
+docker run --env-file ./.env -d --name api -p 8000:8000 hamelin92/b303:ver
+```
 
-# migration
-
-aerich migrate (백엔드 개발 전용)
--> 최신 models 기준으로 sql문 생성 ( 각 테이블의 참조 대상이 상위에 있도록 수정 필요)
-
-aerich init -t app.config.TORTOISE_ORM
--> 스키마 생성.
-aerich upgrade
--> 최신 models 기준으로 만들어진 sql문을 db에 반영
+# 4. EC2 접속하기
+- MobaXterm을 사용하면 편리하다.
+- EC2 인스턴스가 존재하는 경우, 혹은 ssh 서버가 켜져있는 경우
+- 좌측 상단 툴바의 Session 클릭
+- Basic SSH settings의 [Remote host]에 호스트 주소 입력
+- 호스트 주소는 (팀고유코드).p.ss**y.io, 또는 ip 주소 등
+- Specify username은 우분투 사용시 ubuntu로 입력.
+- port 넘버는 보통 22 사용.
+- pem 키 보유시 하단의 Use private key 체크 후 해당하는 칸에 pem 파일을 등록.
+- 저장하면 개인 세션 목록에 저장되고 접속 가능하다.
+- 따로 pem 키를 입력 안하는 경우 들어갈 때마다 비밀번호 입력해준다.
