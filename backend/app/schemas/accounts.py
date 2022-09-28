@@ -49,7 +49,7 @@ class CurrentUser(BaseModel):
     is_admin: bool
 
     # follower: 나를 팔로우한 사람 수, following: 내가 팔로우 하고있는 사람 수
-    follower: int
-    following: int
+    follower: Union[int, None]
+    following: Union[int, None]
 
 
