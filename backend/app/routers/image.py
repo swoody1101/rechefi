@@ -1,12 +1,9 @@
 import boto3
 from fastapi import APIRouter, UploadFile, Depends
-from dotenv import load_dotenv
 import os, uuid
 
 from app.routers.accounts import get_current_user
 from app.config import settings
-
-load_dotenv()
 
 router = APIRouter(prefix="/image", tags=["image"])
 
@@ -38,7 +35,7 @@ def convert_size(size_bytes):
 
 
 @router.post("/", description="이미지 업로드", status_code=201)
-async def test(file: UploadFile, User = Depends(get_current_user)):
+async def upload_img(file: UploadFile, User = Depends(get_current_user)):
     # 이미지 사이즈 및 확장자 확인
     file_content = await file.read()
     await file.seek(0)
@@ -58,7 +55,7 @@ async def test(file: UploadFile, User = Depends(get_current_user)):
 
 
 @router.delete("/{img_url:path}", description="이미지 삭제", status_code=200)
-async def test(img_url: str, User = Depends(get_current_user)):
+async def delete_img(img_url: str, User = Depends(get_current_user)):
 
     # URL로부터 파일 이름 추출
     img_url = img_url.replace(f'https://{S3_BUCKET_NAME}.s3.{REGION_NAME}.amazonaws.com/','')
