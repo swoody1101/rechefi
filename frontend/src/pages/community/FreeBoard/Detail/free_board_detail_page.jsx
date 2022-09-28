@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container } from "@mui/material";
 import {
   useParams,
@@ -13,6 +13,7 @@ import FreeBoardDetailPostInfo from "./components/free_board_detail_post_info";
 import FreeBoardDetailBottombar from "./components/free_board_detail_bottombar";
 import FreeBoardDetailCommentContainer from "./components/free_board_detail_comments_container";
 import Comments from "../../../../common/components/comments/comments";
+import http from "../../../../utils/http-commons";
 
 function FreeBoardDetailPage() {
   const { postId } = useParams();
@@ -22,13 +23,31 @@ function FreeBoardDetailPage() {
   const isNotice = searchParam.get("notice") === "y";
 
   // handle server data
-  const QUERY_KEY = "FREEBOARD_DETAIL";
   const COMMENT_QUERY_KEY = "FREEBOARD_COMMENT";
+  const QUERY_KEY = `FREEBOARD_DETAIL`;
   const { isLoading, isError, data, error } = useFetch({
     queryKey: QUERY_KEY,
     param: postId,
     uri: "/community/free-board/detail",
   });
+
+  // const [data, setData] = useState(null);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [isError, setIsError] = useState(false);
+  // const [error, setError] = useState({});
+
+  // useEffect(() => {
+  //   http
+  //     .get(`/community/free-board/detail/${postId}`)
+  //     .then((response) => {
+  //       setData(response.data.data);
+  //       setIsLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       setError(error);
+  //       setIsError(true);
+  //     });
+  // }, []);
 
   return (
     <Container
