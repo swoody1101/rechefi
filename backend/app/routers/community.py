@@ -7,6 +7,7 @@ from app.routers.accounts import get_current_user
 
 from app.models.community import Article, ArticleComment, LikeArticle, Notice, Cooking, CookingComment, LikeCooking
 from app.models.accounts import User
+from app.schemas.accounts import CurrentUser
 
 from app.schemas.community import ArticleCreateForm, ArticleCommentForm, ArticleCommentList, ArticleDetail, \
     CookingCreateForm, NoticeDetail, CookingDetail
@@ -28,7 +29,7 @@ async def notice_detail(article_id: int):
     article.views += 1
     await article.save()
     data = NoticeDetail(
-        nickname=article.user.nickname,
+        user=CurrentUser(**dict(article.user)),
         **dict(article)
     )
     return ObjectResponse(data=data)
@@ -74,7 +75,7 @@ async def article_detail(article_id: int):
     article.views += 1
     await article.save()
     data = ArticleDetail(
-        nickname=article.user.nickname,
+        user=CurrentUser(**dict(article.user)),
         like_users=await article.like_users.all().values("id", "nickname"),
         **dict(article)
     )
@@ -84,7 +85,7 @@ async def article_detail(article_id: int):
 @router.get("/free-board/comment/{article_id}", description="게시물 댓글 리스트", response_model=MultipleObjectResponse)
 async def get_article_comment_list(article_id: int):
     comments = await ArticleComment.filter(article_id=article_id).select_related('user').order_by('-id')
-    data = [ArticleCommentList(**dict(comment), nickname=comment.user.nickname) for comment in comments]
+    data = [ArticleCommentList(**dict(comment), user=CurrentUser(**dict(comment.user))) for comment in comments]
     return MultipleObjectResponse(data=data)
 
 
@@ -189,7 +190,7 @@ async def cooking_detail(article_id: int):
     article.views += 1
     await article.save()
     data = CookingDetail(
-        nickname=article.user.nickname,
+        user=CurrentUser(**dict(article.user)),
         like_users=await article.like_users.all().values("id", "nickname"),
         **dict(article)
     )
@@ -199,7 +200,7 @@ async def cooking_detail(article_id: int):
 @router.get("/gallery/comment/{article_id}", description="게시물 댓글 리스트", response_model=MultipleObjectResponse)
 async def get_cooking_comment_list(article_id: int):
     comments = await CookingComment.filter(cooking_id=article_id).select_related('user').order_by('-id')
-    data = [ArticleCommentList(**dict(comment), nickname=comment.user.nickname) for comment in comments]
+    data = [ArticleCommentList(**dict(comment), user=CurrentUser(**dict(comment.user)).dict()) for comment in comments]
     return MultipleObjectResponse(data=data)
 
 
@@ -306,15 +307,10 @@ async def get_article_list(page: int, q: Union[str, None] = None, opt: Union[str
         articles = articles[:10]
     post = [
         {
-            "id": article.id,
-            "title": article.title,
-            "date": article.created_at,
-            "user_id": article.user_id,
-            "img_url": article.img_url,
-            "nickname": article.user.nickname,
-            'views': article.views,
+            **dict(article),
             "likes": len(await article.like_users.all()),
-            "comments_count": len(await ArticleComment.filter(article_id=article.id))
+            "comments_count": len(await ArticleComment.filter(article_id=article.id)),
+            "user": CurrentUser(**dict(article.user)).dict()
         }
         for article in articles
     ]
@@ -344,13 +340,8 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
 
     post = [
         {
-            "id": article.id,
-            "title": article.title,
-            "date": article.created_at,
-            "user_id": article.user_id,
-            "img_url": article.img_url,
-            "nickname": article.user.nickname,
-            'views': article.views,
+            **dict(article),
+            "user": CurrentUser(**dict(article.user))
         }
         for article in articles
     ]
@@ -380,13 +371,8 @@ async def get_cooking_list(page: int, q: Union[str, None] = None, opt: Union[str
 
     post = [
         {
-            "id": article.id,
-            "title": article.title,
-            "date": article.created_at,
-            "user_id": article.user_id,
-            "img_url": article.img_url,
-            "nickname": article.user.nickname,
-            'views': article.views,
+            **dict(article),
+            "user": CurrentUser(**dict(article.user)),
             "likes": len(await article.like_users.all()),
             "comments_count": len(await CookingComment.filter(cooking_id=article.id)),
         }

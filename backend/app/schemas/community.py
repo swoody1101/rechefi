@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field
 from typing import List
 from datetime import datetime
 
+from app.schemas.accounts import CurrentUser
+
 
 class ArticleCreateForm(BaseModel):
     title: str
@@ -21,14 +23,14 @@ class ArticleCommentList(ArticleCommentForm):
     created_at: datetime
     updated_at: datetime
     user_id: int
-    nickname: str
+    user: CurrentUser
 
 
 class NoticeDetail(ArticleCreateForm):
     user_id: int
     created_at: datetime
     updated_at: datetime
-    nickname: str
+    user: CurrentUser
     views: int
 
 
@@ -36,7 +38,7 @@ class ArticleDetail(ArticleCreateForm):
     user_id: int
     created_at: datetime
     updated_at: datetime
-    nickname: str
+    user: CurrentUser
     views: int
     like_users: List[dict] = Field(Nullable=True)
 

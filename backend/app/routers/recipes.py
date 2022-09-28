@@ -7,6 +7,7 @@ from app.routers.accounts import get_current_user
 
 from app.models.recipes import Recipe, Tag, Ingredient, RecipeComment, LikeRecipe, RecipeIngredient
 from app.models.accounts import User
+from app.schemas.accounts import CurrentUser
 
 from app.schemas.recipes import RecipeCreateForm, TagForm, IngredientForm, IngredientRecipeForm, RecipeCommentForm, \
     RecipeCommentList
@@ -73,7 +74,7 @@ async def get_stt_result(request: Request, file: UploadFile = File(...), user: U
 
 @router.get("/detail/{recipe_id}", description="레시피 상세", response_model=ObjectResponse)
 async def recipe_detail(recipe_id: int):
-    recipe = await Recipe.get_or_none(id=recipe_id)
+    recipe = await Recipe.get_or_none(id=recipe_id).select_related('user')
     if recipe is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 레시피입니다.").dict())
     else:
@@ -85,7 +86,7 @@ async def recipe_detail(recipe_id: int):
         ]
         data = {
             "recipe": recipe,
-            "nickname": (await recipe.user).nickname,
+            "user": CurrentUser(**dict(recipe.user)),
             "tags": await recipe.tags.all(),
             "ingredients": ingredients,
             "like_users": await recipe.like_users.all().values("id", "nickname"),
@@ -95,8 +96,8 @@ async def recipe_detail(recipe_id: int):
 
 @router.get("/comment/{recipe_id}", description="레시피 댓글 리스트", response_model=MultipleObjectResponse)
 async def get_comment_list(recipe_id: int):
-    comments = await RecipeComment.filter(recipe_id=recipe_id).order_by('-id')
-    data = [RecipeCommentList(**dict(comment), nickname=(await comment.user).nickname) for comment in comments]
+    comments = await RecipeComment.filter(recipe_id=recipe_id).select_related('user').order_by('-id')
+    data = [RecipeCommentList(**dict(comment), user=CurrentUser(**dict(comment.user))) for comment in comments]
     return MultipleObjectResponse(data=data)
 
 
@@ -210,13 +211,8 @@ async def get_recipe_list(page: int,
         recipes = filtered_recipes[:50]
     post = [
         {
-            "id": recipe.id,
-            "title": recipe.title,
-            "date": recipe.created_at,
-            "user_id": recipe.user_id,
-            "img_url": recipe.img_url,
-            "nickname": recipe.user.nickname,
-            'views': recipe.views,
+            **dict(recipe),
+            "user": CurrentUser(**dict(recipe.user)),
             "tags": await recipe.tags.all(),
             "ingredients": await recipe.ingredients.all(),
             "likes": len(await recipe.like_users.all()),
