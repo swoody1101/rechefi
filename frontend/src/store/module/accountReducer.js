@@ -13,11 +13,15 @@ const initialState = {
 
   // user data
   loginToken: getToken(),
+  userId: "",
   email: "",
   nickname: "",
   introduce: "",
-  img_url: "",
-  data: "",
+  follower: "",
+  following: "",
+  imgUrl: "",
+  admin: "",
+  followingList: [],
 };
 
 export const signupThunk = createAsyncThunk(
@@ -25,7 +29,7 @@ export const signupThunk = createAsyncThunk(
   async (signupInfo) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/members/signup",
+        "http://localhost:8000/members",
         signupInfo,
         { headers: { "Content-Type": `application/json` } }
       );
@@ -35,6 +39,15 @@ export const signupThunk = createAsyncThunk(
     }
   }
 );
+
+export const signoutThunk = createAsyncThunk("auth/signout", async () => {
+  try {
+    const response = await http.delete("http://localhost:8000/members");
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+});
 
 export const loginThunk = createAsyncThunk(
   "auth/login",
@@ -60,15 +73,25 @@ export const loginThunk = createAsyncThunk(
   }
 );
 
-export const loadProfileThunk = createAsyncThunk(
-  "auth/loadProfileThunk",
+export const loadMyProfileThunk = createAsyncThunk(
+  "auth/loadMyProfileThunk",
   async () => {
     try {
       const response = await http.get("/members");
-      console.log(response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
-      console.error(error);
+      return error.response;
+    }
+  }
+);
+
+export const loadProfileThunk = createAsyncThunk(
+  "auth/loadProfileThunk",
+  async (email) => {
+    try {
+      const response = await http.get(`/members/${email}`);
+      return response.data.data;
+    } catch (error) {
       return error.response;
     }
   }
@@ -79,10 +102,8 @@ export const checkNicknameThunk = createAsyncThunk(
   async (nickname) => {
     try {
       const response = await http.get(`/members/validation/2/${nickname}`);
-      console.log(response.data);
       return response.data;
     } catch (error) {
-      console.error(error);
       return error.response;
     }
   }
@@ -93,10 +114,43 @@ export const porfileModifyThunk = createAsyncThunk(
   async (profileInfo) => {
     try {
       const response = await http.put("/members", profileInfo);
-      console.log(response.data);
       return response.data;
     } catch (error) {
-      console.error(error);
+      return error.response;
+    }
+  }
+);
+
+export const loadFollowerListThunk = createAsyncThunk(
+  "auth/loadFollowerListThunk",
+  async (email) => {
+    try {
+      const response = await http.get(`/members/follower/${email}`);
+      return response.data.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+
+export const loadFollowingListThunk = createAsyncThunk(
+  "auth/loadFollowingListThunk",
+  async (email) => {
+    try {
+      const response = await http.get(`/members/following/${email}`);
+      return response.data.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+export const profileFollowThunk = createAsyncThunk(
+  "auth/profileFollowThunk",
+  async (email) => {
+    try {
+      const response = await http.post(`/members/follow/${email}`);
+      return response.data;
+    } catch (error) {
       return error.response;
     }
   }
@@ -108,6 +162,9 @@ export const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.email = "";
+      state.nickname = "";
+      state.introduce = "";
+      state.imgUrl = "";
       state.auth = false;
       state.loading = false;
       state.error = null;
@@ -126,36 +183,40 @@ export const authSlice = createSlice({
       if (payload.data.access_token) {
         state.auth = true;
 
-        console.log("fulfilled: " + state.auth);
         // data recieved
         state.loginToken = payload.data.access_token;
+        state.userId = payload.data.user_id;
         state.email = payload.data.email;
         state.nickname = payload.data.nickname;
+        state.admin = payload.data.is_admin;
 
         // save in local storage
         saveToken(state.loginToken);
       }
     },
-    [loginThunk.rejected]: (state, { payload }) => {
-      console.log("rejected");
-      // error
-      state.loading = false;
-      state.error = payload.data;
-    },
-    [loadProfileThunk.pending]: (state) => {
+    [loginThunk.pending]: (state) => {
       // loading
       state.loading = true;
       state.error = null;
     },
-    [loadProfileThunk.fulfilled]: (state, { payload }) => {
+    [loadMyProfileThunk.fulfilled]: (state, { payload }) => {
       // loading
       state.loading = false;
       state.auth = true;
 
       state.email = payload.email;
       state.nickname = payload.nickname;
-      state.img_url = payload.img_url;
+      state.imgUrl = payload.img_url;
       state.introduce = payload.about_me;
+      state.follower = payload.follower;
+      state.following = payload.following;
+    },
+    [loadFollowingListThunk.fulfilled]: (state, { payload }) => {
+      // loading
+      state.loading = false;
+      state.auth = true;
+
+      state.followingList = payload.following;
     },
   },
 });
