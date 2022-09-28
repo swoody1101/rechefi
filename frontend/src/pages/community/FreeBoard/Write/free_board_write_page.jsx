@@ -12,9 +12,9 @@ import {
 } from "../../../../common/components/sweatAlert";
 import { convertToHTML } from "draft-convert";
 import { usePost } from "../../../../hooks/useMutations";
-import { useSelector } from "react-redux";
 import FreeBoardWriteAdminCheckbox from "./components/free_board_write_admin_chkbox";
 import { EditorState } from "draft-js";
+import { useUserInfo } from "../../../../hooks/FreeBoard/useUserInfo";
 
 function FreeBoardWritePage() {
   const QUERY_KEY = "FREEBOARD_POST";
@@ -28,8 +28,7 @@ function FreeBoardWritePage() {
   );
 
   // get and handle Administrator info
-  const login_info = useSelector((store) => store.account);
-  const isAdmin = login_info.admin || false;
+  const { userId, isAdmin } = useUserInfo();
   const [checked, setChekced] = useState(false);
 
   // handle bottom bar buttons
