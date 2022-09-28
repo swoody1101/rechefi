@@ -31,7 +31,10 @@ function FreeBoardDetailUserAvartar({
         component={RouterLink}
         sx={{ pb: 0.1 }}
         // TODO : change with match implemented
-        to={`/mypage/${email}`}
+        to={`/mypage`}
+        state={{
+          user_id: email,
+        }}
       >
         {nickname}
       </Link>
