@@ -4,7 +4,7 @@ from tortoise.contrib.fastapi import register_tortoise
 from app.config import TORTOISE_ORM, settings
 from app.routers import router
 
-app = FastAPI(title="new project", version="0.51")
+app = FastAPI(title="new project", version="0.53")
 
 app.add_middleware(
     CORSMiddleware,
