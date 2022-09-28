@@ -19,7 +19,7 @@ function FreeBoardDetailPage() {
 
   // check is this notice
   const [searchParam, setSearchParam] = useSearchParams();
-  const isNotice = (searchParam.get("notice") || 1) === 1;
+  const isNotice = searchParam.get("notice") === "y";
 
   // handle server data
   const QUERY_KEY = "FREEBOARD_DETAIL";
@@ -55,7 +55,7 @@ function FreeBoardDetailPage() {
         // shown contents
         <>
           <TitleWithDivider
-            title={`${!isNotice ? "[공지]" : ""} ${
+            title={`${isNotice ? "[공지]" : ""} ${
               data.title
             }`}
             textVariant={"h5"}
@@ -83,7 +83,7 @@ function FreeBoardDetailPage() {
       {/* comments */}
       {isError ? (
         "" // if error
-      ) : !isNotice ? (
+      ) : isNotice ? (
         "" // notice dont contain comments
       ) : (
         <FreeBoardDetailCommentContainer>

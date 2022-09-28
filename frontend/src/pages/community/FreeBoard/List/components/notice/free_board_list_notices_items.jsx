@@ -39,7 +39,7 @@ function FreeBoardListNoticeItems() {
             isLast={data.length - 1 === index}
             onClick={() =>
               navigate(
-                `/community/free-board/detail/${item.id}`
+                `/community/free-board/detail/${item.id}?notice=y`
               )
             }
           />
