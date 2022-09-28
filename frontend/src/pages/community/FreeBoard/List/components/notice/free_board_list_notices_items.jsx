@@ -9,7 +9,7 @@ function FreeBoardListNoticeItems() {
   const navigate = useNavigate();
 
   // handle server data
-  const QUERY_KEY = "NOTICE_LIST";
+  const QUERY_KEY = "NOTICE";
   const { isLoading, isError, data } = useFetch({
     queryKey: QUERY_KEY,
     param: 1,
