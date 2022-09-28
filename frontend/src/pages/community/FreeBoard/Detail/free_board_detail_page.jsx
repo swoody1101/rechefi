@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container } from "@mui/material";
 import {
+  useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
@@ -14,13 +15,21 @@ import FreeBoardDetailBottombar from "./components/free_board_detail_bottombar";
 import FreeBoardDetailCommentContainer from "./components/free_board_detail_comments_container";
 import Comments from "../../../../common/components/comments/comments";
 import http from "../../../../utils/http-commons";
+import { useUserInfo } from "../../../../hooks/FreeBoard/useUserInfo";
+import { useDelete } from "../../../../hooks/useMutations";
+import {
+  Confirm,
+  Success,
+  Warn,
+} from "../../../../common/components/sweatAlert";
 
 function FreeBoardDetailPage() {
-  const { postId } = useParams();
+  const navigate = useNavigate();
 
   // check is this notice
   const [searchParam, setSearchParam] = useSearchParams();
   const isNotice = searchParam.get("notice") === "y";
+  const { postId } = useParams();
 
   // handle server data
   const COMMENT_QUERY_KEY = "FREEBOARD_COMMENT";
@@ -28,7 +37,9 @@ function FreeBoardDetailPage() {
   const { isLoading, isError, data, error } = useFetch({
     queryKey: QUERY_KEY,
     param: postId,
-    uri: "/community/free-board/detail",
+    uri: `/community/${
+      isNotice ? "notice-board" : "free-board"
+    }/detail`,
   });
 
   // const [data, setData] = useState(null);
@@ -48,6 +59,43 @@ function FreeBoardDetailPage() {
   //       setIsError(true);
   //     });
   // }, []);
+
+  // get user info from store
+  const { userId, isAdmin } = useUserInfo();
+  const writerId = data ? data.user_id : -1;
+
+  // for delete and modify authority
+  const isBoardAuth = () => {
+    if (isAdmin) return false;
+    if (userId !== writerId) return true;
+    else return false;
+  };
+
+  // delete request to server
+  const { mutate } = useDelete();
+  const deletePost = () => {
+    Confirm("정말로 글을 삭제하시겠습니까?", () => {
+      mutate(
+        {
+          uri: `/community/${
+            isNotice ? "notice-board" : "free-board"
+          }/${postId}`,
+        },
+        {
+          onSuccess: (response) => {
+            if (response.message === "success") {
+              Success("글 삭제가 완료되었습니다");
+              navigate("/community/free-board", {
+                replace: true,
+              });
+            } else {
+              Warn("글 삭제 중 문제가 발생하였습니다");
+            }
+          },
+        }
+      );
+    });
+  };
 
   return (
     <Container
@@ -94,9 +142,18 @@ function FreeBoardDetailPage() {
         </>
       )}
 
-      {/* buttons */}
+      {/* bottom buttons */}
       <FreeBoardDetailBottombar
-        writerId={data ? data.user_id : -1}
+        onListClick={() => {
+          navigate("/community/free-board");
+        }}
+        onModifyClick={() => {
+          navigate(
+            `/community/free-board/write?modify=${postId}`
+          );
+        }}
+        onDeleteClick={deletePost}
+        disabledCondition={isBoardAuth}
       />
 
       {/* comments */}
