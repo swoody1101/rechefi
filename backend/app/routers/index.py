@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Response, status, Header, Depends
+from starlette.responses import JSONResponse
 from tortoise.expressions import Subquery, F
+from httpx import AsyncClient
 
 from app.models.recipes import Recipe, LikeRecipe
+from app.schemas.accounts import CurrentUser
 
 from app.schemas.recipes import RecipeList
 from app.schemas.common import *
@@ -20,7 +23,7 @@ async def get_monthly_recipe():
         created_at__gte=datetime(now.year, now.month, 1, tzinfo=timezone('Asia/Seoul'))
     ).select_related('user')
     data = [RecipeList(
-        nickname=recipe.user.nickname,
+        user=CurrentUser(**dict(recipe.user)),
         likes=await recipe.like_users.all().count(),
         tags=await recipe.tags,
         comment_count=len(await recipe.comments),
@@ -35,7 +38,7 @@ async def get_monthly_recipe():
 async def get_best_recipe():
     recipes = await Recipe.all().select_related('user')
     data = [RecipeList(
-        nickname=recipe.user.nickname,
+        user=CurrentUser(**dict(recipe.user)),
         likes=await recipe.like_users.all().count(),
         tags=await recipe.tags,
         comment_count=len(await recipe.comments),
