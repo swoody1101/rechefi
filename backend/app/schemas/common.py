@@ -1,13 +1,20 @@
 from pydantic import BaseModel, Field
 
-
 class CommonResponse(BaseModel):
     message: str = "success"
+
+
+class MessageResponse(CommonResponse):
+    detail: str
 
 
 class CommonFailedResponse(BaseModel):
     message: str = "failed"
     detail: str
+
+
+class DuplicateResponse(BaseModel):
+    duplicate: bool = True
 
 
 class LoginResponse(CommonResponse):
