@@ -237,20 +237,17 @@ async def get_follower(member_id, user: User = Depends(get_other_user)):
     data = {
         "follower": follower, 
     }
-
     return ObjectResponse(data=data)
 
 
 @router.get("/following/{member_id}", description="해당 유저의 팔로잉 조회", response_model=ObjectResponse)
 async def get_following(member_id, user: User = Depends(get_other_user)):
     # follower: 나를 팔로우한 사람, following: 내가 팔로우 하고있는 사람
-
     following = await user.following
     following = list(map(lambda follows: follows.email, following))
     data = {
         "following": following
     }
-
     return ObjectResponse(data=data)
 
 
