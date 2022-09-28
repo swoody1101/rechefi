@@ -98,6 +98,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     user = await User.get_or_none(email=token_data.email)
     if user is None:
         raise credentials_exception
+    if redis_session.get(token) is None:
+        pass
     return user
 
 ####### 타 유저정보 받아오기 #######
