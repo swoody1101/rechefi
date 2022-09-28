@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import {
   MyCookDetailContent,
   MyCookDetailContentWithCommentWrapper,
+  MyCookDetailDeleteButtonWrapper,
   MyCookDetailImage,
   MyCookDetailImageWrapper,
   MyCookDetailListLoadingWrapper,
@@ -56,21 +57,24 @@ export const MyCookDetail = ({ postId, modalClose }) => {
           src={data.data.img_url}
           alt="이미지"
         ></MyCookDetailImage>
+        <div>작성자:{data.data.user.nickname}</div>
         <MyCookDetailContent>{data.data.content}</MyCookDetailContent>
-        <button
-          onClick={() => {
-            mutate(
-              { uri: "/community/gallery/", article_id: postId },
-              {
-                onSuccess: () => {
-                  modalClose();
-                },
-              }
-            );
-          }}
-        >
-          삭제하기
-        </button>
+        {userInfo.auth && (
+          <MyCookDetailDeleteButtonWrapper
+            onClick={() => {
+              mutate(
+                { uri: "/community/gallery/", article_id: postId },
+                {
+                  onSuccess: () => {
+                    modalClose();
+                  },
+                }
+              );
+            }}
+          >
+            삭제
+          </MyCookDetailDeleteButtonWrapper>
+        )}
       </MyCookDetailImageWrapper>
       <MyCookDetailContentWithCommentWrapper>
         <Comments

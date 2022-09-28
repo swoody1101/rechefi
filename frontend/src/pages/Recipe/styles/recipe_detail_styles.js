@@ -201,3 +201,14 @@ export const ReForwardBox = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+export const MyRecipeDetailDeleteButtonWrapper = styled.button`
+  background: none;
+  background-color: ${Palette.mainColor3};
+  width: 15%;
+  border-radius: 8px;
+  height: 6vh;
+  margin-left: 3%;
+  border: none;
+  margin-bottom: 5%;
+`;
