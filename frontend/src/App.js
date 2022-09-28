@@ -1,37 +1,42 @@
 import { Global } from "@emotion/react";
 import { Reset } from "./common/styles/global";
-
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-} from "react-router-dom";
-
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainPage from "./pages/Main/main_page";
 import Layout from "./common/components/Main_layout";
-import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail";
 import MyCook from "./pages/community/my_cook/my_cook_container";
+import MyCookWriter from "./pages/community/my_cook/components/write/write";
 
 import RecipeList from "./pages/Recipe/List/recipe_list_page";
+import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail";
 import RecipeWrite from "./pages/Recipe/Write/recipe_write_page";
 
 import SignUp from "./pages/Account/Signup/signup_page";
 import Login from "./pages/Account/Login/login_page";
 import NewPassword from "./pages/Account/Login/new_password_page";
-import MyPage from "./pages/Account/Mypage/mypage_page";
-import MyCookWriter from "./pages/community/my_cook/components/write/write";
+import ProfilePage from "./pages/Account/Mypage/profile_page";
+import ProfileFollowerList from "./pages/Account/Mypage/components/profile_follower_list";
+import ProfileFollowingList from "./pages/Account/Mypage/components/profile_following_list";
+import ProfileModifyPage from "./pages/Account/Mypage/profile_modify_page";
 
-import { ReactQueryDevtools } from "react-query/devtools";
 import NotFound from "./pages/NotFound/not_found_page";
-import {
-  QueryClientProvider,
-  QueryClient,
-} from "react-query";
 
+import { QueryClientProvider, QueryClient } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { useDispatch } from "react-redux";
+import { getToken } from "./utils/JWT-token";
+import { loadMyProfileThunk } from "./store/module/accountReducer";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (getToken()) {
+      dispatch(loadMyProfileThunk());
+    }
+  }, []);
+
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
@@ -47,22 +52,16 @@ function App() {
               <Route path="/account" element={<MainPage />} />
               <Route path="/recipe/postId=:detail" element={<RecipeDetail />} />
               <Route path="/community">
-                <Route
-                  path="write"
-                  element={<MyCookWriter />}
-                />
-                <Route
-                  path="my-cook"
-                  element={<MyCook />}
-                />
+                <Route path="write" element={<MyCookWriter />} />
+                <Route path="my-cook" element={<MyCook />} />
               </Route>
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
-              <Route
-                path="/new-password"
-                element={<NewPassword />}
-              />
-              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/new-password" element={<NewPassword />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile-modify" element={<ProfileModifyPage />} />
+              <Route path="/follower" element={<ProfileFollowerList />} />
+              <Route path="/following" element={<ProfileFollowingList />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

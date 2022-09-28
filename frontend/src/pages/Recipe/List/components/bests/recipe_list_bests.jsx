@@ -8,7 +8,7 @@ function RecipeListBests({ bestRecipes }) {
   return (
     <Container>
       <TitleWithDivider
-        variant="h5"
+        textVariant="h5"
         title="베스트 레시피"
       />
       <Carousel
