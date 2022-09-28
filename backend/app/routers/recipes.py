@@ -10,7 +10,7 @@ from app.models.accounts import User
 from app.schemas.accounts import CurrentUser
 
 from app.schemas.recipes import RecipeCreateForm, TagForm, IngredientForm, IngredientRecipeForm, RecipeCommentForm, \
-    RecipeCommentList
+    RecipeCommentList, RecipeList
 from app.schemas.common import *
 from app.config import settings
 from httpx import AsyncClient
@@ -213,7 +213,7 @@ async def get_recipe_list(page: int,
         recipes = filtered_recipes[:50]
     post = [
         {
-            **dict(recipe),
+            **RecipeList(**dict(recipe)).dict(),
             "user": CurrentUser(**dict(recipe.user)),
             "tags": await recipe.tags.all(),
             "ingredients": await recipe.ingredients.all(),

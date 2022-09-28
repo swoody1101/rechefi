@@ -10,7 +10,7 @@ from app.models.accounts import User
 from app.schemas.accounts import CurrentUser
 
 from app.schemas.community import ArticleCreateForm, ArticleCommentForm, ArticleCommentList, ArticleDetail, \
-    CookingCreateForm, NoticeDetail, CookingDetail
+    CookingCreateForm, NoticeDetail, CookingDetail, ArticleList
 from app.schemas.common import *
 
 router = APIRouter(prefix="/community", tags=["community"])
@@ -307,7 +307,7 @@ async def get_article_list(page: int, q: Union[str, None] = None, opt: Union[str
         articles = articles[:10]
     post = [
         {
-            **dict(article),
+            **ArticleList(**dict(article)).dict(),
             "likes": len(await article.like_users.all()),
             "comments_count": len(await ArticleComment.filter(article_id=article.id)),
             "user": CurrentUser(**dict(article.user)).dict()
@@ -340,7 +340,7 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
 
     post = [
         {
-            **dict(article),
+            **ArticleList(**dict(article)).dict(),
             "user": CurrentUser(**dict(article.user))
         }
         for article in articles
@@ -371,7 +371,7 @@ async def get_cooking_list(page: int, q: Union[str, None] = None, opt: Union[str
 
     post = [
         {
-            **dict(article),
+            **ArticleList(**dict(article)).dict(),
             "user": CurrentUser(**dict(article.user)),
             "likes": len(await article.like_users.all()),
             "comments_count": len(await CookingComment.filter(cooking_id=article.id)),
