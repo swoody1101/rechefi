@@ -13,7 +13,9 @@ import RecipeWrite from "./pages/Recipe/Write/recipe_write_page";
 import SignUp from "./pages/Account/Signup/signup_page";
 import Login from "./pages/Account/Login/login_page";
 import NewPassword from "./pages/Account/Login/new_password_page";
-import MyPage from "./pages/Account/Mypage/mypage_page";
+import ProfilePage from "./pages/Account/Mypage/profile_page";
+import ProfileFollowerList from "./pages/Account/Mypage/components/profile_follower_list";
+import ProfileFollowingList from "./pages/Account/Mypage/components/profile_following_list";
 import ProfileModifyPage from "./pages/Account/Mypage/profile_modify_page";
 
 import NotFound from "./pages/NotFound/not_found_page";
@@ -22,16 +24,18 @@ import { QueryClientProvider, QueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { useDispatch } from "react-redux";
 import { getToken } from "./utils/JWT-token";
-import { loadProfileThunk } from "./store/module/accountReducer";
+import { loadMyProfileThunk } from "./store/module/accountReducer";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 function App() {
   const dispatch = useDispatch();
-
-  if (getToken()) {
-    dispatch(loadProfileThunk());
-  }
+  useEffect(() => {
+    if (getToken()) {
+      dispatch(loadMyProfileThunk());
+    }
+  }, []);
 
   return (
     <div className="App">
@@ -54,8 +58,10 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
               <Route path="/new-password" element={<NewPassword />} />
-              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile-modify" element={<ProfileModifyPage />} />
+              <Route path="/follower" element={<ProfileFollowerList />} />
+              <Route path="/following" element={<ProfileFollowingList />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

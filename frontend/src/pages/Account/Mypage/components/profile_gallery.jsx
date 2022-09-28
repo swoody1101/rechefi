@@ -1,8 +1,7 @@
 import React from "react";
 import { Box, Button, ButtonGroup, styled } from "@mui/material";
 
-const MyPageProfileGallery = () => {
-  const imglist = [];
+const ProfileGallery = () => {
   return (
     <Box>
       <ButtonGroup variant="text">
@@ -13,7 +12,7 @@ const MyPageProfileGallery = () => {
   );
 };
 
-export default MyPageProfileGallery;
+export default ProfileGallery;
 
 const GalleryButton = styled(Button)({
   color: "gray",

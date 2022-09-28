@@ -25,7 +25,6 @@ import {
 const LoginView = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const loginInfo = useSelector((store) => store.account);
   const theme = createTheme();
   const refEmail = useRef(null);
   const refPassword = useRef(null);
