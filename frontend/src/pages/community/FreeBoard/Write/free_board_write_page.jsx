@@ -11,14 +11,14 @@ import {
   Success,
 } from "../../../../common/components/sweatAlert";
 import { convertToHTML } from "draft-convert";
-import usePostData from "../../../../hooks/usePostData";
+import { usePost } from "../../../../hooks/useMutations";
 import { useSelector } from "react-redux";
 import FreeBoardWriteAdminCheckbox from "./components/free_board_write_admin_chkbox";
 import { EditorState } from "draft-js";
 
 function FreeBoardWritePage() {
   const QUERY_KEY = "FREEBOARD_POST";
-  const { mutate } = usePostData(QUERY_KEY);
+  const { mutate } = usePost(QUERY_KEY);
   const navigate = useNavigate();
 
   // input data
