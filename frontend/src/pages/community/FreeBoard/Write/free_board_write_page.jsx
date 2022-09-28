@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import {
   Confirm,
   Success,
-  Warn,
 } from "../../../../common/components/sweatAlert";
 import { convertToHTML } from "draft-convert";
 import usePostData from "../../../../hooks/usePostData";
@@ -52,8 +51,8 @@ function FreeBoardWritePage() {
       {
         onSuccess: (response) => {
           if (response.message === "success") {
-            Success("레시피 작성이 완료되었습니다");
-            navigate("/commuity/free-board", {
+            Success("글 작성이 완료되었습니다");
+            navigate("/community/free-board", {
               replace: true,
             });
           }
