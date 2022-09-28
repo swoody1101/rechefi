@@ -17,8 +17,8 @@ import { EditorState } from "draft-js";
 import { useUserInfo } from "../../../../hooks/FreeBoard/useUserInfo";
 
 function FreeBoardWritePage() {
-  const QUERY_KEY = "FREEBOARD_POST";
-  const { mutate } = usePost(QUERY_KEY);
+  const QUERY_POST_KEY = "FREEBOARD";
+  const { mutate } = usePost(QUERY_POST_KEY);
   const navigate = useNavigate();
 
   // input data
@@ -72,6 +72,8 @@ function FreeBoardWritePage() {
     if (!titleValidation()) return true;
     return false;
   };
+
+  //
 
   return (
     <Container sx={{ mt: 2, pb: 1 }}>

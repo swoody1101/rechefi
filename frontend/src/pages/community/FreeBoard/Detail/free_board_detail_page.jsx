@@ -33,9 +33,9 @@ function FreeBoardDetailPage() {
 
   // handle server data
   const COMMENT_QUERY_KEY = "FREEBOARD_COMMENT";
-  const QUERY_KEY = `FREEBOARD_DETAIL`;
+  const DETAIL_QUERY_KEY = "FREEBOARD_DETAIL";
   const { isLoading, isError, data, error } = useFetch({
-    queryKey: QUERY_KEY,
+    queryKey: DETAIL_QUERY_KEY,
     param: postId,
     uri: `/community/${
       isNotice ? "notice-board" : "free-board"
@@ -72,7 +72,8 @@ function FreeBoardDetailPage() {
   };
 
   // delete request to server
-  const { mutate } = useDelete();
+  const QUERY_KEY = isNotice ? "FREEBOARD" : "NOTICE";
+  const { mutate } = useDelete(QUERY_KEY);
   const deletePost = () => {
     Confirm("정말로 글을 삭제하시겠습니까?", () => {
       mutate(

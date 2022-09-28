@@ -21,7 +21,7 @@ function FreeBoardPage() {
   const page_num = parseInt(query.get("page") || "1", 30);
 
   // handle server data
-  const QUERY_KEY = "FREEBOARD_LIST";
+  const QUERY_KEY = "FREEBOARD";
   const { isLoading, isError, data } = useFetch({
     queryKey: QUERY_KEY,
     param: page_num,
