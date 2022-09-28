@@ -55,6 +55,10 @@ function FreeBoardPage() {
               "글을 불러오는 중 문제가 발생하였습니다"
             }
           />
+        ) : data.posts.length === 0 ? (
+          <ErrorMessagePaper
+            message={"작성된 글이 없습니다"}
+          />
         ) : (
           data.posts.map((item, index) => (
             <FreeBoardListItem
