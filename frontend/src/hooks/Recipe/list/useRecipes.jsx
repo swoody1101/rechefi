@@ -5,7 +5,7 @@ import http from "../../../utils/http-commons";
 export function useRecipes() {
   const [recipes, setRecipes] = useState([]);
 
-  const getRecipes = (recipe_id = 1) => {
+  const getRecipes = (recipe_id = 0) => {
     http
       .get(`/recipe/${recipe_id}`)
       .then((response) => {
