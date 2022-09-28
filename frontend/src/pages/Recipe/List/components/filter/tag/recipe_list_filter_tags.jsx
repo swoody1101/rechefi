@@ -44,7 +44,10 @@ function RecipeListFilterTags({
         flexDirection: "column",
       }}
     >
-      <TitleWithDivider variant="h6" title="요리 태그" />
+      <TitleWithDivider
+        textVariant="h6"
+        title="요리 태그"
+      />
       <Box
         sx={{
           display: "flex",

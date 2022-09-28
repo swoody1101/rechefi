@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -15,27 +15,55 @@ import {
 } from "@mui/material";
 import { loginThunk } from "../../../store/module/accountReducer";
 import { Palette } from "../../../common/styles/palette";
+import {
+  OK,
+  BAD_REQUEST,
+  NOT_FOUND,
+  CONFLICT,
+} from "../../../utils/CustomConst";
 
 const LoginView = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const theme = createTheme();
   const refEmail = useRef(null);
   const refPassword = useRef(null);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const loginHandler = (event) => {
     event.preventDefault();
+
     const email = refEmail.current.value;
     const password = refPassword.current.value;
 
+    if (email === "") {
+      alert("이메일을 입력해주세요.");
+      return;
+    }
+    if (password === "") {
+      alert("비밀번호를 입력해주세요.");
+      return;
+    }
+
     dispatch(loginThunk({ email, password }))
-      .unwrap() // 오류처리
-      .then(() => {
-        navigate("/");
-        alert("안녕하세요");
+      .unwrap()
+      .then((res) => {
+        if (res.status === OK) {
+          navigate("/");
+          alert("안녕하세요");
+        } else {
+          alert("적절한 요청이 아닙니다.");
+          refEmail.current.value = "";
+          refPassword.current.value = "";
+        }
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === BAD_REQUEST) {
+          alert("없는 아이디 이거나 잘못된 비밀번호입니다.");
+        } else if (err.response.status === NOT_FOUND) {
+          alert("없는 아이디 이거나 잘못된 비밀번호입니다.");
+        } else if (err.response.status === CONFLICT) {
+          alert("이미 중복으로 접속된 아이디입니다.");
+        }
       });
   };
 
