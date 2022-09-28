@@ -229,19 +229,25 @@ async def get_other_page(other_user: User = Depends(get_other_user)):
     return ObjectResponse(data=data)
 
 
-@router.get("/follow/{member_id}", description="해당 유저의 팔로워/팔로우 조회", response_model=ObjectResponse)
-async def get_follow(member_id, user: User = Depends(get_other_user)):
+@router.get("/follower/{member_id}", description="해당 유저의 팔로워 조회", response_model=ObjectResponse)
+async def get_follower(member_id, user: User = Depends(get_other_user)):
     # follower: 나를 팔로우한 사람, following: 내가 팔로우 하고있는 사람
     follower = await user.followers
     follower = list(map(lambda followers: followers.email, follower))
+    data = {
+        "follower": follower, 
+    }
+    return ObjectResponse(data=data)
 
+
+@router.get("/following/{member_id}", description="해당 유저의 팔로잉 조회", response_model=ObjectResponse)
+async def get_following(member_id, user: User = Depends(get_other_user)):
+    # follower: 나를 팔로우한 사람, following: 내가 팔로우 하고있는 사람
     following = await user.following
     following = list(map(lambda follows: follows.email, following))
     data = {
-        "follower": follower, 
         "following": following
     }
-
     return ObjectResponse(data=data)
 
 
