@@ -78,14 +78,14 @@ const RecipeDetail = () => {
         {aiButton ? (
           <div>
             <AiArea content={data.data.recipe.content} toggleAI={toggleAI} />
-            <Backdrop onClick={toggleAI} />
+            <Backdrop />
           </div>
         ) : null}
         <RecipeDetailTitleWrapperDiv>
           <RecipedetailTitleArea
             post={{
               title: data.data.recipe.title,
-              member_nickname: data.data.nickname,
+              member_nickname: data.data.user.nickname,
               date: data.data.recipe.created_at,
             }}
           />
@@ -105,7 +105,6 @@ const RecipeDetail = () => {
             <RecipeDetailContent content={data.data.recipe.content} />
           </RecipeDetailContentWrapper>
         </RecipeDetailIngredinetsContentDiv>
-
         <RecipeDetailLikeWrppaerDiv onClick={likeHandler}>
           <div>추천하기</div>
           <RecipeDetailLikeBorderDiv>

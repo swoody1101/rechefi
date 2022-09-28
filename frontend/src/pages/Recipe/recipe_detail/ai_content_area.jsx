@@ -7,7 +7,13 @@ import AiVoiceController from "./ai_voice_controller";
 import CloseIcon from "@mui/icons-material/Close";
 import { useMediaQuery } from "@mui/material";
 
-const AiContentArea = ({ content, toggleAI }) => {
+const AiContentArea = ({
+  content,
+  toggleAI,
+  recognition,
+  openAi,
+  setOpenAi,
+}) => {
   const [contentText, setContentText] = useState([]);
   const [currentCur, setCurrentCur] = useState(0);
   const [play, setPlay] = useState(true);
@@ -18,11 +24,7 @@ const AiContentArea = ({ content, toggleAI }) => {
   let rewind = false;
 
   useEffect(() => {
-    console.log(synth.paused);
-
     synth.cancel();
-    //   synth.resume();
-
     let text = ["음성 안내를 시작하겠습니다."];
     content.split("```").forEach((e) => {
       if (e.slice(0, 3) === "<p>") {
@@ -45,12 +47,18 @@ const AiContentArea = ({ content, toggleAI }) => {
       speechMsg.lang = "ko-KR";
       speechMsg.text = contentText[currentCur];
       speechMsg.onend = () => {
+        console.log(flag);
         setCurrentCur((prev) => {
           if (flag) {
             return prev - 1;
           } else {
             return prev + 1;
           }
+        });
+      };
+      speechMsg.onpause = () => {
+        setPlay((prev) => {
+          return false;
         });
       };
       synth.speak(speechMsg);
@@ -67,6 +75,7 @@ const AiContentArea = ({ content, toggleAI }) => {
 
   const nextPlay = () => {
     synth.cancel();
+
     setPlay((prev) => {
       return true;
     });
@@ -82,7 +91,7 @@ const AiContentArea = ({ content, toggleAI }) => {
   const resume = () => {
     synth.resume();
     setPlay((prev) => {
-      return !prev;
+      return true;
     });
   };
 
@@ -113,6 +122,9 @@ const AiContentArea = ({ content, toggleAI }) => {
         pause={pause}
         resume={resume}
         play={play}
+        recognition={recognition}
+        openAi={openAi}
+        setOpenAi={setOpenAi}
       />
     </div>
   );

@@ -7,13 +7,14 @@ import {
 } from "../styles/recipe_detail_styles";
 
 const RecipedetailTitleArea = ({ post }) => {
-  console.log()
+  const createAt = post.date.slice(0, 10) + " / " + post.date.slice(11, 18);
+  console.log();
   return (
     <RecipeTitleAreaWrapperDiv>
       <RecipeTitleTitleAreaDiv>{post.title}</RecipeTitleTitleAreaDiv>
       <RecipeWriterDateAreaDiv>
         <RecipeWriterAreaDiv>{post.member_nickname}</RecipeWriterAreaDiv>
-        <RecipeDateAreaDiv>{post.date}</RecipeDateAreaDiv>
+        <RecipeDateAreaDiv>{createAt}</RecipeDateAreaDiv>
       </RecipeWriterDateAreaDiv>
     </RecipeTitleAreaWrapperDiv>
   );
