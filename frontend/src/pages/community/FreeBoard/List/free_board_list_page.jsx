@@ -10,6 +10,7 @@ import RecipeListFab from "../../../Recipe/List/components/recipe_list_fab";
 import { useFetch } from "../../../../hooks/useFetch";
 import LoadingSpinner from "../../../Recipe/List/components/recipe_list_loading_spinner";
 import ErrorMessagePaper from "../../../../common/components/error_message_paper";
+import { getToken } from "../../../../utils/JWT-token";
 
 function FreeBoardPage() {
   const navigate = useNavigate();
@@ -74,11 +75,16 @@ function FreeBoardPage() {
         urlLink="/community/free-board"
       />
 
-      <RecipeListFab
-        onClick={() => {
-          navigate("/community/free-board/write");
-        }}
-      />
+      {/* show write btn when login */}
+      {getToken() ? (
+        <RecipeListFab
+          onClick={() => {
+            navigate("/community/free-board/write");
+          }}
+        />
+      ) : (
+        ""
+      )}
     </Container>
   );
 }
