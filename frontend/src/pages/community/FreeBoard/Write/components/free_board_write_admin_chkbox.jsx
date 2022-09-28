@@ -6,11 +6,13 @@ function FreeBoardWriteAdminCheckbox({
   label,
   checked,
   setchecked,
+  disabled,
 }) {
   return (
     <FormControlLabel
       label={label}
       sx={{ mx: 1 }}
+      disabled={disabled()}
       control={
         <Checkbox
           checked={checked}
