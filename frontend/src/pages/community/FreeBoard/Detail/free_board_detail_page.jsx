@@ -1,18 +1,29 @@
 import React from "react";
 import { Container } from "@mui/material";
-import { useParams } from "react-router-dom";
+import {
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useFetch } from "../../../../hooks/useFetch";
 import ErrorMessagePaper from "../../../../common/components/error_message_paper";
 import ReadOnlyEditor from "../../../../common/components/read_only_editor";
 import TitleWithDivider from "../../../../common/components/title_with_divider";
 import LoadingSpinner from "../../../Recipe/List/components/recipe_list_loading_spinner";
 import FreeBoardDetailPostInfo from "./components/free_board_detail_post_info";
+import FreeBoardDetailBottombar from "./components/free_board_detail_bottombar";
+import FreeBoardDetailCommentContainer from "./components/free_board_detail_comments_container";
+import Comments from "../../../../common/components/comments/comments";
 
 function FreeBoardDetailPage() {
   const { postId } = useParams();
 
+  // check is this notice
+  const [searchParam, setSearchParam] = useSearchParams();
+  const isNotice = (searchParam.get("notice") || 1) === 1;
+
   // handle server data
   const QUERY_KEY = "FREEBOARD_DETAIL";
+  const COMMENT_QUERY_KEY = "FREEBOARD_COMMENT";
   const { isLoading, isError, data, error } = useFetch({
     queryKey: QUERY_KEY,
     param: postId,
@@ -44,10 +55,13 @@ function FreeBoardDetailPage() {
         // shown contents
         <>
           <TitleWithDivider
-            title={data.title}
+            title={`${!isNotice ? "[공지]" : ""} ${
+              data.title
+            }`}
             textVariant={"h5"}
           />
           <FreeBoardDetailPostInfo
+            // TODO : match with back
             userEmail={""}
             userImage={""}
             userNickname={data.nickname}
@@ -56,9 +70,30 @@ function FreeBoardDetailPage() {
           />
           <ReadOnlyEditor
             HTML={data.content}
-            style={{ mt: 2, minHeight: "360px" }}
+            style={{ mt: 2, minHeight: "300px" }}
           />
         </>
+      )}
+
+      {/* buttons */}
+      <FreeBoardDetailBottombar
+        writerId={data ? data.user_id : -1}
+      />
+
+      {/* comments */}
+      {isError ? (
+        "" // if error
+      ) : !isNotice ? (
+        "" // notice dont contain comments
+      ) : (
+        <FreeBoardDetailCommentContainer>
+          <Comments
+            aiButton={false}
+            postId={postId}
+            queryKey={COMMENT_QUERY_KEY}
+            uri="/community/free-board/comment/"
+          />
+        </FreeBoardDetailCommentContainer>
       )}
     </Container>
   );
