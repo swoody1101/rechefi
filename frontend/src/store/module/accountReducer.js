@@ -17,6 +17,8 @@ const initialState = {
   email: "",
   nickname: "",
   introduce: "",
+  follower: "",
+  following: "",
   img_url: "",
   admin: "",
 };
@@ -26,7 +28,7 @@ export const signupThunk = createAsyncThunk(
   async (signupInfo) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/members/signup",
+        "http://localhost:8000/members",
         signupInfo,
         { headers: { "Content-Type": `application/json` } }
       );
@@ -36,6 +38,15 @@ export const signupThunk = createAsyncThunk(
     }
   }
 );
+
+export const signoutThunk = createAsyncThunk("auth/signout", async () => {
+  try {
+    const response = await http.delete("http://localhost:8000/members");
+    return response.data;
+  } catch (error) {
+    return error.response;
+  }
+});
 
 export const loginThunk = createAsyncThunk(
   "auth/login",
@@ -66,12 +77,13 @@ export const loadMyProfileThunk = createAsyncThunk(
   async () => {
     try {
       const response = await http.get("/members");
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return error.response;
     }
   }
 );
+
 export const loadProfileThunk = createAsyncThunk(
   "auth/loadProfileThunk",
   async (email) => {
@@ -102,6 +114,18 @@ export const porfileModifyThunk = createAsyncThunk(
     try {
       const response = await http.put("/members", profileInfo);
       return response.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+
+export const loadFollowListThunk = createAsyncThunk(
+  "auth/loadFollowListThunk",
+  async (email) => {
+    try {
+      const response = await http.get(`/members/follow/${email}`);
+      return response.data.data;
     } catch (error) {
       return error.response;
     }
@@ -142,14 +166,15 @@ export const authSlice = createSlice({
         state.nickname = payload.data.nickname;
         state.admin = payload.data.is_admin;
 
+        console.log(state.email);
         // save in local storage
         saveToken(state.loginToken);
       }
     },
-    [loginThunk.rejected]: (state, { payload }) => {
-      // error
-      state.loading = false;
-      state.error = payload.data;
+    [loginThunk.pending]: (state) => {
+      // loading
+      state.loading = true;
+      state.error = null;
     },
     [loadMyProfileThunk.fulfilled]: (state, { payload }) => {
       // loading
@@ -160,6 +185,8 @@ export const authSlice = createSlice({
       state.nickname = payload.nickname;
       state.img_url = payload.img_url;
       state.introduce = payload.about_me;
+      state.follower = payload.follower;
+      state.following = payload.following;
     },
   },
 });

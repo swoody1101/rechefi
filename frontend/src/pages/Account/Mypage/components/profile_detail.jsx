@@ -1,8 +1,11 @@
 import React from "react";
 import { Avatar, Button, Box, Typography } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const ProfileDetail = (props) => {
-  const img_url = props.img_url;
+  const loginInfo = useSelector((store) => store.account);
+  const imgUrl = props.imgUrl;
+  const email = props.email;
   const nickname = props.nickname;
   const introduce = props.introduce;
 
@@ -31,7 +34,7 @@ const ProfileDetail = (props) => {
         <Typography align="center" sx={{ verticalAlign: "middle" }}>
           {nickname}
         </Typography>
-        <Button>팔로우</Button>
+        {email !== loginInfo.email ? <Button>팔로우</Button> : <></>}
       </Box>
       <Typography textAlign={"center"}>
         {introduce ? introduce : "아직 소개 글이 없습니다."}
