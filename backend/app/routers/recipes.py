@@ -63,7 +63,7 @@ async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_
 
 
 @router.post("/speech-to-text", description="AI서버와 STT 데이터 통신")
-async def communicate_ai_with_stt(request: Request, file: UploadFile = File(...), user: User = Depends(get_current_user)):
+async def get_ai_response(request: Request, file: UploadFile = File(...), user: User = Depends(get_current_user)):
     # async with AsyncClient(base_url='http://127.0.0.1:8001/') as client:
     client = AsyncClient()
     if file.content_type == "audio/wav":
@@ -71,7 +71,7 @@ async def communicate_ai_with_stt(request: Request, file: UploadFile = File(...)
         await file.seek(0)
         return JSONResponse(content=stt_response.json())
     else:
-        return JSONResponse(content=CommonFailedResponse(detail=f'파일 명: {file.filename}, 유형: {file.content_type}'))
+        return JSONResponse(content=CommonFailedResponse(detail=f'파일명: {file.filename}, 유형: {file.content_type}').dict())
 
 
 @router.get("/detail/{recipe_id}", description="레시피 상세", response_model=ObjectResponse)
