@@ -4,6 +4,8 @@ from pydantic import BaseModel, Field
 
 from datetime import datetime
 
+from app.schemas.accounts import CurrentUser
+
 
 class RecipeCommentForm(BaseModel):
     content: str
@@ -14,7 +16,7 @@ class RecipeCommentForm(BaseModel):
 
 class RecipeCommentList(RecipeCommentForm):
     user_id: int
-    nickname: str
+    user: CurrentUser
     created_at: datetime
     updated_at: datetime
 
@@ -50,7 +52,7 @@ class RecipeLikeUser(BaseModel):
 class RecipeList(BaseModel):
     user_id: int
     id: int
-    nickname: str
+    user: CurrentUser
     title: str
     content: str
     img_url: str = Field(nullable=True)

@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     AWS_SECRET_ACCESS_KEY: str = ""
     REGION_NAME: str = ""
 
+    # AI SERVER
+    AI_SERVER_URL: str = ""
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
