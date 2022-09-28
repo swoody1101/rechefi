@@ -13,14 +13,15 @@ const initialState = {
 
   // user data
   loginToken: getToken(),
-  user_id: "",
+  userId: "",
   email: "",
   nickname: "",
   introduce: "",
   follower: "",
   following: "",
-  img_url: "",
+  imgUrl: "",
   admin: "",
+  followingList: [],
 };
 
 export const signupThunk = createAsyncThunk(
@@ -89,7 +90,7 @@ export const loadProfileThunk = createAsyncThunk(
   async (email) => {
     try {
       const response = await http.get(`/members/${email}`);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return error.response;
     }
@@ -120,12 +121,35 @@ export const porfileModifyThunk = createAsyncThunk(
   }
 );
 
-export const loadFollowListThunk = createAsyncThunk(
-  "auth/loadFollowListThunk",
+export const loadFollowerListThunk = createAsyncThunk(
+  "auth/loadFollowerListThunk",
   async (email) => {
     try {
-      const response = await http.get(`/members/follow/${email}`);
+      const response = await http.get(`/members/follower/${email}`);
       return response.data.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+
+export const loadFollowingListThunk = createAsyncThunk(
+  "auth/loadFollowingListThunk",
+  async (email) => {
+    try {
+      const response = await http.get(`/members/following/${email}`);
+      return response.data.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+export const profileFollowThunk = createAsyncThunk(
+  "auth/profileFollowThunk",
+  async (email) => {
+    try {
+      const response = await http.post(`/members/follow/${email}`);
+      return response.data;
     } catch (error) {
       return error.response;
     }
@@ -140,7 +164,7 @@ export const authSlice = createSlice({
       state.email = "";
       state.nickname = "";
       state.introduce = "";
-      state.img_url = "";
+      state.imgUrl = "";
       state.auth = false;
       state.loading = false;
       state.error = null;
@@ -161,12 +185,11 @@ export const authSlice = createSlice({
 
         // data recieved
         state.loginToken = payload.data.access_token;
-        state.user_id = payload.data.user_id;
+        state.userId = payload.data.user_id;
         state.email = payload.data.email;
         state.nickname = payload.data.nickname;
         state.admin = payload.data.is_admin;
 
-        console.log(state.email);
         // save in local storage
         saveToken(state.loginToken);
       }
@@ -183,10 +206,17 @@ export const authSlice = createSlice({
 
       state.email = payload.email;
       state.nickname = payload.nickname;
-      state.img_url = payload.img_url;
+      state.imgUrl = payload.img_url;
       state.introduce = payload.about_me;
       state.follower = payload.follower;
       state.following = payload.following;
+    },
+    [loadFollowingListThunk.fulfilled]: (state, { payload }) => {
+      // loading
+      state.loading = false;
+      state.auth = true;
+
+      state.followingList = payload.following;
     },
   },
 });

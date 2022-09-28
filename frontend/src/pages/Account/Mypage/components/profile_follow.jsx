@@ -1,21 +1,18 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Box, styled, Typography } from "@mui/material";
 
 const ProfileFollow = (props) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const email = props.email;
   const followerCount = props.follower;
   const followingCount = props.following;
-  const followerList = props.followerList;
-  const followingList = props.followingList;
+  const navigate = useNavigate();
 
   const followerClickHandler = () => {
-    navigate("/follow");
+    navigate("/follower", { state: email });
   };
   const followingClickHandler = () => {
-    navigate("/follow");
+    navigate("/following", { state: email });
   };
 
   return (

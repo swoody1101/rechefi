@@ -14,7 +14,8 @@ import SignUp from "./pages/Account/Signup/signup_page";
 import Login from "./pages/Account/Login/login_page";
 import NewPassword from "./pages/Account/Login/new_password_page";
 import ProfilePage from "./pages/Account/Mypage/profile_page";
-import ProfileFollowList from "./pages/Account/Mypage/components/profile_follow_list";
+import ProfileFollowerList from "./pages/Account/Mypage/components/profile_follower_list";
+import ProfileFollowingList from "./pages/Account/Mypage/components/profile_following_list";
 import ProfileModifyPage from "./pages/Account/Mypage/profile_modify_page";
 
 import NotFound from "./pages/NotFound/not_found_page";
@@ -24,15 +25,17 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { useDispatch } from "react-redux";
 import { getToken } from "./utils/JWT-token";
 import { loadMyProfileThunk } from "./store/module/accountReducer";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 function App() {
   const dispatch = useDispatch();
-
-  if (getToken()) {
-    dispatch(loadMyProfileThunk());
-  }
+  useEffect(() => {
+    if (getToken()) {
+      dispatch(loadMyProfileThunk());
+    }
+  }, []);
 
   return (
     <div className="App">
@@ -57,7 +60,8 @@ function App() {
               <Route path="/new-password" element={<NewPassword />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile-modify" element={<ProfileModifyPage />} />
-              <Route path="/follow" element={<ProfileFollowList />} />
+              <Route path="/follower" element={<ProfileFollowerList />} />
+              <Route path="/following" element={<ProfileFollowingList />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
