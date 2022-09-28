@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import React from "react";
 
-const MyPageFollowItem = (props) => {
+const ProfileFollowItem = (props) => {
   return (
     <Box
       sx={{
@@ -26,4 +26,4 @@ const MyPageFollowItem = (props) => {
   );
 };
 
-export default MyPageFollowItem;
+export default ProfileFollowItem;

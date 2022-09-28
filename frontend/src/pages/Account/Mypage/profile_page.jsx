@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import ProfileDetail from "./components/profile_detail";
 import ProfileFollow from "./components/profile_follow";
 import ProfileGallery from "./components/profile_gallery";
 import {
+  loadFollowListThunk,
   loadMyProfileThunk,
   loadProfileThunk,
 } from "../../../store/module/accountReducer";
@@ -18,30 +19,37 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const profile = {
-    email: "",
-    nickname: "",
-    img_url: "",
-    introduce: "",
-    follower: 0,
-    following: 0,
-  };
+  const [email, setEmail] = useState();
+  const [nickname, setNickname] = useState();
+  const [imgUrl, setImgUrl] = useState();
+  const [introduce, setIntroduce] = useState();
+  const [follower, setFollower] = useState();
+  const [following, setFollowing] = useState();
+
+  const [followerList, setFollowerList] = useState([]);
+  const [followingList, setFollowingList] = useState([]);
 
   useEffect(() => {
     const token = getToken();
     if (token) {
       if (state === loginInfo.email) {
         dispatch(loadMyProfileThunk());
+        setEmail(loginInfo.email);
+        setNickname(loginInfo.nickname);
+        setImgUrl(loginInfo.img_url);
+        setIntroduce(loginInfo.about_me);
+        setFollower(loginInfo.follower);
+        setFollowing(loginInfo.following);
       } else {
         dispatch(loadProfileThunk(state))
           .unwrap()
           .then((res) => {
-            profile.email = res.email;
-            profile.nickname = res.email;
-            profile.introduce = res.about_me;
-            profile.introduce = res.img_url;
-            profile.follower = res.follower;
-            profile.following = res.following;
+            setEmail(res.data.email);
+            setNickname(res.data.nickname);
+            setImgUrl(res.data.img_url);
+            setIntroduce(res.data.about_me);
+            setFollower(res.data.follower);
+            setFollowing(res.data.following);
           })
           .catch((err) => {
             alert("잘못된 요청입니다.");
@@ -52,7 +60,17 @@ const ProfilePage = () => {
       alert("로그인 후 접근해 주세요");
       navigate("/login");
     }
-  }, [profile]);
+  }, [dispatch, loginInfo]);
+
+  useEffect(() => {
+    // 팔로우 리스트
+    dispatch(loadFollowListThunk(state))
+      .unwrap()
+      .then((res) => {
+        setFollowerList([...res.follower]);
+        setFollowingList([...res.following]);
+      });
+  }, []);
 
   return (
     <Container
@@ -63,8 +81,18 @@ const ProfilePage = () => {
       }}
     >
       <Box sx={{ width: "100%" }}>
-        <ProfileDetail />
-        <ProfileFollow />
+        <ProfileDetail
+          img_url={imgUrl}
+          email={email}
+          nickname={nickname}
+          introduce={introduce}
+        />
+        <ProfileFollow
+          follower={follower}
+          following={following}
+          followerList={followerList}
+          followingList={followingList}
+        />
         <ProfileGallery />
       </Box>
     </Container>

@@ -1,9 +1,22 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Button, Box, styled, Typography } from "@mui/material";
 
 const ProfileFollow = (props) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const followerCount = props.follower;
-  const folloingCount = props.following;
+  const followingCount = props.following;
+  const followerList = props.followerList;
+  const followingList = props.followingList;
+
+  const followerClickHandler = () => {
+    navigate("/follow");
+  };
+  const followingClickHandler = () => {
+    navigate("/follow");
+  };
 
   return (
     <Box
@@ -15,12 +28,12 @@ const ProfileFollow = (props) => {
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <FollowButton>팔로워</FollowButton>
+        <FollowButton onClick={followerClickHandler}>팔로워</FollowButton>
         <Typography sx={{ textAlign: "center" }}>{followerCount}</Typography>
       </Box>
       <Box>
-        <FollowButton>팔로잉</FollowButton>
-        <Typography sx={{ textAlign: "center" }}>{folloingCount}</Typography>
+        <FollowButton onClick={followingClickHandler}>팔로잉</FollowButton>
+        <Typography sx={{ textAlign: "center" }}>{followingCount}</Typography>
       </Box>
     </Box>
   );
