@@ -24,8 +24,8 @@ function FreeBoardListItem({ post, isNotice, isLast, onClick }) {
         isNotice={isNotice}
       />
       <FreeBoardListItemBottomInfo
-        postDate={post.date}
-        postWriter={post.nickname}
+        postDate={post.created_at}
+        postWriter={post.user.nickname}
         postViews={post.views}
       />
     </ListItemButton>

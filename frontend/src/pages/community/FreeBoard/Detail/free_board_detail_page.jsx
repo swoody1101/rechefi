@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container } from "@mui/material";
-import {
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useFetch } from "../../../../hooks/useFetch";
 import ErrorMessagePaper from "../../../../common/components/error_message_paper";
 import ReadOnlyEditor from "../../../../common/components/read_only_editor";
@@ -37,9 +33,7 @@ function FreeBoardDetailPage() {
   const { isLoading, isError, data, error } = useFetch({
     queryKey: DETAIL_QUERY_KEY,
     param: postId,
-    uri: `/community/${
-      isNotice ? "notice-board" : "free-board"
-    }/detail`,
+    uri: `/community/${isNotice ? "notice-board" : "free-board"}/detail`,
   });
 
   // const [data, setData] = useState(null);
@@ -123,16 +117,14 @@ function FreeBoardDetailPage() {
         // shown contents
         <>
           <TitleWithDivider
-            title={`${isNotice ? "[공지]" : ""} ${
-              data.title
-            }`}
+            title={`${isNotice ? "[공지]" : ""} ${data.title}`}
             textVariant={"h5"}
           />
           <FreeBoardDetailPostInfo
             // TODO : match with back
-            userEmail={""}
-            userImage={""}
-            userNickname={data.nickname}
+            userEmail={data.user.email}
+            userImage={data.user.img_url}
+            userNickname={data.user.nickname}
             postDate={data.created_at}
             postViews={data.views}
           />
@@ -149,9 +141,7 @@ function FreeBoardDetailPage() {
           navigate("/community/free-board");
         }}
         onModifyClick={() => {
-          navigate(
-            `/community/free-board/write?modify=${postId}`
-          );
+          navigate(`/community/free-board/write?modify=${postId}`);
         }}
         onDeleteClick={deletePost}
         disabledCondition={isBoardAuth}
