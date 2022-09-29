@@ -104,6 +104,11 @@ export const RecipeDetailContentElementDiv = styled(
   font-weight: bolder;
 `;
 
+export const RecipeDetailContentImage = styled.img`
+  width: 100%;
+  height: auto;
+`;
+
 export const RecipeDetailLikeWrppaerDiv = styled.div`
   display: flex;
   justify-content: center;
@@ -195,4 +200,15 @@ export const ReForwardBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+export const MyRecipeDetailDeleteButtonWrapper = styled.button`
+  background: none;
+  background-color: ${Palette.mainColor3};
+  width: 15%;
+  border-radius: 8px;
+  height: 6vh;
+  margin-left: 3%;
+  border: none;
+  margin-bottom: 5%;
 `;

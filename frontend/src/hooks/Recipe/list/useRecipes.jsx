@@ -14,9 +14,7 @@ export function useRecipes() {
         }
       })
       .catch((error) => {
-        Warn(
-          `${error} 서버에 연결중 문제가 발생하였습니다`
-        );
+        Warn(`${error} 서버에 연결중 문제가 발생하였습니다`);
       });
   };
 

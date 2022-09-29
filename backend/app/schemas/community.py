@@ -28,14 +28,22 @@ class ArticleCommentList(ArticleCommentForm):
     nickname: str
 
 
+class NoticeDetail(ArticleCreateForm):
+    user_id: int
+    created_at: datetime
+    updated_at: datetime
+    nickname: str
+    views: int
+
+
 class ArticleDetail(ArticleCreateForm):
     user_id: int
     created_at: datetime
     updated_at: datetime
     nickname: str
     views: int
-    like_users: List[dict]
-    comments: List[ArticleCommentList]
+    like_users: List[dict] = Field(Nullable=True)
+    # comments: List[ArticleCommentList] = Field(Nullable=True)
 
 
 class CookingCreateForm(ArticleCreateForm):

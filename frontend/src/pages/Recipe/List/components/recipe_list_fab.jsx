@@ -14,6 +14,7 @@ function RecipeListFab({ onClick }) {
         right: 20,
         bottom: 20,
         top: "auto",
+        zIndex: 10,
         background: Palette.mainColor3,
       }}
     >
