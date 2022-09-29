@@ -15,7 +15,6 @@ const SidebarMyAccount = ({ sidebarClose }) => {
     navigate("/profile", { state: loginInfo.email });
   };
 
-  console.log(loginInfo.imgUrl);
   return (
     <SidebarMyAccountWrapper>
       <SidebarMyProfileImage>
