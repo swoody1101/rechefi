@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Union
 from datetime import datetime
 
 from app.schemas.accounts import CurrentUser
@@ -52,4 +52,15 @@ class CookingCreateForm(ArticleCreateForm):
 
 
 class ArticleList(BaseModel):
-    pass
+    user_id: int
+    id: int
+    title: str
+    views: int
+    img_url: str = Field(nullable=True)
+    created_at: datetime
+    updated_at: datetime
+    recipe_id: Union[int, None] = None
+    category: int = Field(nullable=True)
+
+
+
