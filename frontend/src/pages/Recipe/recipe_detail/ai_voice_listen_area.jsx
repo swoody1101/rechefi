@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { AiAreaTextWrapper } from "../styles/recipe_ai_styles";
+import http from "../../../utils/http-commons";
+import { getToken } from "../../../utils/JWT-token";
 
 const AiVoiceListenArea = () => {
   const [stream, setStream] = useState();
@@ -12,6 +14,8 @@ const AiVoiceListenArea = () => {
   const [alertAudio] = useState(new Audio("/sound/alert.wav"));
   const [alertPlay, setAlertPlay] = useState(false);
   const [talk, setTalk] = useState("듣는 중입니다...");
+  const [soundFile, setSoundFile] = useState(undefined);
+  const loginToken = getToken();
   useEffect(() => {
     setAlertPlay((prev) => {
       return !prev;
@@ -57,20 +61,19 @@ const AiVoiceListenArea = () => {
             analyser.disconnect();
             audioCtx.createMediaStreamSource(stream).disconnect();
 
+            let audioFileUrl = undefined;
+
             mediaRecorder.ondataavailable = function (e) {
+              audioFileUrl = e.data;
               setAudioUrl(e.data);
               setOnRec(true);
             };
             if (audioUrl) {
               URL.createObjectURL(audioUrl);
             }
-
-            const sound = new File([audioUrl], "soundBlob", {
-              lastModified: new Date().getTime(),
-              type: "audio",
-            });
-            setDisabled(false);
-            console.log(sound);
+            if (audioFileUrl) {
+              URL.createObjectURL(audioFileUrl);
+            }
           } else {
             setOnRec(false);
           }
@@ -84,8 +87,32 @@ const AiVoiceListenArea = () => {
     audio.loop = false;
     audio.volume = 1;
     audio.play();
+    console.log(audio);
   };
-
+  useEffect(() => {
+    if (audioUrl) {
+      const sound = new File([audioUrl], "soundBlob", {
+        lastModified: new Date().getTime(),
+        type: "audio/wav",
+      });
+      setSoundFile(sound);
+      setDisabled(false);
+      console.log(sound);
+    }
+  }, [audioUrl]);
+  // useEffect(() => {
+  //   console.log(soundFile);
+  //   if (!disabled && soundFile !== undefined) {
+  //     const formdata = new FormData();
+  //     formdata.append("file", soundFile);
+  //     http.post("/recipe/speech-to-text", formdata, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //         Authorization: `Bearer ${loginToken}`,
+  //       },
+  //     });
+  //   }
+  // }, [disabled, loginToken, soundFile]);
   return (
     <>
       {/* <button onClick={onRecAudio}>녹음</button> */}
