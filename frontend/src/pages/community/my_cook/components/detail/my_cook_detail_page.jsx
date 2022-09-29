@@ -2,15 +2,21 @@ import { useEffect } from "react";
 import {
   MyCookDetailContent,
   MyCookDetailContentWithCommentWrapper,
+  MyCookDetailDeleteButtonWrapper,
   MyCookDetailImage,
   MyCookDetailImageWrapper,
+  MyCookDetailListLoadingWrapper,
   MyCookDetailWrapper,
 } from "../../styles/list/list_style";
 import { createPortal } from "react-dom";
 import { useFetchDetail } from "../../../../../hooks/useFetch";
 import Comments from "../../../../../common/components/comments/comments";
+import RecipeListLoadingSpinner from "../../../../Recipe/List/components/recipe_list_loading_spinner";
+import { useSelector } from "react-redux";
+import useDeleteMyCook from "../../../../../hooks/my_cook/useDeleteMyCook";
 
-export const MyCookDetail = ({ postId }) => {
+export const MyCookDetail = ({ postId, modalClose }) => {
+  const userInfo = useSelector((store) => store.account);
   useEffect(() => {
     document.body.style.cssText = `
       position: fixed; 
@@ -23,15 +29,24 @@ export const MyCookDetail = ({ postId }) => {
       window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
     };
   }, []);
+
   const { isLoading, isError, data, error } = useFetchDetail({
     queryKey: "myCookDetail",
     articleId: postId,
     uri: "/community/gallery/detail/",
   });
 
+  const { mutate } = useDeleteMyCook("myCookPosts");
+
   if (isLoading) {
-    return <div>로딩중...</div>;
+    return (
+      <MyCookDetailListLoadingWrapper>
+        <RecipeListLoadingSpinner loading={isLoading} />
+      </MyCookDetailListLoadingWrapper>
+    );
   }
+  console.log(data);
+  console.log(userInfo);
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
@@ -42,7 +57,24 @@ export const MyCookDetail = ({ postId }) => {
           src={data.data.img_url}
           alt="이미지"
         ></MyCookDetailImage>
+        <div>작성자:{data.data.user.nickname}</div>
         <MyCookDetailContent>{data.data.content}</MyCookDetailContent>
+        {userInfo.auth && (
+          <MyCookDetailDeleteButtonWrapper
+            onClick={() => {
+              mutate(
+                { uri: "/community/gallery/", article_id: postId },
+                {
+                  onSuccess: () => {
+                    modalClose();
+                  },
+                }
+              );
+            }}
+          >
+            삭제
+          </MyCookDetailDeleteButtonWrapper>
+        )}
       </MyCookDetailImageWrapper>
       <MyCookDetailContentWithCommentWrapper>
         <Comments

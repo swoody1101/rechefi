@@ -54,3 +54,9 @@ export const UploadImageImg = styled.img`
   width: 100%;
   height: auto;
 `;
+
+export const SelectReferenceRecipeDiv = styled.div`
+  font-weight: 700;
+  text-align: center;
+  padding: 5%;
+`;

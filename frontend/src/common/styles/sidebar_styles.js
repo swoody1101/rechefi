@@ -50,6 +50,13 @@ export const Backdrop = styled.div`
 export const SideBarOpenButton = styled.button`
   border: none;
   background: none;
+  margin-left: 3vw;
+  @media only screen and (min-width: 1025px) {
+    margin-left: 1vw;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    margin-left: 2vw;
+  }
 `;
 
 export const SideBarCommunityDivWrapper = styled.div`

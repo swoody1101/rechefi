@@ -8,178 +8,24 @@ import {
   RecipeListWrapper,
 } from "../../styles/write/write_styles";
 import SearchIcon from "@mui/icons-material/Search";
+import useFetchList from "../../../../../hooks/useFetch";
 
-const RecipeModal = () => {
-  // DEBUG
-  const data = useMemo(
-    () => [
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 1,
-        tags: [{ id: 1 }, { id: 2 }],
-        ingredients: [{ name: "파" }, { name: "양파" }],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 2,
-        tags: [{ id: 2 }],
-        ingredients: [{ name: "양파" }],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 3,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 4,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 5,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 11,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 12,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 13,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 14,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 15,
-        tags: [],
-        ingredients: [],
-      },
-    ],
-    []
-  );
-
-  const [loading, setLoading] = useState(false);
-  const [recipes, setRecipes] = useState([]);
+const RecipeModal = ({ onRecipeItemClicked }) => {
+  const { data, isLoading } = useFetchList({
+    queryKey: "searchRecipeList",
+    articleId: 1,
+    uri: `/recipe/`,
+  });
   const [searchKeyword, setSearchKeyword] = useState("");
 
-  /**
-   * add recipe list item
-   * @param {Integer} nAddedRecipes number of added recipes
-   */
-  const addRecipesBeingShown = useCallback(
-    async (nAddedRecipes) => {
-      // for spinner UI
-      setLoading(true);
-
-      if (recipes.length + nAddedRecipes <= data.length) {
-        await setTimeout(() => {
-          setRecipes(
-            recipes.concat(
-              data.slice(recipes.length, recipes.length + nAddedRecipes)
-            )
-          );
-        }, 1000);
-      }
-
-      setLoading(false);
-    },
-    [recipes, setLoading, data]
-  );
-
-  let ticking = false;
-  const onScroll = useCallback(() => {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        let documentScrollPos = window.scrollY + window.innerHeight;
-
-        // if scroll end
-        if (documentScrollPos <= document.documentElement.scrollHeight - 20) {
-          addRecipesBeingShown(5);
-        }
-
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, [addRecipesBeingShown]);
-
-  // attach on Scroll event
-  useEffect(() => {
-    window.addEventListener("scroll", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [onScroll]);
-
-  // list Value init
-  useEffect(() => {
-    setRecipes(data.slice(0, 5));
-  }, [data]);
   const searchWordOnChange = (e) => {
     setSearchKeyword(e.target.value);
   };
   const searchWordHandler = () => {
     console.log(searchKeyword);
   };
+  if (isLoading) return <div>로딩중</div>;
+
   return createPortal(
     <RecipeListModal>
       <RecipeListWrapper>
@@ -197,7 +43,11 @@ const RecipeModal = () => {
             onClick={searchWordHandler}
           />
         </RecipeListSearchWrapper>
-        <RecipeList recipes={recipes} loading={loading} />
+        <RecipeList
+          recipes={data.pages[0].result.data}
+          loading={isLoading}
+          onRecipeItemClicked={onRecipeItemClicked}
+        />
       </RecipeListWrapper>
     </RecipeListModal>,
     document.getElementById("myCookDetail")

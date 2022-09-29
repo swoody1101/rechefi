@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import RecipeListBests from "./components/bests/recipe_list_bests";
 import RecipeList from "./components/recipe_list";
 import RecipeListFab from "./components/recipe_list_fab";
@@ -34,10 +29,7 @@ function RecipeListPage() {
       // for spinner UI
       setLoading(true);
 
-      if (
-        shownRecipes.length + nAddedRecipes <=
-        recipes.length
-      ) {
+      if (shownRecipes.length + nAddedRecipes <= recipes.length) {
         await setTimeout(() => {
           setShownRecipes(
             shownRecipes.concat(
@@ -62,14 +54,10 @@ function RecipeListPage() {
   const onScroll = useCallback(() => {
     if (!ticking) {
       window.requestAnimationFrame(() => {
-        let documentScrollPos =
-          window.scrollY + window.innerHeight;
+        let documentScrollPos = window.scrollY + window.innerHeight;
 
         // if scroll end
-        if (
-          documentScrollPos <=
-          document.documentElement.scrollHeight - 20
-        ) {
+        if (documentScrollPos <= document.documentElement.scrollHeight - 20) {
           addRecipesBeingShown(5);
         }
 
@@ -91,11 +79,8 @@ function RecipeListPage() {
 
   // see recipe detail
   const onRecipeItemClicked = (id, title) => {
-    navigate({
-      // TODO : change with matching updated
-      pathname: "/recipe/detail",
-      hash: `${id}`,
-    });
+    // const postId = id;
+    navigate(`/recipe/postId=` + id);
   };
 
   return (
