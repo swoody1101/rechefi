@@ -41,6 +41,7 @@ class TokenData(BaseModel):
 
 
 class CurrentUser(BaseModel):
+    id: int
     email: str
     nickname: str
     about_me: Union[str, None]
