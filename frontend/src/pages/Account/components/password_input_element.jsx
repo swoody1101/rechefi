@@ -14,6 +14,9 @@ const PasswordInputElement = (props) => {
   const setPassword = props.setValue;
 
   const passwordValidation = (props) => {
+    if (props === "") {
+      return true;
+    }
     const regexCheck = regex.password;
     if (regexCheck.test(props)) {
       return true;

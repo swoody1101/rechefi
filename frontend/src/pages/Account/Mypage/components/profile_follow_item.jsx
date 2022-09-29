@@ -31,7 +31,7 @@ const ProfileFollowItem = (props) => {
         justifyContent: "space-between",
         marginTop: "5px",
       }}
-      key={props.key}
+      key={props.email}
     >
       <Box
         sx={{
