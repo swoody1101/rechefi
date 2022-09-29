@@ -8,7 +8,7 @@ export const uploadImage = (formdata) => {
     if (!loginToken) reject("login needed");
 
     axios
-      .post(process.env.REACT_APP_BACKEND_URL, formdata, {
+      .post(`${process.env.REACT_APP_BACKEND_URL}/image`, formdata, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${loginToken}`,
