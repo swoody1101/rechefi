@@ -22,8 +22,6 @@ const ProfileFollowingList = () => {
     const temp = loginInfo.followingList.map(
       (following) => following === props
     );
-    console.log(loginInfo.followingList);
-    console.log(temp);
     if (temp) {
       return true;
     }
@@ -32,7 +30,6 @@ const ProfileFollowingList = () => {
 
   return followingList.map((following) => (
     <ProfileFollowItem
-      key={following}
       email={following}
       isFollow={isFollowHandler(following)}
     />
