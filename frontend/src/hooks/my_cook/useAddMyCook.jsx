@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "react-query";
-import { Success } from "../../common/components/sweatAlert";
 import http from "../../utils/http-commons";
 
 export default function useAddMyCook(uniqueKey) {
@@ -11,7 +10,7 @@ export default function useAddMyCook(uniqueKey) {
         content: sendData.content,
         img_url: sendData.imageUploadUrl,
         category: 0,
-        recipe_id: 0,
+        recipe_id: sendData.recipe_id,
       });
       return data;
     },
