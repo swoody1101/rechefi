@@ -11,6 +11,8 @@ export function useRecipes() {
       .then((response) => {
         if (response.data.message === "success") {
           setRecipes(recipes.concat(response.data.data.post));
+        } else {
+          throw new Error(response.data.message);
         }
       })
       .catch((error) => {

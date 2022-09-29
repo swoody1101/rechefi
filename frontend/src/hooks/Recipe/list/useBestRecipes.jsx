@@ -8,9 +8,11 @@ export function useBestRecipes() {
   const getBestRecipes = () => {
     http
       .get("/main/best-recipe")
-      .then((reponse) => {
-        if (reponse.data.message === "success") {
-          setBestRecipes(reponse.data.data.slice(0, 5));
+      .then((response) => {
+        if (response.data.message === "success") {
+          setBestRecipes(response.data.data.slice(0, 5));
+        } else {
+          throw new Error(response.data.message);
         }
       })
       .catch((error) => {
