@@ -100,19 +100,19 @@ const AiVoiceListenArea = () => {
       console.log(sound);
     }
   }, [audioUrl]);
-  useEffect(() => {
-    console.log(soundFile);
-    if (!disabled && soundFile !== undefined) {
-      const formdata = new FormData();
-      formdata.append("file", soundFile);
-      http.post("/recipe/speech-to-text", formdata, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${loginToken}`,
-        },
-      });
-    }
-  }, [disabled, loginToken, soundFile]);
+  // useEffect(() => {
+  //   console.log(soundFile);
+  //   if (!disabled && soundFile !== undefined) {
+  //     const formdata = new FormData();
+  //     formdata.append("file", soundFile);
+  //     http.post("/recipe/speech-to-text", formdata, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //         Authorization: `Bearer ${loginToken}`,
+  //       },
+  //     });
+  //   }
+  // }, [disabled, loginToken, soundFile]);
   return (
     <>
       {/* <button onClick={onRecAudio}>녹음</button> */}
