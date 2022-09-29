@@ -5,8 +5,7 @@ export function usePrevious(value) {
 
   // Store current value in ref
   useEffect(() => {
-    if (value !== null && value !== undefined)
-      ref.current = value;
+    if (value !== null && value !== undefined) ref.current = value;
   }, [value]); // Only re-run if value changes
 
   return ref.current;

@@ -72,9 +72,7 @@ function RecipeListItem({ recipe, onClick }) {
                 src="/assets/img/food_example_2.jpg"
                 sx={{ width: 24, height: 24, mr: 1 }}
               /> */}
-              <Typography varaint="h6">
-                {recipe.author}
-              </Typography>
+              <Typography varaint="h6">{recipe.author}</Typography>
             </Box>
           </Box>
 
@@ -86,11 +84,7 @@ function RecipeListItem({ recipe, onClick }) {
             }}
           >
             <Typography variant="caption">
-              조회수 :
-              {" " +
-                (recipe.views
-                  ? recipe.views.toLocaleString()
-                  : 0)}
+              조회수 :{" " + (recipe.views ? recipe.views.toLocaleString() : 0)}
             </Typography>
             <RecipeListItemLikeBtn likes={recipe.likes} />
           </Box>

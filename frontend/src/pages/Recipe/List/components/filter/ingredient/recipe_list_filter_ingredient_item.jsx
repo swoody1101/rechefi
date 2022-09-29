@@ -9,12 +9,7 @@ import React, { useState } from "react";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { Palette } from "../../../../../../common/styles/palette";
 
-function RecipeFilterIngredItem({
-  ingredId,
-  ingredName,
-  onInclude,
-  onDelete,
-}) {
+function RecipeFilterIngredItem({ ingredId, ingredName, onInclude, onDelete }) {
   // for filter options
   const [isIncluded, setIsIncluded] = useState(true);
 

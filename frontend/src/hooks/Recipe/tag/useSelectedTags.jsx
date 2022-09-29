@@ -9,9 +9,7 @@ export function useSelectedTag() {
   };
 
   const deleteTag = (tag_id) => {
-    setSelectedTags(
-      selectedTags.filter((tag) => tag !== tag_id)
-    );
+    setSelectedTags(selectedTags.filter((tag) => tag !== tag_id));
   };
 
   return [selectedTags, addTag, deleteTag];

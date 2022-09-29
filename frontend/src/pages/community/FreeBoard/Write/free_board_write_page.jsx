@@ -6,10 +6,7 @@ import FreeBoardWriteEditorContainer from "./components/editor/free_board_write_
 import EditorWithImage from "./components/editor/free_board_write_editor_with_image";
 import WriteBottombar from "../../../Recipe/Write/components/bottombar/recipe_write_bottombar";
 import { useNavigate } from "react-router-dom";
-import {
-  Confirm,
-  Success,
-} from "../../../../common/components/sweatAlert";
+import { Confirm, Success } from "../../../../common/components/sweatAlert";
 import { convertToHTML } from "draft-convert";
 import { usePost } from "../../../../hooks/useMutations";
 import FreeBoardWriteAdminCheckbox from "./components/free_board_write_admin_chkbox";
@@ -23,9 +20,7 @@ function FreeBoardWritePage() {
 
   // input data
   const [title, setTitle, titleValidation] = useTitle();
-  const [editorState, setEditorState] = useState(
-    EditorState.createEmpty()
-  );
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   // get and handle Administrator info
   const { userId, isAdmin } = useUserInfo();
@@ -35,14 +30,10 @@ function FreeBoardWritePage() {
   const completeWrite = () => {
     mutate(
       {
-        uri: `/community/${
-          checked ? "notice-board" : "free-board"
-        }`,
+        uri: `/community/${checked ? "notice-board" : "free-board"}`,
         sentData: {
           title: title,
-          content: convertToHTML(
-            editorState.getCurrentContent()
-          ),
+          content: convertToHTML(editorState.getCurrentContent()),
           img_url: "",
           category: 0,
         },
@@ -96,9 +87,7 @@ function FreeBoardWritePage() {
         ""
       )}
 
-      <FreeBoardWriteEditorContainer
-        style={{ mt: isAdmin ? 0 : 2 }}
-      >
+      <FreeBoardWriteEditorContainer style={{ mt: isAdmin ? 0 : 2 }}>
         <EditorWithImage
           editorState={editorState}
           setEditorState={setEditorState}

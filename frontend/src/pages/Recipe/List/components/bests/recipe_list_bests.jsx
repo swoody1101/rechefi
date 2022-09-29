@@ -7,15 +7,8 @@ import TitleWithDivider from "../../../../../common/components/title_with_divide
 function RecipeListBests({ bestRecipes }) {
   return (
     <Container>
-      <TitleWithDivider
-        textVariant="h5"
-        title="베스트 레시피"
-      />
-      <Carousel
-        animation="slide"
-        interval="6000"
-        sx={{ width: "100%" }}
-      >
+      <TitleWithDivider textVariant="h5" title="베스트 레시피" />
+      <Carousel animation="slide" interval="6000" sx={{ width: "100%" }}>
         {bestRecipes.map((item, i) => (
           <BestRecipeCard bestRecipe={item} key={i} />
         ))}

@@ -4,12 +4,7 @@ import { Palette } from "../../../../../../common/styles/palette";
 import FreeBoardListItemBottomInfo from "./free_board_list_item_bottom_info";
 import FreeBoardListItemTitle from "./free_board_list_item_title";
 
-function FreeBoardListItem({
-  post,
-  isNotice,
-  isLast,
-  onClick,
-}) {
+function FreeBoardListItem({ post, isNotice, isLast, onClick }) {
   return (
     <ListItemButton
       onClick={onClick}
