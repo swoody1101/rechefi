@@ -28,7 +28,7 @@ function BestRecipeCard({ bestRecipe }) {
           bestRecipe.img_url
             ? bestRecipe.img_url
             : // default image
-              require("../../../../../assets/img/food_example_2.jpg")
+              require("../../../../../assets/img/default_food.png")
         }
         alt={bestRecipe.title}
       />

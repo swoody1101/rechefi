@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import RecipeListItemLikeBtn from "./recipe_list_item_like_btn";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
 
 function RecipeListItem({ recipe, onClick }) {
   return (
@@ -35,7 +36,7 @@ function RecipeListItem({ recipe, onClick }) {
             recipe.img_url
               ? recipe.img_url
               : // default image
-                require("../../../../assets/img/food_example_2.jpg")
+                require("../../../../assets/img/default_food.png")
           }
           alt={recipe.title + "_img"}
           sx={{
