@@ -1,4 +1,4 @@
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { Avatar } from "@mui/material";
 import {
   SidebarMyAccountWrapper,
   SidebarMyNicknameDiv,
@@ -18,7 +18,7 @@ const SidebarMyAccount = ({ sidebarClose }) => {
   return (
     <SidebarMyAccountWrapper>
       <SidebarMyProfileImage>
-        <AccountCircleIcon sx={{ fontSize: 75 }} />
+        <Avatar src={loginInfo.imgUrl} sx={{ width: 55, height: 55 }} />
       </SidebarMyProfileImage>
       {loginInfo.auth ? (
         <SidebarMyNicknameDiv onClick={mypageTransitionHandler}>
