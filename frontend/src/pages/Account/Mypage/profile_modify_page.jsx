@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -17,6 +17,7 @@ import {
   checkNicknameThunk,
   porfileModifyThunk,
 } from "../../../store/module/accountReducer";
+import InputImage from "../../../common/components/input_image";
 
 const ProfileModifyPage = () => {
   const loginInfo = useSelector((store) => store.account);
@@ -29,15 +30,18 @@ const ProfileModifyPage = () => {
   const [introduce, setIntroduce] = useState(
     loginInfo.introduce ? loginInfo.introduce : ""
   );
-  const [myImgae, setMyImage] = useState(
-    loginInfo.img_url ? loginInfo.img_url : ""
-  );
+  const [imgUrl, setImgUrl] = useState(loginInfo.imgUrl);
+  const myImage = useRef();
+
+  const addImageBlock = (imageLink) => {
+    setImgUrl(imageLink);
+  };
 
   const nicknameCheck = () => {
     if (nickname === loginInfo.nickname) {
       return true;
     }
-    if (!nickname) {
+    if (nickname === "") {
       alert("닉네임을 입력해주세요.");
       return false;
     }
@@ -57,19 +61,17 @@ const ProfileModifyPage = () => {
       return;
     }
 
-    // nicknameCheck() 백엔드 수정 중
-    if (nicknameCheck()) {
+    if (!nicknameCheck()) {
       alert("사용 불가능한 닉네임입니다.");
       setNickname(loginInfo.nickname);
       return;
     }
 
-    // 이미지 추가 필요
     const profileInfo = {
       nickname: nickname,
       about_me: introduce,
       password: password,
-      img_url: null,
+      img_url: imgUrl,
     };
     dispatch(porfileModifyThunk(profileInfo));
     navigate(`/mypage`);
@@ -93,7 +95,15 @@ const ProfileModifyPage = () => {
               height: 120,
               mx: "auto",
             }}
+            src={imgUrl}
           ></Avatar>
+          <Button
+            onClick={() => {
+              myImage.current.click();
+            }}
+          >
+            이미지 업로드
+          </Button>
           <Grid container spacing={2} marginTop="20px">
             <NicknameInputElement value={nickname} setValue={setNickname} />
             <PasswordInputElement value={password} setValue={setPassword} />
@@ -116,6 +126,7 @@ const ProfileModifyPage = () => {
             수정
           </Button>
         </FormControl>
+        <InputImage setRef={myImage} onInput={addImageBlock} />
       </Box>
     </Container>
   );
