@@ -356,13 +356,13 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
 @router.get("/gallery/search-by-id/{page}", description="유저 id로 작성된 요리자랑 목록 조회", response_model=ObjectResponse)
 async def get_cooking_list_by_id(page: int, mid: int):
     cooking = await Cooking.filter(user_id=mid).select_related('user').order_by('-id')
-    pages = 1 + len(cooking)//50
+    pages = 1 + len(cooking)//20
     current_page = page
     if 1 <= page <= pages:
-        cooking = cooking[(page-1)*50:page*50]
+        cooking = cooking[(page-1)*20:page*20]
     else:
         current_page = 1
-        cooking = cooking[:50]
+        cooking = cooking[:20]
     post = [
         {
             **ArticleList(**dict(article)).dict(),
@@ -388,13 +388,13 @@ async def get_cooking_list(page: int, q: Union[str, None] = None, opt: Union[str
     elif opt == "author":
         query = query.filter(user__nickname__contains=q)
     cooking = await query
-    pages = 1 + len(cooking)//50
+    pages = 1 + len(cooking)//20
     current_page = page
     if 1 <= page <= pages:
-        cooking = cooking[(page-1)*50:page*50]
+        cooking = cooking[(page-1)*20:page*20]
     else:
         current_page = 1
-        cooking = cooking[:50]
+        cooking = cooking[:20]
 
     post = [
         {
