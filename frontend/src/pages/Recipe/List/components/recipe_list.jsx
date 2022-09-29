@@ -67,11 +67,11 @@ function RecipeList({ recipes, loading, onRecipeItemClicked }) {
   });
 
   return (
-    <Container>
+    <>
       <RecipeListFilter onFilterApplied={setFilter} />
       <Box>{recipeItems}</Box>
       <RecipeListLoadingSpinner loading={loading} />
-    </Container>
+    </>
   );
 }
 
