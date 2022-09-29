@@ -52,12 +52,15 @@ class RecipeLikeUser(BaseModel):
 class RecipeList(BaseModel):
     user_id: int
     id: int
-    user: CurrentUser
     title: str
-    content: str
+    views: int
     img_url: str = Field(nullable=True)
-    tags: List[TagList]
-    likes: int
-    comment_count: int
     created_at: datetime
     updated_at: datetime
+
+
+class RecipeRecommendation(RecipeList):
+    likes: int
+    user: CurrentUser
+    comment_count: int
+    tags: List[TagList]
