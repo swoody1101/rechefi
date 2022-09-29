@@ -4,10 +4,7 @@ import TitleWithDivider from "../../../../../common/components/title_with_divide
 import RecipeWriteIngredInputItem from "./recipe_write_ingredient_item";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 
-function RecipeWriteIngredList({
-  ingredients,
-  setIngredients,
-}) {
+function RecipeWriteIngredList({ ingredients, setIngredients }) {
   // handle input from one item
   const onInput = (inputed_ingred, inputed_idx) => {
     setIngredients(
@@ -19,31 +16,24 @@ function RecipeWriteIngredList({
 
   const onDelete = (deleted_idx) => {
     setIngredients(
-      ingredients.filter(
-        (ingred, index) => index !== deleted_idx
-      )
+      ingredients.filter((ingred, index) => index !== deleted_idx)
     );
   };
 
-  const recipeIngredInputs = ingredients.map(
-    (ingred, index) => {
-      return (
-        <RecipeWriteIngredInputItem
-          key={index}
-          index={index}
-          onBlur={onInput}
-          onDelete={onDelete}
-        />
-      );
-    }
-  );
+  const recipeIngredInputs = ingredients.map((ingred, index) => {
+    return (
+      <RecipeWriteIngredInputItem
+        key={index}
+        index={index}
+        onBlur={onInput}
+        onDelete={onDelete}
+      />
+    );
+  });
 
   // control ingred information
   const addIngred = () => {
-    setIngredients([
-      ...ingredients,
-      { name: "", amount: "" },
-    ]);
+    setIngredients([...ingredients, { name: "", amount: "" }]);
   };
 
   return (

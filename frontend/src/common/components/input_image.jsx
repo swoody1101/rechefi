@@ -33,8 +33,7 @@ function InputImage({ setRef, onInput }) {
       const res = await uploadImage(formData);
       onInput(res);
     } catch (error) {
-      if (error.response.status === 401)
-        Warn("로그인이 필요합니다");
+      if (error.response.status === 401) Warn("로그인이 필요합니다");
       else Warn(`${error} 업로드 중 문제가 발생하였습니다`);
     }
 

@@ -1,8 +1,4 @@
-import {
-  Accordion,
-  AccordionSummary,
-  Paper,
-} from "@mui/material";
+import { Accordion, AccordionSummary, Paper } from "@mui/material";
 import React from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import RecipeListFilterTags from "./tag/recipe_list_filter_tags";
@@ -13,16 +9,11 @@ import { useSelectedIngreds } from "../../../../../hooks/Recipe/ingredient/useSe
 
 function RecipeListFilterContainer({ onFilterApplied }) {
   // handle tag information
-  const [selectedTags, addTag, deleteTag] =
-    useSelectedTag();
+  const [selectedTags, addTag, deleteTag] = useSelectedTag();
 
   // handle ingred info
-  const [
-    selectedIngreds,
-    addIngred,
-    deleteIngred,
-    changeIngred,
-  ] = useSelectedIngreds();
+  const [selectedIngreds, addIngred, deleteIngred, changeIngred] =
+    useSelectedIngreds();
 
   return (
     <Accordion
@@ -57,10 +48,7 @@ function RecipeListFilterContainer({ onFilterApplied }) {
           flexDirection: "column",
         }}
       >
-        <RecipeListFilterTags
-          onTagAdded={addTag}
-          onTagDeleted={deleteTag}
-        />
+        <RecipeListFilterTags onTagAdded={addTag} onTagDeleted={deleteTag} />
         <RecipeListFilterIngredients
           onSelectedIngredAdded={addIngred}
           onSelectedIngredDeleted={deleteIngred}

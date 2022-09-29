@@ -1,27 +1,21 @@
+import { createPortal } from "react-dom";
 import {
-  FastForwardBox,
-  RecipeDetailAIRemoteBox,
-  RecipeDetailAIRemoteWrapper,
-  ReForwardBox,
-} from "../styles/recipe_detail_styles";
+  AiAreaListenBackDrop,
+  AiAreaListenButton,
+  AiAreaListenWrapper,
+} from "../styles/recipe_ai_styles";
+import AiVoiceListenArea from "./ai_voice_listen_area";
 
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import FastForwardIcon from "@mui/icons-material/FastForward";
-import FastRewindIcon from "@mui/icons-material/FastRewind";
-
-const RecipeDeatilAIvoiceControll = () => {
-  return (
-    <RecipeDetailAIRemoteWrapper>
-      <RecipeDetailAIRemoteBox>
-        <ReForwardBox>
-          <FastRewindIcon fontSize="large" />
-        </ReForwardBox>
-        <PlayArrowIcon fontSize="large" />
-        <FastForwardBox>
-          <FastForwardIcon fontSize="large" />
-        </FastForwardBox>
-      </RecipeDetailAIRemoteBox>
-    </RecipeDetailAIRemoteWrapper>
+const RecipeDeatilAIvoiceControll = ({ closeAiHandler }) => {
+  return createPortal(
+    <div>
+      <AiAreaListenWrapper>
+        <AiVoiceListenArea />
+        <AiAreaListenButton onClick={closeAiHandler}>닫기</AiAreaListenButton>
+      </AiAreaListenWrapper>
+      <AiAreaListenBackDrop onClick={closeAiHandler} />
+    </div>,
+    document.getElementById("aiControll")
   );
 };
 

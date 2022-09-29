@@ -12,14 +12,10 @@ function RecipeListFilterTagChip({ tag, onClick }) {
         mx: 0.5,
         fontSize: "0.75rem",
         fontWeight: "bold",
-        background: tag.selected
-          ? Palette.mainColor3
-          : Palette.gray1,
+        background: tag.selected ? Palette.mainColor3 : Palette.gray1,
         // erase opacity animation
         "&:hover, &:focus": {
-          backgroundColor: tag.selected
-            ? Palette.mainColor3
-            : Palette.gray1,
+          backgroundColor: tag.selected ? Palette.mainColor3 : Palette.gray1,
         },
       }}
       onClick={onClick}

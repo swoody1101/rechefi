@@ -27,6 +27,7 @@ const ProfileDetail = (props) => {
       }}
     >
       <Avatar
+        src={imgUrl}
         sx={{
           width: 140,
           height: 140,

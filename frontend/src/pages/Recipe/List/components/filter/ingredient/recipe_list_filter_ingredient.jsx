@@ -26,8 +26,7 @@ function RecipeListFilterIngredients({
     if (!onSelectedIngredAdded(ingred)) setAlertOpen(true);
   };
 
-  const [searchedIngred, searchIngred] =
-    useSearchedIngreds();
+  const [searchedIngred, searchIngred] = useSearchedIngreds();
 
   // shown result
   const selectedIngredItems = selectedIngred.map((item) => (
@@ -54,9 +53,7 @@ function RecipeListFilterIngredients({
         onClick={() => setSearchOpen(true)}
         icon={<SearchIcon />}
       ></TitleWithDivider>
-      <Box
-        sx={{ display: "flex", flexDirection: "column" }}
-      >
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
         {selectedIngredItems}
       </Box>
 

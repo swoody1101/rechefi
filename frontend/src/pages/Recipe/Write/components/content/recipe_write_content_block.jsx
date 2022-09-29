@@ -1,8 +1,4 @@
-import {
-  Box,
-  ButtonGroup,
-  IconButton,
-} from "@mui/material";
+import { Box, ButtonGroup, IconButton } from "@mui/material";
 import React from "react";
 import { Palette } from "../../../../../common/styles/palette";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
@@ -41,14 +37,14 @@ function RecipeWriteContentBlock({
         >
           <IconButton
             size="small"
-            sx={{ p: 0 }}
+            sx={{ p: 0, mr: 1 }}
             onClick={() => onIndexDown(index)}
           >
             <ArrowDropUpIcon />
           </IconButton>
           <IconButton
             size="small"
-            sx={{ p: 0 }}
+            sx={{ p: 0, mr: 1 }}
             onClick={() => onIndexUp(index)}
           >
             <ArrowDropDownIcon />

@@ -2,13 +2,7 @@ import { TextField } from "@mui/material";
 import React from "react";
 import { Palette } from "../../../../../common/styles/palette";
 
-function RecipeWriteIngredInput({
-  label,
-  value,
-  setValue,
-  styles,
-  onBlur,
-}) {
+function RecipeWriteIngredInput({ label, value, setValue, styles, onBlur }) {
   return (
     <TextField
       label={label}

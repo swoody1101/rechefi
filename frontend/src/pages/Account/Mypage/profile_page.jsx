@@ -57,7 +57,7 @@ const ProfilePage = () => {
     >
       <Box sx={{ width: "100%" }}>
         <ProfileDetail
-          img_url={imgUrl}
+          imgUrl={imgUrl}
           email={email}
           nickname={nickname}
           introduce={introduce}

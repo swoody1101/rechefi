@@ -1,8 +1,4 @@
-import {
-  IconButton,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
+import { IconButton, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import React, { useState } from "react";
 import RecipeWriteBox from "./recipe_write_box";
 import AddIcon from "@mui/icons-material/Add";
@@ -28,18 +24,11 @@ function RecipeWriteAddCotentBar({ addContent }) {
         justifyContent: "space-between",
       }}
     >
-      <IconButton
-        onClick={() => addContent(contentType)}
-        sx={{ p: 0.5 }}
-      >
+      <IconButton onClick={() => addContent(contentType)} sx={{ p: 0.5 }}>
         <AddIcon />
       </IconButton>
       {/* select content type */}
-      <ToggleButtonGroup
-        value={contentType}
-        exclusive
-        onChange={handleType}
-      >
+      <ToggleButtonGroup value={contentType} exclusive onChange={handleType}>
         {/* it can be component because of MUI */}
         <ToggleButton
           value="text"
