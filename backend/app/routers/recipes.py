@@ -17,6 +17,7 @@ from httpx import AsyncClient
 
 import random
 
+
 router = APIRouter(prefix="/recipe", tags=["recipe"])
 
 
@@ -71,7 +72,7 @@ async def get_ai_response(request: Request, file: UploadFile = File(...), user: 
     num = str(random.random()).split('.')[1]
     if file.content_type.find("audio") == 0:
         stt_response = await client.post(f"{settings.AI_SERVER_URL}/speech-to-text",
-                                         files={"file": (f'{user.id}_{user.nickname}_{num}_{file.filename}', file.file)})
+                                         files={"file": (f'{user.id}_{user.nickname}_{num}_{file.filename}.wav', file.file)})
         await file.seek(0)
         return JSONResponse(content=stt_response.json())
     else:
@@ -194,13 +195,13 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
 @router.get("/search-by-id/{page}", description="유저 id로 작성한 레시피 목록 조회", response_model=ObjectResponse)
 async def get_recipe_list_by_id(page: int, mid: int):
     filtered_recipes = list(await Recipe.filter(user_id=mid).prefetch_related('tags', 'ingredients').select_related('user').order_by('-id'))
-    total_pages = 1 + len(filtered_recipes)//50
+    total_pages = 1 + len(filtered_recipes)//10
     current_page = page
     if 1 <= current_page <= total_pages:
-        recipes = filtered_recipes[(current_page - 1) * 50:current_page * 50]
+        recipes = filtered_recipes[(current_page - 1) * 10:current_page * 10]
     else:
         current_page = 1
-        recipes = filtered_recipes[:50]
+        recipes = filtered_recipes[:10]
     post = [
         {
             **RecipeList(**dict(recipe)).dict(),
@@ -237,13 +238,13 @@ async def get_recipe_list(page: int,
         ingredients = set(ingredient.split(','))
         filtered_recipes = [recipe for recipe in filtered_recipes
                             if ingredients.issubset(await recipe.ingredients.all().values_list("name", flat=True))]
-    total_pages = 1 + len(filtered_recipes)//50
+    total_pages = 1 + len(filtered_recipes)//10
     current_page = page
     if 1 <= current_page <= total_pages:
-        recipes = filtered_recipes[(current_page - 1) * 50:current_page * 50]
+        recipes = filtered_recipes[(current_page - 1) * 10:current_page * 10]
     else:
         current_page = 1
-        recipes = filtered_recipes[:50]
+        recipes = filtered_recipes[:10]
     post = [
         {
             **RecipeList(**dict(recipe)).dict(),
