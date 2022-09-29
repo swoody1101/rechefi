@@ -57,3 +57,10 @@ class RecipeList(BaseModel):
     img_url: str = Field(nullable=True)
     created_at: datetime
     updated_at: datetime
+
+
+class RecipeRecommendation(RecipeList):
+    likes: int
+    user: CurrentUser
+    comment_count: int
+    tags: List[TagList]

@@ -65,9 +65,13 @@ async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_
 @router.post("/speech-to-text", description="AI서버와 STT 데이터 통신")
 async def get_ai_response(request: Request, file: UploadFile = File(...), user: User = Depends(get_current_user)):
     # async with AsyncClient(base_url='http://127.0.0.1:8001/') as client:
+    print(file.filename)
+    print(file.content_type)
     client = AsyncClient()
-    if file.content_type == "audio/wav":
-        stt_response = await client.post(f"{settings.AI_SERVER_URL}/speech-to-text", files={"file": (file.filename, file.file)})
+    if file.content_type.find("audio") == 0:
+        new_name = file.filename.split('.')[0]
+        stt_response = await client.post(f"{settings.AI_SERVER_URL}/speech-to-text",
+                                         files={"file": (f'{user.id}_{user.nickname}_{new_name}.wav', file.file)})
         await file.seek(0)
         return JSONResponse(content=stt_response.json())
     else:
@@ -187,7 +191,7 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
     return CommonResponse()
 
 
-@router.get("/{recipe_id}", description="레시피 목록 조회", response_model=ObjectResponse)
+@router.get("/{page}", description="레시피 목록 조회", response_model=ObjectResponse)
 async def get_recipe_list(page: int,
                           mid: Union[int, None] = None,
                           tag: Union[str, None] = None,
