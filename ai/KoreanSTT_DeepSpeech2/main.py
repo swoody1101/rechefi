@@ -19,9 +19,8 @@ import librosa.display
 from . import GetSpeech 
 from . import tools
 import sys
-sys.path.insert(1, 'D:/server_real/KoreanSTT_DeepSpeech2/kospeech/vocabs')
-# sys.path.append("D:/server_real/KoreanSTT_DeepSpeech2/kospeech/vocabs/ksponspeech.py")
-import ksponspeech
+sys.path.insert(0, "D:/server_real/KoreanSTT_DeepSpeech2/kospeech/vocabs")
+from ksponspeech import KsponSpeechVocabulary
 # from kospeech.models import DeepSpeech2
 
 
@@ -45,7 +44,7 @@ def stt_logic(file_path):
 
 
 # In[7]:
-    model_path = "./KoreanSTT_DeepSpeech2/model.pt"
+    model_path = "./KoreanSTT_DeepSpeech2/model2.pt"
     device = "cpu"
 
     # Get Speech data
@@ -55,7 +54,7 @@ def stt_logic(file_path):
     # Transform to input
     feature = parser(wav_data)
     input_length = torch.LongTensor([len(feature)])
-    vocab = ksponspeech.KsponSpeechVocabulary('./KoreanSTT_DeepSpeech2/aihub_character_vocabs.csv')
+    vocab = KsponSpeechVocabulary('./KoreanSTT_DeepSpeech2/aihub_character_vocabs.csv')
 
     # Load Kospeech Models
     model = torch.load(model_path, map_location=lambda storage, loc: storage).to(device)
