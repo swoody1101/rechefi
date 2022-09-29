@@ -10,7 +10,7 @@ export default function useAddMyCook(uniqueKey) {
         content: sendData.content,
         img_url: sendData.imageUploadUrl,
         category: 0,
-        recipe_id: sendData.recipe_id,
+        recipe_id: sendData.recipe_id === undefined ? 0 : sendData.recipe_id,
       });
       return data;
     },
