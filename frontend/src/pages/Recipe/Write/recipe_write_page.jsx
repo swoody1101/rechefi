@@ -73,7 +73,7 @@ function RecipeWritePage() {
 
     let recipe = {
       title: title,
-      ingredients: ingreds,
+      ingredients: ingreds.filter((ingred) => ingred.name !== ""),
       tags: selectedTags,
       content: tmp_contents,
       img_url: "",
