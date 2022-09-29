@@ -8,14 +8,16 @@ export default function useFetchList({ queryKey, articleId, uri }) {
       const response = await http.get(uri + pageParam);
       return {
         result: response.data,
-        nextPage: pageParam + 100,
+        nextPage: pageParam + 1,
         isLast: response.data.isLast,
       };
     },
     {
       getNextPageParam: (lastPage) => {
-        console.log(lastPage);
-        return lastPage.isLast === undefined ? undefined : lastPage.nextPage;
+        return lastPage.result.data.current_page <
+          lastPage.result.data.total_pages
+          ? lastPage.nextPage
+          : undefined;
       },
     }
   );
@@ -58,4 +60,12 @@ export function useFetchComments({ queryKey, articleId, uri }) {
       },
     }
   );
+}
+
+export function useFetch({ queryKey, param, uri }) {
+  return useQuery([queryKey], async () => {
+    const response = await http.get(`${uri}${param ? `/${param}` : ""}`);
+    if (response.data.message === "success") return response.data.data;
+    else return undefined;
+  });
 }

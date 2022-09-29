@@ -4,10 +4,7 @@ import TitleWithDivider from "../../../../../../common/components/title_with_div
 import RecipeListFilterTagChip from "./recipe_list_filter_tag_item";
 import { useTags } from "../../../../../../hooks/Recipe/tag/useTags";
 
-function RecipeListFilterTags({
-  onTagAdded,
-  onTagDeleted,
-}) {
+function RecipeListFilterTags({ onTagAdded, onTagDeleted }) {
   const [tags, setTags] = useTags();
 
   /**
@@ -29,9 +26,7 @@ function RecipeListFilterTags({
     // set color toggle
     setTags(
       tags.map((tag) =>
-        tag.id === tag_id
-          ? { ...tag, selected: !tag.selected }
-          : tag
+        tag.id === tag_id ? { ...tag, selected: !tag.selected } : tag
       )
     );
   };
@@ -44,10 +39,7 @@ function RecipeListFilterTags({
         flexDirection: "column",
       }}
     >
-      <TitleWithDivider
-        textVariant="h6"
-        title="요리 태그"
-      />
+      <TitleWithDivider textVariant="h6" title="요리 태그" />
       <Box
         sx={{
           display: "flex",

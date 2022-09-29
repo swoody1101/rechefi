@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "react-query";
-import http from "../utils/http-commons";
+import http from "../../utils/http-commons";
 
 export function useAddComment(articleId, queryKey) {
   const queryClient = useQueryClient();

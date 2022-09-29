@@ -7,13 +7,15 @@ function ReadOnlyEditor({ HTML, style }) {
   return (
     <Box sx={{ m: 1, ...style }}>
       <Editor
-        editorState={EditorState.createWithContent(
-          convertFromHTML(HTML)
-        )}
+        editorState={EditorState.createWithContent(convertFromHTML(HTML))}
         readOnly
       />
     </Box>
   );
 }
+
+ReadOnlyEditor.defaultProps = {
+  HTML: "<p></p>",
+};
 
 export default ReadOnlyEditor;

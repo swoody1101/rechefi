@@ -3,20 +3,13 @@ import React, { useState } from "react";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import RecipeWriteIngredInput from "./recipe_write_ingredient_input";
 
-function RecipeWriteIngredItem({
-  index,
-  onBlur,
-  onDelete,
-}) {
+function RecipeWriteIngredItem({ index, onBlur, onDelete }) {
   const [ingredName, setIngredName] = useState("");
   const [ingredAmount, setIngredAmount] = useState("");
 
   // send name and amount to ingredient list
   const onInput = () => {
-    onBlur(
-      { name: ingredName, amount: ingredAmount },
-      index
-    );
+    onBlur({ name: ingredName, amount: ingredAmount }, index);
   };
 
   return (
@@ -35,10 +28,7 @@ function RecipeWriteIngredItem({
         onBlur={onInput}
         styles={{ maxWidth: "28%", ml: 1 }}
       />
-      <IconButton
-        sx={{ p: 0.5, ml: 0.5 }}
-        onClick={() => onDelete(index)}
-      >
+      <IconButton sx={{ p: 0.5, ml: 0.5 }} onClick={() => onDelete(index)}>
         <RemoveCircleOutlineIcon />
       </IconButton>
     </Box>
