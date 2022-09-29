@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "./JWT-token";
 
 const http = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: process.env.REACT_APP_BACKEND_URL,
   headers: {
     "content-type": "application/json; charset=UTF-8",
   },

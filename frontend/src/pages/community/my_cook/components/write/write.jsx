@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Backdrop } from "../../../../../common/styles/sidebar_styles";
-import { WriteAreaWrapper } from "../../styles/write/write_page_styles";
+import {
+  SelectReferenceRecipeDiv,
+  WriteAreaWrapper,
+} from "../../styles/write/write_page_styles";
 import {
   RecipeListSearchResultButton,
   RecipeListSearchWithResultDiv,
@@ -19,6 +22,8 @@ const MyCookWriter = () => {
   const [searchModal, setSearchModal] = useState(false);
   const [imageUploadUrl, setImageUploadUrl] = useState("");
   const [content, setContent] = useState("");
+  const [referenceRecipe, setReferenceRecipe] = useState({});
+
   const navigate = useNavigate();
 
   const { mutate } = useAddMyCook("myCookPosts");
@@ -30,6 +35,11 @@ const MyCookWriter = () => {
 
   const textHandler = (keyword) => {
     setContent(keyword);
+  };
+
+  const onRecipeItemClicked = (id, title) => {
+    setReferenceRecipe({ id: id, title });
+    setSearchModal(false);
   };
 
   const vali = () => {
@@ -45,7 +55,7 @@ const MyCookWriter = () => {
     mutate(
       {
         uri: "/community/gallery",
-        sendData: { content, imageUploadUrl },
+        sendData: { content, imageUploadUrl, recipe_id: referenceRecipe.id },
       },
       {
         onSuccess: () => {
@@ -65,7 +75,7 @@ const MyCookWriter = () => {
     <WriteWrapper>
       {searchModal && (
         <div>
-          <RecipeModal />
+          <RecipeModal onRecipeItemClicked={onRecipeItemClicked} />
           <Backdrop
             onClick={() => {
               setSearchModal(false);
@@ -83,28 +93,14 @@ const MyCookWriter = () => {
         >
           레시피 검색
         </RecipeListSearchResultButton>
+        <SelectReferenceRecipeDiv>
+          {referenceRecipe.title}
+        </SelectReferenceRecipeDiv>
       </RecipeListSearchWithResultDiv>
       <WriteAreaWrapper>
         <UploadImageArea uploadHandler={uploadHandler} />
         <WriteTextArea textHandler={textHandler} />
       </WriteAreaWrapper>
-      <WriteButton
-        onClick={() => {
-          mutate(
-            {
-              uri: "/community/gallery",
-              sendData: { content, imageUploadUrl },
-            },
-            {
-              onSuccess: () => {
-                navigate("/community/my-cook");
-              },
-            }
-          );
-        }}
-      >
-        글 등록
-      </WriteButton>
       <WriteButtonBar
         confirmDisabled={vali()}
         onCancel={onCancel}

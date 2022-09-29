@@ -12,16 +12,16 @@ export default function useFetchList({
       const response = await http.get(uri + pageParam);
       return {
         result: response.data,
-        nextPage: pageParam + 100,
+        nextPage: pageParam + 1,
         isLast: response.data.isLast,
       };
     },
     {
       getNextPageParam: (lastPage) => {
-        console.log(lastPage);
-        return lastPage.isLast === undefined
-          ? undefined
-          : lastPage.nextPage;
+        return lastPage.result.data.current_page <
+          lastPage.result.data.total_pages
+          ? lastPage.nextPage
+          : undefined;
       },
     }
   );

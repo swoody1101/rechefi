@@ -1,4 +1,5 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   SidebarBoardDiv,
   SideBarCommunityDivWrapper,
@@ -7,13 +8,13 @@ import {
   SidebarRecipeElement,
 } from "../../styles/sidebar_styles";
 import SidebarMyAccount from "./sidebar_my_account";
-import { useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { logout } from "../../../store/module/accountReducer";
 
 const SidebarElementList = ({ sidebarClose }) => {
   const loginInfo = useSelector((store) => store.account);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   return (
     <SidebarBoardDiv>
       <SidebarMyAccount sidebarClose={sidebarClose} />
@@ -69,9 +70,15 @@ const SidebarElementList = ({ sidebarClose }) => {
       >
         홈
       </div>
-      <SidebarLogout>
-        <LogoutIcon />
-      </SidebarLogout>
+      {loginInfo.auth && (
+        <SidebarLogout>
+          <LogoutIcon
+            onClick={() => {
+              dispatch(logout());
+            }}
+          />
+        </SidebarLogout>
+      )}
     </SidebarBoardDiv>
   );
 };

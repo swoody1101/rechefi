@@ -1,5 +1,15 @@
+import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Palette } from "../../../../../common/styles/palette";
+
+const moveSideBar = keyframes`
+  0%{
+    transform: translate(-50%,100%);
+  }
+  100%{
+    transform:translate(-50%,-50%);
+  }
+`;
 
 export const MyCookGridUl = styled.ul`
   display: flex;
@@ -36,14 +46,17 @@ export const MyCookGridImage = styled.img`
 `;
 
 export const MyCookDetailWrapper = styled.div`
+  animation: ${moveSideBar} 0.3s ease;
   z-index: 11;
   position: fixed;
   left: 50%;
   transform: translate(-50%, -50%);
   top: 50%;
   width: 85%;
-  height: 85vh;
-  background-color: ${Palette.mainColor3};
+  /* height: 85vh; */
+  height: max-content;
+  max-height: 85vh;
+  background-color: ${Palette.white2};
   border-radius: 14px;
   overflow-y: scroll;
 `;
@@ -71,4 +84,23 @@ export const MyCookDetailContentWithCommentWrapper = styled.div`
   margin-top: 1%;
 
   width: 100%;
+`;
+
+export const MyCookDetailListLoadingWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+export const MyCookDetailDeleteButtonWrapper = styled.button`
+  background: none;
+  background-color: ${Palette.mainColor3};
+  width: 15%;
+  border-radius: 8px;
+  height: 6vh;
+  margin-left: 3%;
+  border: none;
+  margin-bottom: 5%;
 `;
