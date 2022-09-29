@@ -10,7 +10,7 @@ export function useRecipes() {
       .get(`/recipe/${recipe_id}`)
       .then((response) => {
         if (response.data.message === "success") {
-          setRecipes(recipes.concat(response.data.data));
+          setRecipes(recipes.concat(response.data.data.post));
         }
       })
       .catch((error) => {
