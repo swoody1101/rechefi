@@ -11,6 +11,7 @@ import { Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useBestRecipes } from "../../../hooks/Recipe/list/useBestRecipes";
 import { useRecipes } from "../../../hooks/Recipe/list/useRecipes";
+import { getToken } from "../../../utils/JWT-token";
 
 function RecipeListPage() {
   const [recipes, getRecipes] = useRecipes();
@@ -105,11 +106,17 @@ function RecipeListPage() {
         loading={loading}
         onRecipeItemClicked={onRecipeItemClicked}
       />
-      <RecipeListFab
-        onClick={() => {
-          navigate("/recipe/write");
-        }}
-      />
+
+      {/* show write btn when login */}
+      {getToken() ? (
+        <RecipeListFab
+          onClick={() => {
+            navigate("/recipe/write");
+          }}
+        />
+      ) : (
+        ""
+      )}
     </Container>
   );
 }

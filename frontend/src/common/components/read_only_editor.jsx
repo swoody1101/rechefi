@@ -16,4 +16,8 @@ function ReadOnlyEditor({ HTML, style }) {
   );
 }
 
+ReadOnlyEditor.defaultProps = {
+  HTML: "<p></p>",
+};
+
 export default ReadOnlyEditor;

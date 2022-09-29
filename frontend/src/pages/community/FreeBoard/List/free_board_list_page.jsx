@@ -4,46 +4,29 @@ import { useLocation, useNavigate } from "react-router-dom";
 import TitleWithDivider from "../../../../common/components/title_with_divider";
 import FreeBoardListItem from "./components/item/free_board_list_item";
 import FreeBoardListItemContainer from "./components/free_board_list_items_container";
-import FreeBoardListItemNotices from "./components/free_board_list_notices_items";
+import FreeBoardListItemNotices from "./components/notice/free_board_list_notices_items";
 import FreeBoardPagination from "./components/free_board_list_pagination";
 import RecipeListFab from "../../../Recipe/List/components/recipe_list_fab";
+import { useFetch } from "../../../../hooks/useFetch";
+import LoadingSpinner from "../../../Recipe/List/components/recipe_list_loading_spinner";
+import ErrorMessagePaper from "../../../../common/components/error_message_paper";
+import { getToken } from "../../../../utils/JWT-token";
 
 function FreeBoardPage() {
-  const data = [
-    {
-      id: 1,
-      title: "핫한 핫소스 실화냐",
-      likes: 10,
-      date: "2020-10-20",
-      member_id: 1,
-      member_nickname: "나다",
-      comment_count: 3,
-    },
-    {
-      id: 2,
-      title: "핫한 핫소스 실화냐",
-      likes: 10,
-      date: "2020-10-20",
-      member_id: 1,
-      member_nickname: "나다",
-      comment_count: 3,
-    },
-    {
-      id: 3,
-      title: "핫한 핫소스 실화냐",
-      likes: 10,
-      date: "2020-10-20",
-      member_id: 1,
-      member_nickname: "나다",
-      comment_count: 3,
-    },
-  ];
+  const navigate = useNavigate();
 
+  // get page number from URL
   const location = useLocation();
   const query = new URLSearchParams(location.search);
-  const page = parseInt(query.get("page") || "1", 30);
+  const page_num = parseInt(query.get("page") || "1", 30);
 
-  const navigate = useNavigate();
+  // handle server data
+  const QUERY_KEY = "FREEBOARD";
+  const { isLoading, isError, data } = useFetch({
+    queryKey: QUERY_KEY,
+    param: page_num,
+    uri: "/community/free-board",
+  });
 
   return (
     <Container
@@ -61,26 +44,51 @@ function FreeBoardPage() {
       <FreeBoardListItemContainer isNotice={true}>
         <FreeBoardListItemNotices />
       </FreeBoardListItemContainer>
+
       {/* freeboard Items */}
       <FreeBoardListItemContainer style={{ mt: 1 }}>
-        {data.map((item, index) => (
-          <FreeBoardListItem
-            key={item.id}
-            post={item}
-            isLast={data.length - 1 === index}
+        {isLoading ? (
+          <LoadingSpinner loading={true} />
+        ) : isError ? (
+          <ErrorMessagePaper
+            message={
+              "글을 불러오는 중 문제가 발생하였습니다"
+            }
           />
-        ))}
+        ) : data.posts.length === 0 ? (
+          <ErrorMessagePaper
+            message={"작성된 글이 없습니다"}
+          />
+        ) : (
+          data.posts.map((item, index) => (
+            <FreeBoardListItem
+              key={item.id}
+              post={item}
+              isLast={data.length - 1 === index}
+              onClick={() =>
+                navigate(
+                  `/community/free-board/detail/${item.id}`
+                )
+              }
+            />
+          ))
+        )}
       </FreeBoardListItemContainer>
       <FreeBoardPagination
-        totalPages={30}
+        totalPages={data ? data.totalPages : 1}
         urlLink="/community/free-board"
       />
 
-      <RecipeListFab
-        onClick={() => {
-          navigate("/community/free-board/write");
-        }}
-      />
+      {/* show write btn when login */}
+      {getToken() ? (
+        <RecipeListFab
+          onClick={() => {
+            navigate("/community/free-board/write");
+          }}
+        />
+      ) : (
+        ""
+      )}
     </Container>
   );
 }
