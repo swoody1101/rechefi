@@ -14,12 +14,11 @@
 
 import csv
 import sys
-sys.path.insert(1, 'D:/server_real/KoreanSTT_DeepSpeech2/kospeech/vocabs')
-from .ksponspeech import Vocabulary
-import __init__
+sys.path.insert(1, 'D:/server_real/KoreanSTT_DeepSpeech2')
+from __init__ import Vocabulary
 
 
-class KsponSpeechVocabulary(__init__.Vocabulary):
+class KsponSpeechVocabulary(Vocabulary):
     def __init__(self, vocab_path, output_unit: str = 'character', sp_model_path=None):
         super(KsponSpeechVocabulary, self).__init__()
         if output_unit == 'subword':

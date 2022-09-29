@@ -23,7 +23,7 @@ def get_speech(file_path):
         
     # 음성 파일 소음 수치 반영
     with voice as source:
-        recognizer.adjust_for_ambient_noise(source)
+        recognizer.adjust_for_ambient_noise(source, duration=0.5)
         print("소음 수치 반영합니다. {}".format(recognizer.energy_threshold))
         
     # noise reduction 해결 코드 python
@@ -40,6 +40,6 @@ def get_speech(file_path):
         print("음성 파일 준비가 되었습니다.")
         # result = recognizer.listen(source, timeout = 5)
         # audio = recognizer.listen(source, phrase_time_limit=3).get_raw_data()
-        audio = recognizer.record(source, duration=5).get_raw_data()
+        audio = recognizer.record(source, duration=4).get_raw_data()
         # print(audio)
     return audio
