@@ -27,25 +27,23 @@ function RecipeListPage() {
   const addRecipesBeingShown = useCallback(
     async (nAddedRecipes) => {
       // for spinner UI
-      setLoading(true);
-
-      if (shownRecipes.length + nAddedRecipes <= recipes.length) {
-        await setTimeout(() => {
-          setShownRecipes(
-            shownRecipes.concat(
-              recipes.slice(
-                shownRecipes.length,
-                shownRecipes.length + nAddedRecipes
-              )
-            )
-          );
-        }, 1000);
-      } else {
-        // TODO
-        getRecipes();
-      }
-
-      setLoading(false);
+      // setLoading(true);
+      // if (shownRecipes.length + nAddedRecipes <= recipes.length) {
+      //   await setTimeout(() => {
+      //     setShownRecipes(
+      //       shownRecipes.concat(
+      //         recipes.slice(
+      //           shownRecipes.length,
+      //           shownRecipes.length + nAddedRecipes
+      //         )
+      //       )
+      //     );
+      //   }, 1000);
+      // } else {
+      //   // TODO
+      //   getRecipes();
+      // }
+      // setLoading(false);
     },
     [shownRecipes, setLoading, recipes]
   );
