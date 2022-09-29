@@ -10,7 +10,7 @@ from app.models.accounts import User
 from app.schemas.accounts import CurrentUser
 
 from app.schemas.community import ArticleCreateForm, ArticleCommentForm, ArticleCommentList, ArticleDetail, \
-    CookingCreateForm, NoticeDetail, CookingDetail
+    CookingCreateForm, NoticeDetail, CookingDetail, ArticleList
 from app.schemas.common import *
 
 router = APIRouter(prefix="/community", tags=["community"])
@@ -307,7 +307,7 @@ async def get_article_list(page: int, q: Union[str, None] = None, opt: Union[str
         articles = articles[:10]
     post = [
         {
-            **dict(article),
+            **ArticleList(**dict(article)).dict(),
             "likes": len(await article.like_users.all()),
             "comments_count": len(await ArticleComment.filter(article_id=article.id)),
             "user": CurrentUser(**dict(article.user)).dict()
@@ -340,10 +340,37 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
 
     post = [
         {
-            **dict(article),
+            **ArticleList(**dict(article)).dict(),
             "user": CurrentUser(**dict(article.user))
         }
         for article in articles
+    ]
+    data = {
+        'posts': post,
+        'total_pages': pages,
+        'current_page': current_page
+    }
+    return ObjectResponse(data=data)
+
+
+@router.get("/gallery/search-by-id/{page}", description="유저 id로 작성된 요리자랑 목록 조회", response_model=ObjectResponse)
+async def get_cooking_list_by_id(page: int, mid: int):
+    cooking = await Cooking.filter(user_id=mid).select_related('user').order_by('-id')
+    pages = 1 + len(cooking)//50
+    current_page = page
+    if 1 <= page <= pages:
+        cooking = cooking[(page-1)*50:page*50]
+    else:
+        current_page = 1
+        cooking = cooking[:50]
+    post = [
+        {
+            **ArticleList(**dict(article)).dict(),
+            "user": CurrentUser(**dict(article.user)),
+            "likes": len(await article.like_users.all()),
+            "comments_count": len(await CookingComment.filter(cooking_id=article.id)),
+        }
+        for article in cooking
     ]
     data = {
         'posts': post,
@@ -371,7 +398,7 @@ async def get_cooking_list(page: int, q: Union[str, None] = None, opt: Union[str
 
     post = [
         {
-            **dict(article),
+            **ArticleList(**dict(article)).dict(),
             "user": CurrentUser(**dict(article.user)),
             "likes": len(await article.like_users.all()),
             "comments_count": len(await CookingComment.filter(cooking_id=article.id)),
