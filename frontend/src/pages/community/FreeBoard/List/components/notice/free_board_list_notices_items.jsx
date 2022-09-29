@@ -22,14 +22,10 @@ function FreeBoardListNoticeItems() {
         <LoadingSpinner loading={true} />
       ) : isError ? (
         <ErrorMessagePaper
-          message={
-            "공지을 불러오는 중 문제가 발생하였습니다"
-          }
+          message={"공지을 불러오는 중 문제가 발생하였습니다"}
         />
       ) : data.posts.length === 0 ? (
-        <ErrorMessagePaper
-          message={"작성된 공지가 없습니다"}
-        />
+        <ErrorMessagePaper message={"작성된 공지가 없습니다"} />
       ) : (
         data.posts.map((item, index) => (
           <FreeBoardListItem
@@ -38,9 +34,7 @@ function FreeBoardListNoticeItems() {
             isNotice={true}
             isLast={data.length - 1 === index}
             onClick={() =>
-              navigate(
-                `/community/free-board/detail/${item.id}?notice=y`
-              )
+              navigate(`/community/free-board/detail/${item.id}?notice=y`)
             }
           />
         ))
