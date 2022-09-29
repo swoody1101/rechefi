@@ -51,14 +51,10 @@ function FreeBoardPage() {
           <LoadingSpinner loading={true} />
         ) : isError ? (
           <ErrorMessagePaper
-            message={
-              "글을 불러오는 중 문제가 발생하였습니다"
-            }
+            message={"글을 불러오는 중 문제가 발생하였습니다"}
           />
         ) : data.posts.length === 0 ? (
-          <ErrorMessagePaper
-            message={"작성된 글이 없습니다"}
-          />
+          <ErrorMessagePaper message={"작성된 글이 없습니다"} />
         ) : (
           data.posts.map((item, index) => (
             <FreeBoardListItem
@@ -66,9 +62,7 @@ function FreeBoardPage() {
               post={item}
               isLast={data.length - 1 === index}
               onClick={() =>
-                navigate(
-                  `/community/free-board/detail/${item.id}`
-                )
+                navigate(`/community/free-board/detail/${item.id}`)
               }
             />
           ))

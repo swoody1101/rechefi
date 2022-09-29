@@ -75,11 +75,7 @@ function RecipeListFilterSearch({
             sx={{ flexGrow: 1, mr: 1 }}
             onKeyUp={onKeyUp}
           ></OutlinedInput>
-          <IconButton
-            onClick={search}
-            type="button"
-            aria-label="search"
-          >
+          <IconButton onClick={search} type="button" aria-label="search">
             <SearchIcon />
           </IconButton>
         </Box>
@@ -87,9 +83,7 @@ function RecipeListFilterSearch({
         <Divider sx={{ mt: 2, mb: 1 }} />
 
         {/* shown searched result */}
-        <Box
-          sx={{ display: "flex", flexDirection: "column" }}
-        >
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           {searchItems}
         </Box>
       </DialogContent>

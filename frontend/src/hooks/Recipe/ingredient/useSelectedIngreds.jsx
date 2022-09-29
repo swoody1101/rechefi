@@ -14,18 +14,13 @@ export function useSelectedIngreds() {
     if (isDuplicated) return false;
 
     // add success
-    setSelectedIngred([
-      ...selectedIngreds,
-      { ...ingred, include: true },
-    ]);
+    setSelectedIngred([...selectedIngreds, { ...ingred, include: true }]);
     return true;
   };
 
   const deleteIngred = (ingred_id) => {
     setSelectedIngred(
-      selectedIngreds.filter(
-        (ingred) => ingred.id !== ingred_id
-      )
+      selectedIngreds.filter((ingred) => ingred.id !== ingred_id)
     );
   };
 
@@ -33,17 +28,10 @@ export function useSelectedIngreds() {
   const changeIngred = (ingred_id, flag) => {
     setSelectedIngred(
       selectedIngreds.map((ingred) =>
-        ingred.id === ingred_id
-          ? { ...ingred, include: flag }
-          : ingred
+        ingred.id === ingred_id ? { ...ingred, include: flag } : ingred
       )
     );
   };
 
-  return [
-    selectedIngreds,
-    addIngred,
-    deleteIngred,
-    changeIngred,
-  ];
+  return [selectedIngreds, addIngred, deleteIngred, changeIngred];
 }

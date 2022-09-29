@@ -1,10 +1,7 @@
 import { Paper } from "@mui/material";
 import React from "react";
 
-function FreeBoardWriteEditorContainer({
-  children,
-  style,
-}) {
+function FreeBoardWriteEditorContainer({ children, style }) {
   return (
     <Paper
       sx={{

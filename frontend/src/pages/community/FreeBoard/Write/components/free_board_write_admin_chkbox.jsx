@@ -2,12 +2,7 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import React from "react";
 import { Palette } from "../../../../../common/styles/palette";
 
-function FreeBoardWriteAdminCheckbox({
-  label,
-  checked,
-  setchecked,
-  disabled,
-}) {
+function FreeBoardWriteAdminCheckbox({ label, checked, setchecked, disabled }) {
   return (
     <FormControlLabel
       label={label}

@@ -3,12 +3,7 @@ import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Palette } from "../../../../../common/styles/palette";
 
-function FreeBoardDetailUserAvartar({
-  email,
-  nickname,
-  imageLink,
-  style,
-}) {
+function FreeBoardDetailUserAvartar({ email, nickname, imageLink, style }) {
   return (
     <Box
       sx={{
