@@ -15,6 +15,8 @@ from app.schemas.common import *
 from app.config import settings
 from httpx import AsyncClient
 
+import random
+
 router = APIRouter(prefix="/recipe", tags=["recipe"])
 
 
@@ -65,13 +67,11 @@ async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_
 @router.post("/speech-to-text", description="AI서버와 STT 데이터 통신")
 async def get_ai_response(request: Request, file: UploadFile = File(...), user: User = Depends(get_current_user)):
     # async with AsyncClient(base_url='http://127.0.0.1:8001/') as client:
-    print(file.filename)
-    print(file.content_type)
     client = AsyncClient()
+    num = str(random.random()).split('.')[1]
     if file.content_type.find("audio") == 0:
-        new_name = file.filename.split('.')[0]
         stt_response = await client.post(f"{settings.AI_SERVER_URL}/speech-to-text",
-                                         files={"file": (f'{user.id}_{user.nickname}_{new_name}.wav', file.file)})
+                                         files={"file": (f'{user.id}_{user.nickname}_{num}_{file.filename}', file.file)})
         await file.seek(0)
         return JSONResponse(content=stt_response.json())
     else:
@@ -189,6 +189,35 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
     else:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 레시피입니다.").dict())
     return CommonResponse()
+
+
+@router.get("/search-by-id/{page}", description="유저 id로 작성한 레시피 목록 조회", response_model=ObjectResponse)
+async def get_recipe_list_by_id(page: int, mid: int):
+    filtered_recipes = list(await Recipe.filter(user_id=mid).prefetch_related('tags', 'ingredients').select_related('user').order_by('-id'))
+    total_pages = 1 + len(filtered_recipes)//50
+    current_page = page
+    if 1 <= current_page <= total_pages:
+        recipes = filtered_recipes[(current_page - 1) * 50:current_page * 50]
+    else:
+        current_page = 1
+        recipes = filtered_recipes[:50]
+    post = [
+        {
+            **RecipeList(**dict(recipe)).dict(),
+            "user": CurrentUser(**dict(recipe.user)),
+            "tags": await recipe.tags.all(),
+            "ingredients": await recipe.ingredients.all(),
+            "likes": len(await recipe.like_users.all()),
+            "comments_count": len(await RecipeComment.filter(recipe_id=recipe.id))
+        }
+        for recipe in recipes
+    ]
+    data = {
+        "post": post,
+        "total_pages": total_pages,
+        "current_page": current_page
+    }
+    return ObjectResponse(data=data)
 
 
 @router.get("/{page}", description="레시피 목록 조회", response_model=ObjectResponse)
