@@ -1,9 +1,4 @@
-import {
-  Box,
-  Divider,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, IconButton, Typography } from "@mui/material";
 import React from "react";
 import { Palette } from "../styles/palette";
 
@@ -35,11 +30,7 @@ function TitleWithDivider({
         </Typography>
 
         {onClick !== null ? (
-          <IconButton
-            onClick={onClick}
-            type="button"
-            sx={{ p: 0.5 }}
-          >
+          <IconButton onClick={onClick} type="button" sx={{ p: 0.5 }}>
             {icon}
           </IconButton>
         ) : null}

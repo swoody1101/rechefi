@@ -17,9 +17,7 @@ export function usePost(queryKey) {
         if (error.response.status === 401) {
           Warn("로그인이 필요합니다");
         } else {
-          Warn(
-            `${error.code}\n 서버와 통신중 문제가 발생하였습니다`
-          );
+          Warn(`${error.code}\n 서버와 통신중 문제가 발생하였습니다`);
         }
       },
     }
@@ -41,9 +39,7 @@ export function useDelete(queryKey) {
         if (error.response.status === 401) {
           Warn("로그인이 필요합니다");
         } else {
-          Warn(
-            `${error.code}\n 서버와 통신중 문제가 발생하였습니다`
-          );
+          Warn(`${error.code}\n 서버와 통신중 문제가 발생하였습니다`);
         }
       },
     }
@@ -65,9 +61,7 @@ export function usePut(queryKey) {
         if (error.response.status === 401) {
           Warn("로그인이 필요합니다");
         } else {
-          Warn(
-            `${error.code}\n 서버와 통신중 문제가 발생하였습니다`
-          );
+          Warn(`${error.code}\n 서버와 통신중 문제가 발생하였습니다`);
         }
       },
     }

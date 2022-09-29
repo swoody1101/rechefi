@@ -12,11 +12,7 @@ import RecipeWriteContentBlock from "./components/content/recipe_write_content_b
 import RecipeWriteContentImage from "./components/content/recipe_write_content_img";
 import RecipeWriteContentText from "./components/content/recipe_write_content_text";
 import RecipeWriteBottombar from "./components/bottombar/recipe_write_bottombar";
-import {
-  Confirm,
-  Success,
-  Warn,
-} from "../../../common/components/sweatAlert";
+import { Confirm, Success, Warn } from "../../../common/components/sweatAlert";
 import { useSelectedTag } from "../../../hooks/Recipe/tag/useSelectedTags";
 import { useTitle } from "../../../hooks/Recipe/write/useTitle";
 import { useContents } from "../../../hooks/Recipe/write/useContents";
@@ -29,8 +25,7 @@ function RecipeWritePage() {
   const [title, setTitle, titleValidation] = useTitle();
 
   // control tag information
-  const [selectedTags, addTag, deleteTag] =
-    useSelectedTag();
+  const [selectedTags, addTag, deleteTag] = useSelectedTag();
 
   // ingredients for recipe
   const [ingreds, setIngred] = useState([]);
@@ -90,11 +85,7 @@ function RecipeWritePage() {
         navigate("/recipe", { replace: true });
       })
       .catch((error) => {
-        Warn(
-          error +
-            " : " +
-            "레시피 작성 중 문제가 발생하였습니다"
-        );
+        Warn(error + " : " + "레시피 작성 중 문제가 발생하였습니다");
       });
   };
 
@@ -123,10 +114,7 @@ function RecipeWritePage() {
       />
       {/* tags */}
       <RecipeWriteBox>
-        <RecipeListFilterTags
-          onTagAdded={addTag}
-          onTagDeleted={deleteTag}
-        />
+        <RecipeListFilterTags onTagAdded={addTag} onTagDeleted={deleteTag} />
       </RecipeWriteBox>
       {/* ingredients */}
       <RecipeWriteBox>
@@ -147,9 +135,7 @@ function RecipeWritePage() {
           >
             {/* image or text */}
             {block.type === "image" ? (
-              <RecipeWriteContentImage
-                link={block.content}
-              />
+              <RecipeWriteContentImage link={block.content} />
             ) : (
               <RecipeWriteContentText
                 index={index}
@@ -167,10 +153,7 @@ function RecipeWritePage() {
         onCancel={cancleWrite}
       />
 
-      <InputImage
-        setRef={imageInput}
-        onInput={addImageBlock}
-      />
+      <InputImage setRef={imageInput} onInput={addImageBlock} />
     </Container>
   );
 }

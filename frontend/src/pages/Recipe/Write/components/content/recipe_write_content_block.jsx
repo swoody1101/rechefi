@@ -1,8 +1,4 @@
-import {
-  Box,
-  ButtonGroup,
-  IconButton,
-} from "@mui/material";
+import { Box, ButtonGroup, IconButton } from "@mui/material";
 import React from "react";
 import { Palette } from "../../../../../common/styles/palette";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
