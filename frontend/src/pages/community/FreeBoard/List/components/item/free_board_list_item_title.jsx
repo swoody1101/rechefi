@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import FreeBoardListItemCommentChip from "./free_board_list_item_comment_chip";
-import FreeBoardListNoticeChip from "../free_board_list_notice_chip";
+import FreeBoardListNoticeChip from "../notice/free_board_list_notice_chip";
 
 function FreeBoardListItemTitle({
   postTitle,

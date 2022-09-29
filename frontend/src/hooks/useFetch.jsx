@@ -1,7 +1,11 @@
 import { useInfiniteQuery, useQuery } from "react-query";
 import http from "../utils/http-commons";
 
-export default function useFetchList({ queryKey, articleId, uri }) {
+export default function useFetchList({
+  queryKey,
+  articleId,
+  uri,
+}) {
   return useInfiniteQuery(
     queryKey,
     async ({ pageParam = articleId }) => {
@@ -23,14 +27,22 @@ export default function useFetchList({ queryKey, articleId, uri }) {
   );
 }
 
-export function useFetchDetail({ queryKey, articleId, uri }) {
+export function useFetchDetail({
+  queryKey,
+  articleId,
+  uri,
+}) {
   return useQuery([queryKey, articleId], async () => {
     const response = await http.get(uri + articleId);
     return response.data;
   });
 }
 
-export function useFetchComments({ queryKey, articleId, uri }) {
+export function useFetchComments({
+  queryKey,
+  articleId,
+  uri,
+}) {
   return useQuery(
     [queryKey, articleId],
     async () => {
@@ -60,4 +72,15 @@ export function useFetchComments({ queryKey, articleId, uri }) {
       },
     }
   );
+}
+
+export function useFetch({ queryKey, param, uri }) {
+  return useQuery([queryKey], async () => {
+    const response = await http.get(
+      `${uri}${param ? `/${param}` : ""}`
+    );
+    if (response.data.message === "success")
+      return response.data.data;
+    else return undefined;
+  });
 }

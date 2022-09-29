@@ -1,0 +1,9 @@
+.DraftEditor-root {
+    height: 400px;
+    overflow-y: auto;
+}
+
+/* placeholder text style */
+.public-DraftEditorPlaceholder-inner {
+    color: gray;
+}

@@ -6,6 +6,7 @@ function RecipeWriteBottombarButton({
   color,
   children,
   disabled,
+  style,
 }) {
   return (
     <Button
@@ -18,6 +19,7 @@ function RecipeWriteBottombarButton({
         "&:focus, &:hover": {
           backgroundColor: color,
         },
+        ...style,
       }}
     >
       {children}
