@@ -15,6 +15,7 @@ import ConfirmPasswordInputElement from "../components/confim_password_input_ele
 import ProfileModifyIntroduce from "./components/profile_modify_introduce";
 import {
   checkNicknameThunk,
+  loadMyProfileThunk,
   porfileModifyThunk,
 } from "../../../store/module/accountReducer";
 import InputImage from "../../../common/components/input_image";
@@ -74,6 +75,7 @@ const ProfileModifyPage = () => {
       img_url: imgUrl,
     };
     dispatch(porfileModifyThunk(profileInfo));
+    dispatch(loadMyProfileThunk());
     navigate(`/mypage`);
   };
 
