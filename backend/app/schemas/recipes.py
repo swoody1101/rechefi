@@ -49,11 +49,17 @@ class RecipeLikeUser(BaseModel):
     user_id: int
 
 
-class RecipeList(BaseModel):
+class SimpleRecipeList(BaseModel):
     user_id: int
     id: int
     title: str
     views: int
+    img_url: str = Field(nullable=True)
+    # created_at: datetime
+    # updated_at: datetime
+
+
+class RecipeList(SimpleRecipeList):
     img_url: str = Field(nullable=True)
     created_at: datetime
     updated_at: datetime

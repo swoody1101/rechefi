@@ -51,7 +51,15 @@ class CookingCreateForm(ArticleCreateForm):
     recipe_id: int = Field(nullable=False)
 
 
-class ArticleList(BaseModel):
+class SimpleArticleList(BaseModel):
+    user_id: int
+    id: int
+    title: str
+    views: int
+    img_url: str = Field(nullable=True)
+
+
+class ArticleList(SimpleArticleList):
     user_id: int
     id: int
     title: str

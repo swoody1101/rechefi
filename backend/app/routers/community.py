@@ -10,7 +10,7 @@ from app.models.accounts import User
 from app.schemas.accounts import CurrentUser
 
 from app.schemas.community import ArticleCreateForm, ArticleCommentForm, ArticleCommentList, ArticleDetail, \
-    CookingCreateForm, NoticeDetail, CookingDetail, ArticleList
+    CookingCreateForm, NoticeDetail, CookingDetail, ArticleList, SimpleArticleList
 from app.schemas.common import *
 
 router = APIRouter(prefix="/community", tags=["community"])
@@ -365,10 +365,9 @@ async def get_cooking_list_by_id(page: int, mid: int):
         cooking = cooking[:20]
     post = [
         {
-            **ArticleList(**dict(article)).dict(),
-            "user": CurrentUser(**dict(article.user)),
-            "likes": len(await article.like_users.all()),
-            "comments_count": len(await CookingComment.filter(cooking_id=article.id)),
+            **SimpleArticleList(**dict(article)).dict(),
+            # "likes": len(await article.like_users.all()),
+            # "comments_count": len(await CookingComment.filter(cooking_id=article.id)),
         }
         for article in cooking
     ]
