@@ -37,14 +37,14 @@ function RecipeWriteContentBlock({
         >
           <IconButton
             size="small"
-            sx={{ p: 0 }}
+            sx={{ p: 0, mr: 1 }}
             onClick={() => onIndexDown(index)}
           >
             <ArrowDropUpIcon />
           </IconButton>
           <IconButton
             size="small"
-            sx={{ p: 0 }}
+            sx={{ p: 0, mr: 1 }}
             onClick={() => onIndexUp(index)}
           >
             <ArrowDropDownIcon />
