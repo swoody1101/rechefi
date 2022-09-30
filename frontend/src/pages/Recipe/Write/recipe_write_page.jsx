@@ -59,6 +59,9 @@ function RecipeWritePage() {
 
   // handle bottom bar buttons
   const writeComplete = () => {
+    let first_image_link = "";
+
+    // for processing
     let tmp_contents = "";
     contents.forEach((item, index) => {
       tmp_contents = tmp_contents.concat(
@@ -73,8 +76,12 @@ function RecipeWritePage() {
       }
 
       // setThumbnail first image
-      if (item.type === "image" && thumbnail === "") {
-        setThumbnail(item.content);
+      if (
+        item.type === "image" &&
+        thumbnail === "" &&
+        first_image_link === ""
+      ) {
+        first_image_link = item.content;
       }
     });
 
@@ -83,7 +90,7 @@ function RecipeWritePage() {
       ingredients: ingreds.filter((ingred) => ingred.name !== ""),
       tags: selectedTags,
       content: tmp_contents,
-      img_url: thumbnail,
+      img_url: thumbnail === "" ? first_image_link : thumbnail,
     };
 
     http
