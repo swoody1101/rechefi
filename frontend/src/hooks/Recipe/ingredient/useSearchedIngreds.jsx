@@ -8,9 +8,11 @@ export function useSearchedIngreds() {
   const searchIngred = (keyword) => {
     http
       .get(`/recipe/ingredient?name=${keyword}`)
-      .then((reponse) => {
-        if (reponse.data.message === "success") {
-          setSearchedIngred(reponse.data.data);
+      .then((response) => {
+        if (response.data.message === "success") {
+          setSearchedIngred(response.data.data);
+        } else {
+          throw new Error(response.data.message);
         }
       })
       .catch((error) => {

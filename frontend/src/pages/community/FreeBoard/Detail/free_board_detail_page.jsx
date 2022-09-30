@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useFetch } from "../../../../hooks/useFetch";
 import ErrorMessagePaper from "../../../../common/components/error_message_paper";
@@ -11,13 +11,13 @@ import FreeBoardDetailBottombar from "./components/free_board_detail_bottombar";
 import FreeBoardDetailCommentContainer from "./components/free_board_detail_comments_container";
 import Comments from "../../../../common/components/comments/comments";
 import http from "../../../../utils/http-commons";
-import { useUserInfo } from "../../../../hooks/FreeBoard/useUserInfo";
 import { useDelete } from "../../../../hooks/useMutations";
 import {
   Confirm,
   Success,
   Warn,
 } from "../../../../common/components/sweatAlert";
+import { useSelector } from "react-redux";
 
 function FreeBoardDetailPage() {
   const navigate = useNavigate();
@@ -55,11 +55,13 @@ function FreeBoardDetailPage() {
   // }, []);
 
   // get user info from store
-  const { userId, isAdmin } = useUserInfo();
+  const login_info = useSelector((store) => store.account);
+  const isAdmin = login_info.admin || false;
+  const userId = login_info.user_id || -2;
   const writerId = data ? data.user_id : -1;
 
   // for delete and modify authority
-  const isBoardAuth = () => {
+  const hasAuth = () => {
     if (isAdmin) return false;
     if (userId !== writerId) return true;
     else return false;
@@ -141,10 +143,15 @@ function FreeBoardDetailPage() {
           navigate("/community/free-board");
         }}
         onModifyClick={() => {
-          navigate(`/community/free-board/write?modify=${postId}`);
+          // add if notice
+          navigate(
+            `/community/free-board/write?${
+              isNotice ? "notice=y&" : ""
+            }modify=${postId}`
+          );
         }}
         onDeleteClick={deletePost}
-        disabledCondition={isBoardAuth}
+        disabledCondition={hasAuth}
       />
 
       {/* comments */}

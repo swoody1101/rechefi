@@ -7,7 +7,7 @@ function FreeBoardWriteAdminCheckbox({ label, checked, setchecked, disabled }) {
     <FormControlLabel
       label={label}
       sx={{ mx: 1 }}
-      disabled={disabled()}
+      disabled={disabled}
       control={
         <Checkbox
           checked={checked}

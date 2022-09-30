@@ -1,9 +1,9 @@
 import { Box, TextField } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { Palette } from "../../../../../common/styles/palette";
 
 function RecipeWriteTitleInput({
-  title,
+  value,
   setValue,
   placeholder,
   validation,
@@ -17,7 +17,7 @@ function RecipeWriteTitleInput({
     <Box sx={{ display: "flex", mt: 1, mx: 2 }}>
       <TextField
         variant="standard"
-        value={title}
+        value={value}
         placeholder={placeholder}
         onChange={onChange}
         error={!validation()}
