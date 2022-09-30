@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useBestRecipes } from "../../../hooks/Recipe/list/useBestRecipes";
 import { getToken } from "../../../utils/JWT-token";
 import { useInView } from "react-intersection-observer";
+import RecipeListLoadingSpinner from "./components/recipe_list_loading_spinner";
 
 function RecipeListPage() {
   const navigate = useNavigate();
@@ -42,14 +43,18 @@ function RecipeListPage() {
     <Container sx={{ pt: 2, px: 1, pb: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
       <Container>
-        {data.pages.map((page, index) => (
-          <RecipeList
-            key={index}
-            recipes={page.result.data.post}
-            loading={isLoading}
-            onRecipeItemClicked={onRecipeItemClicked}
-          />
-        ))}
+        {isLoading ? (
+          <RecipeListLoadingSpinner loading={isLoading} />
+        ) : (
+          data.pages.map((page, index) => (
+            <RecipeList
+              key={index}
+              recipes={page.result.data.post}
+              loading={isLoading}
+              onRecipeItemClicked={onRecipeItemClicked}
+            />
+          ))
+        )}
       </Container>
 
       {/* for infinity scroll trigger */}
