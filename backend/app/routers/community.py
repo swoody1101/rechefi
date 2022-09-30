@@ -268,7 +268,7 @@ async def like_cooking(article_id: int, response: Response, user: User = Depends
 @router.put("/gallery/{article_id}", description="게시물 수정", response_model=SingleResponse)
 async def edit_cooking(article_id: int, req: CookingCreateForm, user: User = Depends(get_current_user)):
     # 유저 인증 로직
-    article = await Article.get_or_none(id=article_id)
+    article = await Cooking.get_or_none(id=article_id)
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
     else:
@@ -356,13 +356,13 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
 @router.get("/gallery/search-by-id/{page}", description="유저 id로 작성된 요리자랑 목록 조회", response_model=ObjectResponse)
 async def get_cooking_list_by_id(page: int, mid: int):
     cooking = await Cooking.filter(user_id=mid).select_related('user').order_by('-id')
-    pages = 1 + len(cooking)//20
+    pages = 1 + len(cooking)//15
     current_page = page
     if 1 <= page <= pages:
-        cooking = cooking[(page-1)*20:page*20]
+        cooking = cooking[(page-1)*15:page*15]
     else:
         current_page = 1
-        cooking = cooking[:20]
+        cooking = cooking[:15]
     post = [
         {
             **SimpleArticleList(**dict(article)).dict(),

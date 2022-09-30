@@ -71,7 +71,7 @@ async def get_ai_response(request: Request, file: UploadFile = File(...), user: 
     client = AsyncClient()
     num = str(random.random()).split('.')[1]
     if file.content_type.find("audio") == 0:
-        stt_response = await client.post(f"{settings.AI_SERVER_URL}/speech-to-text",
+        stt_response = await client.post(f"{settings.AI_SERVER_URL}/stt",
                                          files={"file": (f'{user.id}_{user.nickname}_{num}_{file.filename}.wav', file.file)})
         await file.seek(0)
         return JSONResponse(content=stt_response.json())
@@ -195,13 +195,13 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
 @router.get("/search-by-id/{page}", description="유저 id로 작성한 레시피 목록 조회", response_model=ObjectResponse)
 async def get_recipe_list_by_id(page: int, mid: int):
     filtered_recipes = list(await Recipe.filter(user_id=mid).prefetch_related('tags', 'ingredients').select_related('user').order_by('-id'))
-    total_pages = 1 + len(filtered_recipes)//20
+    total_pages = 1 + len(filtered_recipes)//15
     current_page = page
     if 1 <= current_page <= total_pages:
-        recipes = filtered_recipes[(current_page - 1) * 20:current_page * 20]
+        recipes = filtered_recipes[(current_page - 1) * 15:current_page * 15]
     else:
         current_page = 1
-        recipes = filtered_recipes[:20]
+        recipes = filtered_recipes[:15]
     post = [
         {
             **SimpleRecipeList(**dict(recipe)).dict(),
@@ -224,10 +224,13 @@ async def get_recipe_list_by_id(page: int, mid: int):
 async def get_recipe_list(page: int,
                           mid: Union[int, None] = None,
                           tag: Union[str, None] = None,
-                          ingredient: Union[str, None] = None):
+                          ingredient: Union[str, None] = None,
+                          title: Union[str, None] = None):
     query = Recipe.all().prefetch_related('tags', 'ingredients').select_related('user').order_by('-id')
     if mid:
         query = query.filter(user_id=mid)
+    if title:
+        query = query.filter(title__contain=title)
     filtered_recipes = list(await query)
     if tag:
         tags = set(map(int, tag.split(',')))
