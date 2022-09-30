@@ -230,7 +230,7 @@ async def get_recipe_list(page: int,
     if mid:
         query = query.filter(user_id=mid)
     if title:
-        query = query.filter(title__contain=title)
+        query = query.filter(title__contains=title)
     filtered_recipes = list(await query)
     if tag:
         tags = set(map(int, tag.split(',')))
