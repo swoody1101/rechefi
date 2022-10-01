@@ -16,29 +16,44 @@ import {
   RecommentElementWrapper,
 } from "../../styles/comments/comments_styles";
 import { useSelector } from "react-redux/es/exports";
-import { Box, IconButton, Input, Paper } from "@mui/material";
+import {
+  Box,
+  Divider,
+  IconButton,
+  Input,
+  Paper,
+  Typography,
+} from "@mui/material";
 import LoadingSpinner from "../../../pages/Recipe/List/components/recipe_list_loading_spinner";
-import MapsUgcOutlinedIcon from "@mui/icons-material/MapsUgcOutlined";
 import { useState } from "react";
 import CommentWriteField from "./comment_write_field";
 
-const Comments = ({ aiButton, postId, uri, queryKey }) => {
+const Comments = ({ postId, uri, queryKey }) => {
   const handle = useParams();
+  const post_id = postId || handle.detail;
+
+  // check logined
+  const auth = useSelector((store) => store.account.auth);
+
+  const [comment, setComment] = useState("");
   const { data, isLoading } = useFetchComments({
     queryKey: queryKey,
-    articleId: postId !== undefined ? postId : handle.detail,
+    articleId: post_id,
     uri,
   });
 
-  const [comment, setComment] = useState("");
+  console.log(data);
 
   const { mutate } = useAddComment(handle.detail, queryKey);
-  const auth = useSelector((store) => store.account.auth);
+
   const reCommentPush = (reComment) => {
+    if (reComment.content === "") return;
+
     let commentList = data;
     const lastIndex = commentList.filter((e) => {
       return e.group === reComment.group;
     });
+
     lastIndex.sort(function (a, b) {
       if (a.sequence > b.sequence) {
         return 1;
@@ -46,9 +61,10 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
         return -1;
       }
     });
+
     mutate({
       uri: uri,
-      articleId: handle.detail === undefined ? postId : handle.detail,
+      articleId: post_id,
       sendData: {
         content: reComment.content,
         root: 1,
@@ -58,14 +74,16 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
     });
     setComment("");
   };
-  const commentPush = (e) => {
-    e.preventDefault();
+
+  const commentPush = () => {
+    if (comment === "") return;
+
     let commentList = data;
     if (commentList.length === 0) {
       const lastIndex = 1;
       const sendData = {
         uri,
-        articleId: handle.detail === undefined ? postId : handle.detail,
+        articleId: post_id,
         sendData: {
           content: comment,
           root: 0,
@@ -78,7 +96,7 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
       const lastIndex = commentList[commentList.length - 1].group + 1;
       mutate({
         uri,
-        articleId: handle.detail === undefined ? postId : handle.detail,
+        articleId: post_id,
         sendData: {
           content: comment,
           root: 0,
@@ -89,37 +107,57 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
     }
     setComment("");
   };
+
   if (isLoading) {
     return <LoadingSpinner isLoading={true} />;
   }
 
   return (
     <>
-      {Object.keys(data).map((e, i) => (
-        <Box key={i}>
-          {data[e].root === 0 ? (
-            <CommentElement comment={data[e]} reCommentPush={reCommentPush} />
-          ) : (
-            <RecommentElementWrapper>
-              <CommentCreateWrapperDiv>
-                <CommentElementNameDiv>
-                  {data[e].user.nickname}
-                </CommentElementNameDiv>
-                <CommentCreateAtDiv>{data[e].created_at}</CommentCreateAtDiv>
-              </CommentCreateWrapperDiv>
-              <div>{data[e].content}</div>
-            </RecommentElementWrapper>
-          )}
-        </Box>
-      ))}
+      <Typography fontWeight={"bold"} sx={{ my: 1 }}>
+        댓글 목록
+      </Typography>
+      <Divider sx={{ mb: 1 }} />
+      {data.length === 0 ? (
+        <Typography sx={{ my: 2 }}>작성된 댓글이 없습니다</Typography>
+      ) : (
+        Object.keys(data).map((e, i) => (
+          <Box
+            key={i}
+            sx={{ display: "flex", flexDirection: "column", rowGap: 1 }}
+          >
+            {data[e].root === 0 ? (
+              // root element
+              <CommentElement
+                comment={data[e]}
+                reCommentPush={reCommentPush}
+                queryKey={queryKey}
+              />
+            ) : (
+              // recommented element
+              <Box sx={{ width: "85%", ml: "auto" }}>
+                <CommentElement
+                  comment={data[e]}
+                  reCommentPush={reCommentPush}
+                  isRoot={false}
+                  queryKey={queryKey}
+                />
+              </Box>
+            )}
+          </Box>
+        ))
+      )}
 
       {/* comment write */}
       {auth && (
-        <CommentWriteField
-          comment={comment}
-          setComment={setComment}
-          onClick={commentPush}
-        />
+        <Box sx={{ mt: 2 }}>
+          <Divider />
+          <CommentWriteField
+            comment={comment}
+            setComment={setComment}
+            onClick={commentPush}
+          />
+        </Box>
       )}
     </>
   );

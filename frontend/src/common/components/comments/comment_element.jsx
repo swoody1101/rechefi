@@ -11,13 +11,16 @@ import {
   CommentInput,
 } from "../../styles/comments/comments_styles";
 import { useSelector } from "react-redux/es/hooks/useSelector";
-import { Box } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import CommentWriteField from "./comment_write_field";
+import { Palette } from "../../styles/palette";
+import CommentElementBtn from "./comment_element_btn";
+import { useDelete } from "../../../hooks/useMutations";
 
-const CommentElement = ({ comment, reCommentPush }) => {
+const CommentElement = ({ comment, reCommentPush, isRoot, queryKey }) => {
   const [reCommentOpen, setReCommentOpen] = useState(false);
   const [reCommentContent, setReCommentContent] = useState("");
-  const auth = useSelector((store) => store.account.auth);
+  const loginInfo = useSelector((store) => store.account);
 
   // write recomment
   const writeRecomment = () => {
@@ -31,29 +34,55 @@ const CommentElement = ({ comment, reCommentPush }) => {
     setReCommentOpen(false);
   };
 
+  // use Delete comment
+  const { mutate } = useDelete();
+
   return (
     <>
-      <Box>
-        <CommentElementNameDiv>{comment.user.nickname}</CommentElementNameDiv>
-        <CommentCreateAtDiv>{comment.created_at}</CommentCreateAtDiv>
-      </Box>
-      <div>{comment.content}</div>
-      {auth && (
-        <div>
-          <CommentButton
-            onClick={() => {
-              setReCommentOpen((prev) => {
-                return !prev;
-              });
-            }}
-          >
-            답글 달기
-          </CommentButton>
-        </div>
-      )}
+      <Paper sx={{ px: 2, py: 1, mt: 1 }}>
+        {/* comment Info */}
+        <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+          <Typography fontWeight={"bold"} sx={{ mr: 1 }}>
+            {comment.user.nickname}
+          </Typography>
+          <Typography fontSize={"0.7rem"} sx={{ color: Palette.black1 }}>
+            {new Date(comment.created_at).toLocaleString()}
+          </Typography>
+        </Box>
 
+        {/* comment content */}
+        <Typography sx={{ m: 1, mb: 1.5 }}>{comment.content}</Typography>
+
+        <Box sx={{ display: "flex", columnGap: 1 }}>
+          {/* recomment button */}
+          {loginInfo.auth && isRoot && (
+            <CommentElementBtn
+              onClick={() => {
+                setReCommentOpen((prev) => {
+                  return !prev;
+                });
+              }}
+            >
+              답글
+            </CommentElementBtn>
+          )}
+          {comment.user.nickname === loginInfo.nickname && (
+            <CommentElementBtn
+              onClick={() => {
+                setReCommentOpen((prev) => {
+                  return !prev;
+                });
+              }}
+            >
+              삭제
+            </CommentElementBtn>
+          )}
+        </Box>
+      </Paper>
+
+      {/* recomment input area */}
       {reCommentOpen && (
-        <Box sx={{ ml: 2 }}>
+        <Box sx={{ width: "85%", ml: "auto" }}>
           <CommentWriteField
             comment={reCommentContent}
             setComment={setReCommentContent}
@@ -63,6 +92,10 @@ const CommentElement = ({ comment, reCommentPush }) => {
       )}
     </>
   );
+};
+
+CommentElement.defaultProps = {
+  isRoot: true,
 };
 
 export default CommentElement;
