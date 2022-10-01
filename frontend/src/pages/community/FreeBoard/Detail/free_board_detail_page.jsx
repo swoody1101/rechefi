@@ -36,24 +36,6 @@ function FreeBoardDetailPage() {
     uri: `/community/${isNotice ? "notice-board" : "free-board"}/detail`,
   });
 
-  // const [data, setData] = useState(null);
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [isError, setIsError] = useState(false);
-  // const [error, setError] = useState({});
-
-  // useEffect(() => {
-  //   http
-  //     .get(`/community/free-board/detail/${postId}`)
-  //     .then((response) => {
-  //       setData(response.data.data);
-  //       setIsLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       setError(error);
-  //       setIsError(true);
-  //     });
-  // }, []);
-
   // get user info from store
   const login_info = useSelector((store) => store.account);
   const isAdmin = login_info.admin || false;
@@ -123,7 +105,6 @@ function FreeBoardDetailPage() {
             textVariant={"h5"}
           />
           <FreeBoardDetailPostInfo
-            // TODO : match with back
             userEmail={data.user.email}
             userImage={data.user.img_url}
             userNickname={data.user.nickname}
