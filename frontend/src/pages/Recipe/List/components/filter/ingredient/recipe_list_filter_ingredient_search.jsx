@@ -19,7 +19,7 @@ function RecipeListFilterSearch({
   addSearchedItem,
 }) {
   const [keyword, setKeyword] = useState("");
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState("재료 검색");
 
   const handleClose = () => {
     setTitle("");
