@@ -26,37 +26,53 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Palette } from "../../styles/palette";
 import Logo from "./logo";
+import RecipeSearchDialog from "./main_header_search";
 
 const Header = ({ sidebarHandler }) => {
   const navigate = useNavigate();
 
-  //
-  const [hiddenSearchBtn, setHiddenSearchBtn] = useState(false);
+  // Recipe search Button
+  const [showSearchBtn, setshowSearchBtn] = useState(true);
+  const [isShowSearchDialog, setIsShowSearchDialog] = useState(false);
 
+  // window size check queries
   const sm = useMediaQuery("(min-width:768px)");
   const m = useMediaQuery("(min-width: 768px) and (max-width: 1024px)");
   const xl = useMediaQuery("only screen and (min-width: 1025px)");
 
-  // list of shown recipe search
+  // check url for showing search button
   const location = useLocation();
-
   useEffect(() => {
-    const search_shown_path = [
-      "/",
-      "/community/my-cook",
-      "/community/write",
-      "/community/community",
-    ];
+    // list of shown recipe search
+    const search_shown_path = ["/community/"];
+    setshowSearchBtn(true);
 
     search_shown_path.forEach((path) => {
-      if (location.pathname === path) {
+      if (location.pathname.includes(path)) {
+        setshowSearchBtn(false);
       }
     });
   }, [location.pathname]);
 
+  // search
+  const handleSearch = (filter) => {
+    setIsShowSearchDialog(false);
+    navigate("/recipe", {
+      state: filter,
+    });
+    if (location.pathname.includes("/recipe")) window.location.reload();
+  };
+
   return (
     <AppBar position="static" sx={{ background: Palette.mainColor4 }}>
-      <Toolbar sx={{ px: 1, py: 0, justifyContent: "space-between" }}>
+      <Toolbar
+        sx={{
+          px: 1,
+          py: 0,
+          justifyContent: "space-between",
+          position: "relative",
+        }}
+      >
         {/* sidebar control */}
         <IconButton
           color="inherit"
@@ -67,61 +83,36 @@ const Header = ({ sidebarHandler }) => {
         >
           <MenuIcon sx={{ fontSize: sm ? 44 : 32 }} />
         </IconButton>
-
         {/* logo */}
         <Logo
           sm={sm}
           onClick={() => {
             navigate("/");
           }}
+          leftShift={!showSearchBtn}
         />
-
-        <IconButton color="inherit">
-          <SearchIcon sx={{ fontSize: sm ? 40 : 28 }} />
-        </IconButton>
+        {/* search icon */}
+        {showSearchBtn ? (
+          <IconButton
+            color="inherit"
+            onClick={() => {
+              setIsShowSearchDialog(true);
+            }}
+          >
+            <SearchIcon sx={{ fontSize: sm ? 40 : 32 }} />
+          </IconButton>
+        ) : (
+          <Box sx={{ width: 48 }}></Box>
+        )}
       </Toolbar>
 
       {/* Search Box */}
+      <RecipeSearchDialog
+        dialogOpen={isShowSearchDialog}
+        setDialogOpen={setIsShowSearchDialog}
+        handleSearch={handleSearch}
+      />
     </AppBar>
-
-    /* <SideBarOpenButton onClick={openSidebarHandler}>
-        
-      </SideBarOpenButton>
-      {isMain ? (
-        <LayoutSearchParent>
-          {openSearch ? (
-            <LayoutSearchWrapper>
-              <LayoutSearchInputWrapper>
-                <LayoutSearchInput></LayoutSearchInput>
-                <ClearIcon onClick={openSearchBar} sx={{ fontSize: 40 }} />
-              </LayoutSearchInputWrapper>
-              <SearchIcon sx={{ fontSize: 40 }} />
-            </LayoutSearchWrapper>
-          ) : (
-            <LayoutSearchWrapper>
-              <LayoutHeaderLogo
-                onClick={() => {
-                  navigate("/");
-                }}
-              >
-                B303
-              </LayoutHeaderLogo>
-              <SearchIcon
-                sx={{ fontSize: 40 }}
-                onClick={openSearchBar}
-              ></SearchIcon>
-            </LayoutSearchWrapper>
-          )}
-        </LayoutSearchParent>
-      ) : (
-        <LayoutHeaderLogo
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          B303
-        </LayoutHeaderLogo>
-      )} */
   );
 };
 
