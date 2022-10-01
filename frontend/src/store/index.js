@@ -5,6 +5,6 @@ import AiReducer from "./module/AiReducer";
 export const store = configureStore({
   reducer: {
     account: accountReducer,
-    aiRequestReducer:AiReducer
+    aiReducer:AiReducer
   },
 });
