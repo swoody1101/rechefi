@@ -1,8 +1,8 @@
 import { Avatar, Box, Divider, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import useWidthQuery from "../../../hooks/Main/useWidthQuery";
-import { Palette } from "../../styles/palette";
+import useWidthQuery from "../../../../hooks/Main/useWidthQuery";
+import { Palette } from "../../../styles/palette";
 
 const SidebarMyAccount = ({ sidebarClose }) => {
   const loginInfo = useSelector((store) => store.account);

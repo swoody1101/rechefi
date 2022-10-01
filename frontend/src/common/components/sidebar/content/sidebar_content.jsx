@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Box, List } from "@mui/material";
-import SidebarMyAccount from "./sidebar_my_account";
+import SidebarMyAccount from "./sidebar_content_account";
 import SidebarContentItem from "./sidebar_content_item";
 import SidebarContentSubheader from "./sidebar_content_subheader";
-import useWidthQuery from "../../../hooks/Main/useWidthQuery";
+import useWidthQuery from "../../../../hooks/Main/useWidthQuery";
 import BrunchDiningIcon from "@mui/icons-material/BrunchDining";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import MenuBookIcon from "@mui/icons-material/MenuBook";

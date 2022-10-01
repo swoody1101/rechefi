@@ -4,7 +4,7 @@ import {
   ListItemIcon,
   Typography,
 } from "@mui/material";
-import { Palette } from "../../styles/palette";
+import { Palette } from "../../../styles/palette";
 
 function SidebarContentItem({ icon, text, textSize, textBold, onClick }) {
   return (
