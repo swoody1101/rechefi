@@ -1,25 +1,5 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import {
-  LayoutHeaderLogo,
-  LayoutSearchInput,
-  LayoutSearchInputWrapper,
-  LayoutSearchParent,
-  LayoutSearchWrapper,
-  LayoutStyledHeader,
-} from "../../styles/layout_styles/main-layout-styled-header-styles";
-import { SideBarOpenButton } from "../../styles/sidebar_styles";
-import {
-  alpha,
-  AppBar,
-  Box,
-  Button,
-  Fade,
-  IconButton,
-  InputBase,
-  Toolbar,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { AppBar, Box, IconButton, Toolbar } from "@mui/material";
 import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -27,6 +7,7 @@ import { useEffect } from "react";
 import { Palette } from "../../styles/palette";
 import Logo from "./logo";
 import RecipeSearchDialog from "./main_header_search";
+import useWidthQuery from "../../../hooks/Main/useWidthQuery";
 
 const Header = ({ sidebarHandler }) => {
   const navigate = useNavigate();
@@ -36,9 +17,7 @@ const Header = ({ sidebarHandler }) => {
   const [isShowSearchDialog, setIsShowSearchDialog] = useState(false);
 
   // window size check queries
-  const sm = useMediaQuery("(min-width:768px)");
-  const m = useMediaQuery("(min-width: 768px) and (max-width: 1024px)");
-  const xl = useMediaQuery("only screen and (min-width: 1025px)");
+  const [sm, m, xl] = useWidthQuery();
 
   // check url for showing search button
   const location = useLocation();
