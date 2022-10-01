@@ -4,7 +4,7 @@ import { Palette } from "../../styles/palette";
 
 function CommentWriteField({ comment, setComment, onClick }) {
   return (
-    <Paper sx={{ display: "flex", my: 1.5, pl: 1.5, pr: 1, py: 1.5 }}>
+    <Paper sx={{ display: "flex", my: 1.5, pl: 2, pr: 1, py: 1.5 }}>
       <TextField
         variant="standard"
         value={comment}
@@ -23,8 +23,8 @@ function CommentWriteField({ comment, setComment, onClick }) {
           },
         }}
       />
-      <IconButton sx={{ p: 0, ml: 1 }}>
-        <MapsUgcOutlinedIcon onClick={onClick} />
+      <IconButton sx={{ p: 0, ml: 1 }} onClick={onClick}>
+        <MapsUgcOutlinedIcon />
       </IconButton>
     </Paper>
   );
