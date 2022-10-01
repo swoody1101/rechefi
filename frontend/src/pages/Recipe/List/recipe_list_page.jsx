@@ -31,7 +31,6 @@ function RecipeListPage() {
         query += `${ingred.name}${idx !== state.ingreds.length - 1 ? "," : ""}`;
       });
     }
-    console.log(query);
   }
 
   // loading best Recipe
