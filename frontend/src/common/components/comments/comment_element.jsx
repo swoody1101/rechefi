@@ -11,12 +11,16 @@ import {
   CommentInput,
 } from "../../styles/comments/comments_styles";
 import { useSelector } from "react-redux/es/hooks/useSelector";
+import { Box } from "@mui/material";
+import CommentWriteField from "./comment_write_field";
 
 const CommentElement = ({ comment, reCommentPush }) => {
   const [reCommentOpen, setReCommentOpen] = useState(false);
   const [reCommentContent, setReCommentContent] = useState("");
   const auth = useSelector((store) => store.account.auth);
-  const onClick = () => {
+
+  // write recomment
+  const writeRecomment = () => {
     const inputValue = reCommentContent;
     const reComment = {
       content: inputValue,
@@ -26,15 +30,13 @@ const CommentElement = ({ comment, reCommentPush }) => {
     setReCommentContent("");
     setReCommentOpen(false);
   };
-  const onChange = (e) => {
-    setReCommentContent(e.target.value);
-  };
+
   return (
-    <CommentElementWraper>
-      <CommentCreateWrapperDiv>
-        <CommentElementNameDiv>{comment.nickname}</CommentElementNameDiv>
-        <CommentCreateAtDiv>{comment.create_at}</CommentCreateAtDiv>
-      </CommentCreateWrapperDiv>
+    <>
+      <Box>
+        <CommentElementNameDiv>{comment.user.nickname}</CommentElementNameDiv>
+        <CommentCreateAtDiv>{comment.created_at}</CommentCreateAtDiv>
+      </Box>
       <div>{comment.content}</div>
       {auth && (
         <div>
@@ -51,14 +53,15 @@ const CommentElement = ({ comment, reCommentPush }) => {
       )}
 
       {reCommentOpen && (
-        <CommentElementBox>
-          <CommentContentInputWrapper>
-            <CommentInput onChange={onChange} />
-            <CommentButton onClick={onClick}>답글 작성</CommentButton>
-          </CommentContentInputWrapper>
-        </CommentElementBox>
+        <Box sx={{ ml: 2 }}>
+          <CommentWriteField
+            comment={reCommentContent}
+            setComment={setReCommentContent}
+            onClick={writeRecomment}
+          />
+        </Box>
       )}
-    </CommentElementWraper>
+    </>
   );
 };
 

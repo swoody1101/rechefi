@@ -16,15 +16,22 @@ import {
   RecommentElementWrapper,
 } from "../../styles/comments/comments_styles";
 import { useSelector } from "react-redux/es/exports";
+import { Box, IconButton, Input, Paper } from "@mui/material";
+import LoadingSpinner from "../../../pages/Recipe/List/components/recipe_list_loading_spinner";
+import MapsUgcOutlinedIcon from "@mui/icons-material/MapsUgcOutlined";
+import { useState } from "react";
+import CommentWriteField from "./comment_write_field";
 
 const Comments = ({ aiButton, postId, uri, queryKey }) => {
   const handle = useParams();
-  const commentContentRef = useRef(null);
   const { data, isLoading } = useFetchComments({
     queryKey: queryKey,
     articleId: postId !== undefined ? postId : handle.detail,
     uri,
   });
+
+  const [comment, setComment] = useState("");
+
   const { mutate } = useAddComment(handle.detail, queryKey);
   const auth = useSelector((store) => store.account.auth);
   const reCommentPush = (reComment) => {
@@ -49,19 +56,18 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
         sequence: lastIndex[lastIndex.length - 1].sequence + 1,
       },
     });
-    commentContentRef.current.value = "";
+    setComment("");
   };
   const commentPush = (e) => {
     e.preventDefault();
     let commentList = data;
     if (commentList.length === 0) {
       const lastIndex = 1;
-      const content = commentContentRef.current.value;
       const sendData = {
         uri,
         articleId: handle.detail === undefined ? postId : handle.detail,
         sendData: {
-          content,
+          content: comment,
           root: 0,
           group: lastIndex,
           sequence: 1,
@@ -70,52 +76,52 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
       mutate(sendData);
     } else {
       const lastIndex = commentList[commentList.length - 1].group + 1;
-      const content = commentContentRef.current.value;
       mutate({
         uri,
         articleId: handle.detail === undefined ? postId : handle.detail,
         sendData: {
-          content,
+          content: comment,
           root: 0,
           group: lastIndex,
           sequence: 1,
         },
       });
     }
-    commentContentRef.current.value = "";
+    setComment("");
   };
   if (isLoading) {
-    return <div>로딩중...</div>;
+    return <LoadingSpinner isLoading={true} />;
   }
 
   return (
-    <CommentWraper aiButton={aiButton}>
+    <>
       {Object.keys(data).map((e, i) => (
-        <CommentElementBox key={i}>
+        <Box key={i}>
           {data[e].root === 0 ? (
             <CommentElement comment={data[e]} reCommentPush={reCommentPush} />
           ) : (
             <RecommentElementWrapper>
               <CommentCreateWrapperDiv>
                 <CommentElementNameDiv>
-                  {data[e].nickname}
+                  {data[e].user.nickname}
                 </CommentElementNameDiv>
-                <CommentCreateAtDiv>{data[e].create_at}</CommentCreateAtDiv>
+                <CommentCreateAtDiv>{data[e].created_at}</CommentCreateAtDiv>
               </CommentCreateWrapperDiv>
               <div>{data[e].content}</div>
             </RecommentElementWrapper>
           )}
-        </CommentElementBox>
+        </Box>
       ))}
+
+      {/* comment write */}
       {auth && (
-        <CommentElementInputBox>
-          <CommentContentInputWrapper>
-            <CommentInput ref={commentContentRef} />
-            <CommentButton onClick={commentPush}>댓글 달기</CommentButton>
-          </CommentContentInputWrapper>
-        </CommentElementInputBox>
+        <CommentWriteField
+          comment={comment}
+          setComment={setComment}
+          onClick={commentPush}
+        />
       )}
-    </CommentWraper>
+    </>
   );
 };
 
