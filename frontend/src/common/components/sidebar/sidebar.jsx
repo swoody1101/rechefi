@@ -1,8 +1,16 @@
 import { SwipeableDrawer } from "@mui/material";
 import useWidthQuery from "../../../hooks/Main/useWidthQuery";
-import SidebarElementList from "./sidebar_list";
+import SideBarHeader from "./sidebar_header";
+import CloseIcon from "@mui/icons-material/Close";
+import { logout } from "../../../store/module/accountReducer";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useDispatch } from "react-redux";
+import SidebarContent from "./sidebar_content.jsx";
 
 const SideBar = ({ anchor, sidebarClose }) => {
+  // for logout action
+  const dispatch = useDispatch();
+
   const [sm, m, xl] = useWidthQuery();
   const sidebarWidth = xl ? "28%" : m ? "36%" : sm ? "72%" : "72%";
 
@@ -11,12 +19,20 @@ const SideBar = ({ anchor, sidebarClose }) => {
       transitionDuration={500}
       anchor={"left"}
       open={anchor}
+      onOpen={() => {}}
       onClose={sidebarClose}
       PaperProps={{
         sx: { width: sidebarWidth },
       }}
     >
-      <SidebarElementList sidebarClose={sidebarClose} />
+      <SideBarHeader icon={<CloseIcon />} onClick={sidebarClose} />
+      <SidebarContent sidebarClose={sidebarClose} />
+      <SideBarHeader
+        icon={<LogoutIcon />}
+        onClick={() => {
+          dispatch(logout());
+        }}
+      />
     </SwipeableDrawer>
   );
 };
