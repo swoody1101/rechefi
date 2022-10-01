@@ -22,6 +22,12 @@ export const AiAreaWrapper = styled.div`
   border-radius: 14px;
   padding: 5px;
   animation: ${moveSideBar} 0.3s ease;
+  @media only screen and (min-width: 1025px) {
+    width: 50%;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    width: 65%;
+  }
 `;
 
 export const AiAreaContentWrapper = styled.div`
@@ -76,6 +82,12 @@ export const AiAreaListenWrapper = styled.div`
   z-index: 35;
   animation: ${moveSideBar} 0.3s ease;
   transform: translate(-50%, -50%);
+  @media only screen and (min-width: 1025px) {
+    width: 40%;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    width: 55%;
+  }
 `;
 
 export const AiAreaListenBackDrop = styled.div`
@@ -114,4 +126,8 @@ export const AiAreaTextWrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   font-weight: bolder;
+`;
+
+export const OpenAiButton = styled.div`
+  margin-right: 3%;
 `;

@@ -6,11 +6,27 @@ import {
 } from "../styles/recipe_ai_styles";
 import AiVoiceListenArea from "./ai_voice_listen_area";
 
-const RecipeDeatilAIvoiceControll = ({ closeAiHandler }) => {
+const RecipeDeatilAIvoiceControll = ({
+  closeAiHandler,
+  play,
+  pause,
+  prePlay,
+  nextPlay,
+  onPlay,
+  toggleAI,
+}) => {
   return createPortal(
     <div>
       <AiAreaListenWrapper>
-        <AiVoiceListenArea />
+        <AiVoiceListenArea
+          play={play}
+          pause={pause}
+          prePlay={prePlay}
+          nextPlay={nextPlay}
+          closeAiHandler={closeAiHandler}
+          onPlay={onPlay}
+          toggleAI={toggleAI}
+        />
         <AiAreaListenButton onClick={closeAiHandler}>닫기</AiAreaListenButton>
       </AiAreaListenWrapper>
       <AiAreaListenBackDrop onClick={closeAiHandler} />
