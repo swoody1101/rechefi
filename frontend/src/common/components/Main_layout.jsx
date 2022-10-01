@@ -6,18 +6,19 @@ import SideBar from "./sidebar/sidebar";
 const Layout = (props) => {
   const [openSideBar, setOpenSideBar] = useState(false);
 
-  const toggleSidebar = () => {
-    setOpenSideBar((prev) => {
-      return !prev;
-    });
-  };
-  const sidebarClose = () => {
-    setOpenSideBar(false);
-  };
   return (
     <div>
-      <SideBar anchor={openSideBar} sidebarClose={sidebarClose} />
-      <Header sidebarHandler={toggleSidebar} />
+      <SideBar
+        anchor={openSideBar}
+        sidebarClose={() => {
+          setOpenSideBar(false);
+        }}
+      />
+      <Header
+        sidebarHandler={() => {
+          setOpenSideBar(true);
+        }}
+      />
       <LayoutStyledMain>{props.children}</LayoutStyledMain>
     </div>
   );
