@@ -1,40 +1,51 @@
-import { Avatar } from "@mui/material";
-import {
-  SidebarMyAccountWrapper,
-  SidebarMyNicknameDiv,
-  SidebarMyProfileImage,
-} from "../../styles/sidebar_styles";
+import { Avatar, Box, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import useWidthQuery from "../../../hooks/Main/useWidthQuery";
 
 const SidebarMyAccount = ({ sidebarClose }) => {
   const loginInfo = useSelector((store) => store.account);
   const navigate = useNavigate();
 
-  const mypageTransitionHandler = () => {
+  // window size check queries
+  const [sm, m, xl] = useWidthQuery();
+
+  // avartar size
+  const avatar_size = xl ? 92 : m ? 72 : sm ? 52 : 52;
+  const nickname_size = xl ? "2rem" : m ? "1.8rem" : sm ? "1.4rem" : "1.4rem";
+
+  // page move
+  const moveMypage = () => {
     navigate("/profile", { state: loginInfo.email });
+    sidebarClose();
+  };
+
+  // page move
+  const moveLogin = () => {
+    navigate("/login");
+    sidebarClose();
   };
 
   return (
-    <SidebarMyAccountWrapper>
-      <SidebarMyProfileImage>
-        <Avatar src={loginInfo.imgUrl} sx={{ width: 55, height: 55 }} />
-      </SidebarMyProfileImage>
+    <Box sx={{ display: "flex", alignItems: "center", m: 2 }}>
+      <Avatar
+        src={loginInfo.imgUrl}
+        sx={{ width: avatar_size, height: avatar_size, mr: 2 }}
+        onClick={moveMypage}
+      />
       {loginInfo.auth ? (
-        <SidebarMyNicknameDiv onClick={mypageTransitionHandler}>
-          {loginInfo.nickname}
-        </SidebarMyNicknameDiv>
-      ) : (
-        <div
-          onClick={() => {
-            navigate("/login");
-            sidebarClose();
-          }}
+        <Typography
+          variant="h5"
+          fontSize={nickname_size}
+          fontWeight={"bold"}
+          onClick={moveMypage}
         >
-          로그인하기
-        </div>
+          {loginInfo.nickname}
+        </Typography>
+      ) : (
+        <Typography onClick={moveLogin}>로그인이 필요합니다</Typography>
       )}
-    </SidebarMyAccountWrapper>
+    </Box>
   );
 };
 
