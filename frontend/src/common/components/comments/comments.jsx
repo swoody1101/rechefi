@@ -42,8 +42,6 @@ const Comments = ({ postId, uri, queryKey }) => {
     uri,
   });
 
-  console.log(data);
-
   const { mutate } = useAddComment(handle.detail, queryKey);
 
   const reCommentPush = (reComment) => {

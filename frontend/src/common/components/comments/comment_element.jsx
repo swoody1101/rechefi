@@ -51,7 +51,7 @@ const CommentElement = ({ comment, reCommentPush, isRoot, queryKey }) => {
         </Box>
 
         {/* comment content */}
-        <Typography sx={{ m: 1, mb: 1.5 }}>{comment.content}</Typography>
+        <Typography sx={{ m: 1 }}>{comment.content}</Typography>
 
         <Box sx={{ display: "flex", columnGap: 1 }}>
           {/* recomment button */}
