@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/module/accountReducer";
 import useWidthQuery from "../../../hooks/Main/useWidthQuery";
 import SideBarHeader from "./sidebar_header";
-import SidebarContent from "./sidebar_content.jsx";
+import SidebarContent from "./content/sidebar_content.jsx";
 import SideBarFooter from "./sidebar_footer";
 import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
