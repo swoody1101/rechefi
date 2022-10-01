@@ -6,6 +6,7 @@ import { logout } from "../../../store/module/accountReducer";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useDispatch } from "react-redux";
 import SidebarContent from "./sidebar_content.jsx";
+import SideBarFooter from "./sidebar_footer";
 
 const SideBar = ({ anchor, sidebarClose }) => {
   // for logout action
@@ -13,6 +14,7 @@ const SideBar = ({ anchor, sidebarClose }) => {
 
   const [sm, m, xl] = useWidthQuery();
   const sidebarWidth = xl ? "28%" : m ? "36%" : sm ? "72%" : "72%";
+  const icon_size = xl ? "large" : m ? "medium" : "small";
 
   return (
     <SwipeableDrawer
@@ -27,8 +29,8 @@ const SideBar = ({ anchor, sidebarClose }) => {
     >
       <SideBarHeader icon={<CloseIcon />} onClick={sidebarClose} />
       <SidebarContent sidebarClose={sidebarClose} />
-      <SideBarHeader
-        icon={<LogoutIcon />}
+      <SideBarFooter
+        icon={<LogoutIcon fontSize={icon_size} />}
         onClick={() => {
           dispatch(logout());
         }}
