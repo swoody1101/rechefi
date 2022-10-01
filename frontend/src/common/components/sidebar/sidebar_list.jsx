@@ -9,15 +9,24 @@ import {
 } from "../../styles/sidebar_styles";
 import SidebarMyAccount from "./sidebar_my_account";
 import LogoutIcon from "@mui/icons-material/Logout";
+
 import { logout } from "../../../store/module/accountReducer";
+import { Box, Divider, IconButton } from "@mui/material";
+import SideBarHeader from "./sidebar_header";
 
 const SidebarElementList = ({ sidebarClose }) => {
   const loginInfo = useSelector((store) => store.account);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   return (
-    <SidebarBoardDiv>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <SideBarHeader sidebarClose={sidebarClose} />
+      <Divider />
+      {/* user Avatar */}
       <SidebarMyAccount sidebarClose={sidebarClose} />
+      <Divider />
+
       <SidebarRecipeElement
         onClick={() => {
           navigate("/recipe", {
@@ -79,7 +88,7 @@ const SidebarElementList = ({ sidebarClose }) => {
           />
         </SidebarLogout>
       )}
-    </SidebarBoardDiv>
+    </Box>
   );
 };
 
