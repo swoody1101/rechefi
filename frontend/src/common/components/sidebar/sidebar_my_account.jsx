@@ -29,7 +29,7 @@ const SidebarMyAccount = ({ sidebarClose }) => {
 
   return (
     <>
-      <Box sx={{ display: "flex", alignItems: "center", m: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mx: 2, my: 3 }}>
         <Avatar
           src={loginInfo.imgUrl}
           sx={{ width: avatar_size, height: avatar_size, mr: 2 }}

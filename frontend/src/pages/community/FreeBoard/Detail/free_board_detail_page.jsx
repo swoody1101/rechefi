@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, Container } from "@mui/material";
+import React from "react";
+import { Container } from "@mui/material";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useFetch } from "../../../../hooks/useFetch";
 import ErrorMessagePaper from "../../../../common/components/error_message_paper";
@@ -10,7 +10,6 @@ import FreeBoardDetailPostInfo from "./components/free_board_detail_post_info";
 import FreeBoardDetailBottombar from "./components/free_board_detail_bottombar";
 import FreeBoardDetailCommentContainer from "./components/free_board_detail_comments_container";
 import Comments from "../../../../common/components/comments/comments";
-import http from "../../../../utils/http-commons";
 import { useDelete } from "../../../../hooks/useMutations";
 import {
   Confirm,
