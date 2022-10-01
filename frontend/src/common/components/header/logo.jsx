@@ -1,24 +1,25 @@
-import { Button, Typography } from "@mui/material";
+import { Link, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
-function Logo({ sm, onClick }) {
+function Logo({ sm, onClick, leftShift }) {
   return (
     /* logo */
-    <Button color={"inherit"} onClick={onClick}>
-      <Typography
-        fontSize={sm ? 32 : 20}
-        fontWeight={"bold"}
-        sx={{
-          position: "absolute",
-          left: "50%",
-          transform: "translate(-50%, 0%)",
-          pointerEvents: "none",
-          zIndex: 10,
-        }}
-      >
-        Rechef
+    <Link
+      component={RouterLink}
+      to="/"
+      color="inherit"
+      underline="none"
+      sx={{ mr: 2 }}
+    >
+      <Typography fontSize={sm ? 32 : 20} fontWeight={"bold"}>
+        RECHEF
       </Typography>
-    </Button>
+    </Link>
   );
 }
+
+Logo.defaultProps = {
+  leftShift: false,
+};
 
 export default Logo;
