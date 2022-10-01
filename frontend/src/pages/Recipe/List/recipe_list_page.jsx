@@ -20,17 +20,18 @@ function RecipeListPage() {
   if (state) {
     if (state.keyword) query += `title=${state.keyword}&`;
     if (state.tags.length !== 0) {
-      query += "tags=";
+      query += "tag=";
       state.tags.forEach((tag, idx) => {
-        query += `${tag}${idx !== state.tags.length ? "," : ""}`;
+        query += `${tag}${idx !== state.tags.length - 1 ? "," : "&"}`;
       });
     }
-    if (state.ingreds !== 0) {
+    if (state.ingreds.length !== 0) {
       query += "ingredient=";
       state.ingreds.forEach((ingred, idx) => {
-        query += `${ingred.name}${idx !== state.ingreds.length ? "," : ""}`;
+        query += `${ingred.name}${idx !== state.ingreds.length - 1 ? "," : ""}`;
       });
     }
+    console.log(query);
   }
 
   // loading best Recipe
