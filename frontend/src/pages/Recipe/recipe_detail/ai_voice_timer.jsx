@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-const AiVoiceTimer = ({ recordeStop }) => {
+const TestTimer = ({ recordeStop }) => {
   const [sec, setSec] = useState(3);
   const initailTime = useRef(3);
   const interval = useRef(null);
@@ -21,4 +21,4 @@ const AiVoiceTimer = ({ recordeStop }) => {
   return <div></div>;
 };
 
-export default AiVoiceTimer;
+export const AiVoiceTimer = React.memo(TestTimer);

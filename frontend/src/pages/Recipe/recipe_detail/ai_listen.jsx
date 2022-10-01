@@ -1,46 +1,41 @@
 import { useEffect, useState } from "react";
 import { AiAreaTextWrapper } from "../styles/recipe_ai_styles";
-import http from "../../../utils/http-commons";
-import { getToken } from "../../../utils/JWT-token";
 import AudioReactRecorder, { RecordState } from "audio-react-recorder";
-import AiVoiceTimer from "./ai_voice_timer";
-import AiVoiceResult from "./ai_voice_result";
+import { AiVoiceTimer } from "./ai_voice_timer";
+import { AiVoiceRequest } from "./ai_voice_request";
 import { QueryClient } from "react-query";
 
-const AiVoiceListenArea = ({
-  play,
-  pause,
-  prePlay,
-  nextPlay,
-  closeAiHandler,
-  onPlay,
-  toggleAI,
-}) => {
+const AiListen = () => {
   const [alertAudio] = useState(new Audio("/sound/alert.wav"));
+  const [playing, setPlaying] = useState(true);
   const [talk, setTalk] = useState("듣는 중입니다...");
   const [recTrigger, setRecTrigger] = useState(false);
   const [alertPlay, setAlertPlay] = useState(false);
-  const [disabled, setDisabled] = useState(true);
   const [recordState, setRecordState] = useState(null);
   const [audioFile, setAudioFile] = useState(undefined);
   const queryClient = new QueryClient();
   useEffect(() => {
-    queryClient.invalidateQueries("AiSTT");
     setAlertPlay((prev) => {
-      return !prev;
-    });
-    setRecTrigger((prev) => {
       return !prev;
     });
   }, []);
   useEffect(() => {
-    if (alertPlay) {
-      alertAudio.load();
+    if (playing) {
       alertAudio.play();
     } else {
       alertAudio.pause();
+      setRecTrigger(true);
     }
-  }, [alertPlay]);
+  }, [playing]);
+  useEffect(() => {
+    alertAudio.addEventListener("ended", () => {
+      setPlaying(false);
+    });
+    return () => {
+      alertAudio.removeEventListener("ended", () => setPlaying(false));
+    };
+  }, []);
+
   useEffect(() => {
     if (recTrigger) {
       recordeStart();
@@ -52,15 +47,10 @@ const AiVoiceListenArea = ({
 
   const recordeStop = () => {
     setRecordState(RecordState.STOP);
-    setRecTrigger((prev) => {
-      return !prev;
-    });
-    setDisabled((prev) => {
-      return !prev;
-    });
+    setRecTrigger(false);
   };
   const recStop = (audioData) => {
-    console.log("audioData", audioData);
+    console.log(audioData);
     setAudioFile(audioData);
   };
   return (
@@ -71,22 +61,16 @@ const AiVoiceListenArea = ({
         canvasWidth="0"
         canvasHeight="0"
       ></AudioReactRecorder>
-      {disabled ? <AiAreaTextWrapper>{talk}</AiAreaTextWrapper> : null}
-      {audioFile !== undefined && (
-        <AiVoiceResult
-          play={play}
-          pause={pause}
-          prePlay={prePlay}
-          nextPlay={nextPlay}
-          closeAiHandler={closeAiHandler}
-          audioFile={audioFile}
-          onPlay={onPlay}
-          toggleAI={toggleAI}
-        />
+      {audioFile === undefined ? (
+        <div>지금 듣는 중입니다...</div>
+      ) : (
+        <div>
+          <AiVoiceRequest audioFile={audioFile} />
+        </div>
       )}
       <div>{recTrigger && <AiVoiceTimer recordeStop={recordeStop} />}</div>
     </>
   );
 };
 
-export default AiVoiceListenArea;
+export default AiListen;
