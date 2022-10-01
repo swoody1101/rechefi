@@ -1,4 +1,4 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, Divider, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import useWidthQuery from "../../../hooks/Main/useWidthQuery";
@@ -27,25 +27,28 @@ const SidebarMyAccount = ({ sidebarClose }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", m: 2 }}>
-      <Avatar
-        src={loginInfo.imgUrl}
-        sx={{ width: avatar_size, height: avatar_size, mr: 2 }}
-        onClick={moveMypage}
-      />
-      {loginInfo.auth ? (
-        <Typography
-          variant="h5"
-          fontSize={nickname_size}
-          fontWeight={"bold"}
+    <>
+      <Box sx={{ display: "flex", alignItems: "center", m: 2 }}>
+        <Avatar
+          src={loginInfo.imgUrl}
+          sx={{ width: avatar_size, height: avatar_size, mr: 2 }}
           onClick={moveMypage}
-        >
-          {loginInfo.nickname}
-        </Typography>
-      ) : (
-        <Typography onClick={moveLogin}>로그인이 필요합니다</Typography>
-      )}
-    </Box>
+        />
+        {loginInfo.auth ? (
+          <Typography
+            variant="h5"
+            fontSize={nickname_size}
+            fontWeight={"bold"}
+            onClick={moveMypage}
+          >
+            {loginInfo.nickname}
+          </Typography>
+        ) : (
+          <Typography onClick={moveLogin}>로그인이 필요합니다</Typography>
+        )}
+      </Box>
+      <Divider />
+    </>
   );
 };
 
