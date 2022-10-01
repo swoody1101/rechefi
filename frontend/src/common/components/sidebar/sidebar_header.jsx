@@ -1,13 +1,13 @@
-import { Box, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Divider, IconButton } from "@mui/material";
 
-function SideBarHeader({ sidebarClose }) {
+function SideBarHeader({ icon, onClick }) {
   return (
-    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-      <IconButton onClick={sidebarClose}>
-        <CloseIcon />
-      </IconButton>
-    </Box>
+    <>
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <IconButton onClick={onClick}>{icon}</IconButton>
+      </Box>
+      <Divider />
+    </>
   );
 }
 
