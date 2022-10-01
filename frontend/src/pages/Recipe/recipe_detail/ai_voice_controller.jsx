@@ -11,6 +11,8 @@ import PauseIcon from "@mui/icons-material/Pause";
 import { useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import RecipeDeatilAIvoiceControll from "./AIvoice_controll";
+import KeyboardVoiceIcon from "@mui/icons-material/KeyboardVoice";
+import { OpenAiButton } from "../styles/recipe_ai_styles";
 
 const AiVoiceController = ({
   prePlay,
@@ -21,6 +23,9 @@ const AiVoiceController = ({
   recognition,
   openAi,
   setOpenAi,
+  onStop,
+  onPlay,
+  toggleAI,
 }) => {
   // const [openAi, setOpenAi] = useState(false);
   const matches = useMediaQuery("(min-width:768px)");
@@ -48,7 +53,16 @@ const AiVoiceController = ({
   return (
     <AiAreaControllerWrapper>
       {openAi ? (
-        <RecipeDeatilAIvoiceControll closeAiHandler={closeAiHandler} />
+        <RecipeDeatilAIvoiceControll
+          closeAiHandler={closeAiHandler}
+          play={play}
+          pause={pause}
+          prePlay={prePlay}
+          nextPlay={nextPlay}
+          onStop={onStop}
+          onPlay={onPlay}
+          toggleAI={toggleAI}
+        />
       ) : null}
       <AiAreaControllButton onClick={prePlay}>
         <FastRewindIcon sx={matches ? { fontSize: 40 } : { fontSize: 30 }} />
@@ -66,7 +80,9 @@ const AiVoiceController = ({
       <AiAreaControllButton onClick={nextPlay}>
         <FastForwardIcon sx={matches ? { fontSize: 40 } : { fontSize: 30 }} />
       </AiAreaControllButton>
-      <button onClick={openAiHandler}>열기</button>
+      <OpenAiButton onClick={openAiHandler}>
+        <KeyboardVoiceIcon sx={matches ? { fontSize: 40 } : { fontSize: 30 }} />
+      </OpenAiButton>
     </AiAreaControllerWrapper>
   );
 };

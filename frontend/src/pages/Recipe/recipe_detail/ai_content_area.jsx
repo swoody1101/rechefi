@@ -64,6 +64,13 @@ const AiContentArea = ({
       synth.speak(speechMsg);
     }
   }, [contentText, currentCur, flag, rewind, synth]);
+  const onPlay = () => {
+    const cur = currentCur;
+    setCurrentCur(cur - 1);
+    setPlay((prev) => {
+      return true;
+    });
+  };
 
   const prePlay = () => {
     flag = true;
@@ -74,6 +81,7 @@ const AiContentArea = ({
   };
 
   const nextPlay = () => {
+    console.log("taaaa");
     synth.cancel();
 
     setPlay((prev) => {
@@ -121,10 +129,12 @@ const AiContentArea = ({
         prePlay={prePlay}
         pause={pause}
         resume={resume}
+        onPlay={onPlay}
         play={play}
         recognition={recognition}
         openAi={openAi}
         setOpenAi={setOpenAi}
+        toggleAI={toggleAI}
       />
     </div>
   );
