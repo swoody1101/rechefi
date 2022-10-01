@@ -8,6 +8,11 @@ function CommentWriteField({ comment, setComment, onClick }) {
       <TextField
         variant="standard"
         value={comment}
+        onKeyUp={(e) => {
+          if (e.keyCode === 13) {
+            onClick();
+          }
+        }}
         onChange={(e) => {
           setComment(e.target.value);
         }}
