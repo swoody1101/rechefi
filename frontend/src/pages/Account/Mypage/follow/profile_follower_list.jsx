@@ -27,7 +27,11 @@ const ProfileFollowerList = () => {
   };
 
   return followerList.map((follower) => (
-    <ProfileFollowItem email={follower} isFollow={isFollowHandler(follower)} />
+    <ProfileFollowItem
+      key={follower}
+      email={follower}
+      isFollow={isFollowHandler(follower)}
+    />
   ));
 };
 
