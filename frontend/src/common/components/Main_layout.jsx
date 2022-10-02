@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LayoutStyledMain } from "../styles/layout_styles/main-layout-styled-header-styles";
-import Header from "./header/main_header";
+import Header from "./header/Main_header";
 import SideBar from "./sidebar/sidebar";
 
 const Layout = (props) => {

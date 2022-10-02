@@ -44,9 +44,7 @@ const ProfileGalleryRecipeList = (props) => {
                 { id: r.id, title: r.title, img_url: r.img_url },
               ];
             });
-            console.log(recipeList);
           });
-          console.log(recipeList);
         })
         .catch((err) => {
           alert("잘못된 요청입니다.");
