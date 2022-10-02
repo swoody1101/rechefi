@@ -3,11 +3,11 @@ import { Box, CircularProgress, Fade } from "@mui/material";
 
 function RecipeListLoadingSpinner({ loading }) {
   return (
-    <Box sx={{ display: "flex", justifyContent: "center" }}>
-      <Fade in={loading}>
+    <Fade in={loading}>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
         <CircularProgress sx={{ color: "#363636" }} />
-      </Fade>
-    </Box>
+      </Box>
+    </Fade>
   );
 }
 
