@@ -4,8 +4,9 @@ import AudioReactRecorder, { RecordState } from "audio-react-recorder";
 import { AiVoiceTimer } from "./ai_voice_timer";
 import { AiVoiceRequest } from "./ai_voice_request";
 import { QueryClient } from "react-query";
+import { Box, Card } from "@mui/material";
 
-const AiListen = () => {
+const AiListen = ({ synth, toggleAI, recognition }) => {
   const [alertAudio] = useState(new Audio("/sound/alert.wav"));
   const [playing, setPlaying] = useState(true);
   const [talk, setTalk] = useState("듣는 중입니다...");
@@ -54,7 +55,7 @@ const AiListen = () => {
     setAudioFile(audioData);
   };
   return (
-    <>
+    <Box sx={{ height: "100%" }}>
       <AudioReactRecorder
         state={recordState}
         onStop={recStop}
@@ -62,14 +63,51 @@ const AiListen = () => {
         canvasHeight="0"
       ></AudioReactRecorder>
       {audioFile === undefined ? (
-        <div>지금 듣는 중입니다...</div>
+        <></>
       ) : (
         <div>
-          <AiVoiceRequest audioFile={audioFile} />
+          <AiVoiceRequest
+            audioFile={audioFile}
+            synth={synth}
+            recognition={recognition}
+          />
         </div>
       )}
-      <div>{recTrigger && <AiVoiceTimer recordeStop={recordeStop} />}</div>
-    </>
+      <Box
+        sx={{
+          height: "100%",
+          background: "none",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {recTrigger ? (
+          <Box
+            sx={{
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <h2>지금 듣고 있는 중입니다!</h2>
+            <AiVoiceTimer recordeStop={recordeStop} />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <h2>신호음이 끝나면 말하세요!</h2>
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 };
 

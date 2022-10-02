@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useContent } from "../../../hooks/Recipe/detail/useContent";
 import AiContent from "./ai_content";
 import { aiReadingInit } from "../../../store/module/AiReducer";
+import { Box, Card, CircularProgress } from "@mui/material";
 
 const AiContentWrapper = ({ synth, content, recognition }) => {
   const contentArray = useContent(content);
@@ -13,13 +14,21 @@ const AiContentWrapper = ({ synth, content, recognition }) => {
     }
   }, [contentArray, dispatch]);
   return (
-    <div>
+    <Box sx={{ width: "100%", height: "80%" }}>
       {contentArray.length > 0 ? (
         <AiContent recognition={recognition} synth={synth} />
       ) : (
-        <div>불러오는 중...</div>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignContent: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

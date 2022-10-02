@@ -17,8 +17,7 @@ const VoiceRecogition = ({ recognition }) => {
     for (let i = e.resultIndex, len = e.results.length; i < len; i++) {
       let transcript = e.results[i][0].transcript;
       console.log(transcript);
-      if (e.results[i].isFinal && transcript.includes("메카")) {
-        console.log("aaaaaaa");
+      if (e.results[i].isFinal && transcript.includes("요리조리")) {
         recognition.stop();
         synth.pause();
         await dispatch(aiReadingNowPlaying());

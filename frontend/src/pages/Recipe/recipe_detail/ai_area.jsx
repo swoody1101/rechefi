@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { AiAreaWrapper } from "../styles/recipe_ai_styles";
+import { AiAreaWrapper, AiRecipeTitleLine } from "../styles/recipe_ai_styles";
 import VoiceRecogition from "../../../utils/voice-recognition";
 import { useMemo } from "react";
 import { useState } from "react";
 import AiContentWrapper from "./ai_content_wrapper";
 import { useSelector } from "react-redux";
 import AiListenArea from "./ai_listen_area";
+import { Box, Button } from "@mui/material";
 
 const AiArea = ({ content, toggleAI }) => {
   const SpeechRecognition =
@@ -33,15 +34,34 @@ const AiArea = ({ content, toggleAI }) => {
     };
   }, []);
 
+  const closeAi = () => {
+    recognition.stop();
+    synth.cancel();
+    toggleAI();
+  };
+
   return createPortal(
     <AiAreaWrapper>
-      {aiNowListen && <AiListenArea />}
+      <AiRecipeTitleLine>레시피 읽어주기</AiRecipeTitleLine>
+      {aiNowListen && (
+        <AiListenArea
+          synth={synth}
+          recognition={recognition}
+          toggleAI={toggleAI}
+        />
+      )}
       <AiContentWrapper
         synth={synth}
         content={content}
         recognition={recognition}
       />
       <VoiceRecogition recognition={recognition} />
+      <Button
+        sx={{ position: "absolute", bottom: "3%", color: "black" }}
+        onClick={closeAi}
+      >
+        닫기
+      </Button>
     </AiAreaWrapper>,
     document.getElementById("myCookDetail")
   );
