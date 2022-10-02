@@ -48,8 +48,16 @@ export const aiSlice = createSlice({
   name: "ai",
   initialState,
   reducers: {
+    aiReadingFormat: (state) => {
+      state.aiReading.contents = ["음성 안내 기능을 시작합니다."];
+      state.aiReading.currentCur = 0;
+      state.aiReading.content = "";
+      state.aiReading.preFlag = false;
+      state.aiReading.nextFlag = false;
+      state.aiReading.readEnd = false;
+      state.aiReading.nowPlaying = false;
+    },
     aiListenStartAction: (state) => {
-      console.log("testg");
       state.aiListen.nowListen = true;
     },
     aiListenEndAction: (state) => {
@@ -57,7 +65,7 @@ export const aiSlice = createSlice({
     },
     aiReadingInit: (state, { payload }) => {
       state.aiReading.contents = [
-        ...state.aiReading.contents,
+        "음성 안내 기능을 시작합니다.",
         ...payload,
         "음성 안내가 끝났습니다.",
       ];
@@ -129,6 +137,7 @@ export const {
   aiListenStartAction,
   aiListenEndAction,
   aiReqeustCacheClean,
+  aiReadingFormat,
 } = aiSlice.actions;
 
 export default aiSlice.reducer;

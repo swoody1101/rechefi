@@ -88,7 +88,7 @@ const AiVoiceResult = ({ data, synth, toggleAI, recognition }) => {
     };
   }, []);
 
-  return <div>{playing && <div>{data.data}</div>}</div>;
+  return <div>{playing && <h2>인식한 단어는 {data.data} 입니다!</h2>}</div>;
 };
 
 export default AiVoiceResult;

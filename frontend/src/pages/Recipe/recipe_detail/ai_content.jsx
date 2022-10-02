@@ -29,7 +29,7 @@ const AiContent = ({ synth, recognition }) => {
   );
   const dispatch = useDispatch();
   useEffect(() => {
-    if (content !== "") {
+    if (content !== "" && currentCur < contentsLength) {
       const speechMsg = new SpeechSynthesisUtterance();
       speechMsg.rate = 1;
       speechMsg.pitch = 1;
