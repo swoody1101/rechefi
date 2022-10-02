@@ -3,9 +3,9 @@ import { useDispatch } from "react-redux";
 import { useLocation } from "react-router";
 import { useNavigate } from "react-router-dom";
 import { Box, Container } from "@mui/material";
-import ProfileDetail from "./components/profile_detail";
-import ProfileFollow from "./components/profile_follow";
-import ProfileGallery from "./components/profile_gallery";
+import ProfileIntroduce from "./introduce/profile_introduce";
+import ProfileFollow from "./follow/profile_follow";
+import ProfileGallery from "./gallery/profile_gallery";
 import {
   loadMyProfileThunk,
   loadProfileThunk,
@@ -52,11 +52,11 @@ const ProfilePage = () => {
       sx={{
         display: "flex",
         justifyContent: "center",
-        marginTop: "50px",
+        marginTop: "20px",
       }}
     >
       <Box sx={{ width: "100%" }}>
-        <ProfileDetail
+        <ProfileIntroduce
           imgUrl={imgUrl}
           email={email}
           nickname={nickname}

@@ -39,7 +39,7 @@ const ProfileFollowItem = (props) => {
         }}
       >
         <Avatar sx={{ width: 40, height: 40 }}></Avatar>
-        <Typography onClick={profileTransitionHandler}>
+        <Typography onClick={profileTransitionHandler} sx={{ fontSize: 20 }}>
           {props.email}
         </Typography>
       </Box>

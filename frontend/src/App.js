@@ -14,9 +14,9 @@ import SignUp from "./pages/Account/Signup/signup_page";
 import Login from "./pages/Account/Login/login_page";
 import NewPassword from "./pages/Account/Login/new_password_page";
 import ProfilePage from "./pages/Account/Mypage/profile_page";
-import ProfileFollowerList from "./pages/Account/Mypage/components/profile_follower_list";
-import ProfileFollowingList from "./pages/Account/Mypage/components/profile_following_list";
-import ProfileModifyPage from "./pages/Account/Mypage/profile_modify_page";
+import ProfileFollowerList from "./pages/Account/Mypage/follow/profile_follower_list";
+import ProfileFollowingList from "./pages/Account/Mypage/follow/profile_following_list";
+import ProfileModifyPage from "./pages/Account/Mypage/modify/profile_modify_page";
 
 import NotFound from "./pages/NotFound/not_found_page";
 
