@@ -2,6 +2,7 @@ from fastapi import APIRouter, Response, Depends, UploadFile, Request, File
 from typing import Union
 
 from starlette.responses import JSONResponse
+from tortoise.expressions import F
 
 from app.routers.accounts import get_current_user
 
@@ -9,8 +10,7 @@ from app.models.recipes import Recipe, Tag, Ingredient, RecipeComment, LikeRecip
 from app.models.accounts import User
 from app.schemas.accounts import CurrentUser
 
-from app.schemas.recipes import RecipeCreateForm, TagForm, IngredientForm, IngredientRecipeForm, RecipeCommentForm, \
-    RecipeCommentList, RecipeList, SimpleRecipeList
+from app.schemas.recipes import *
 from app.schemas.common import *
 from app.config import settings
 from httpx import AsyncClient
@@ -56,7 +56,6 @@ async def create_ingredient(req: IngredientForm, user: User = Depends(get_curren
 
 @router.post("/", description="레시피 작성", response_model=CommonResponse, status_code=201)
 async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     recipe = await Recipe.create(user_id=user.id, title=req.title, content=req.content, img_url=req.img_url)
     for ingredient in req.ingredients:
         new_ingredient, created = await Ingredient.get_or_create(name=ingredient.name)
@@ -67,19 +66,18 @@ async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_
 
 @router.post("/speech-to-text", description="AI서버와 STT 데이터 통신")
 async def get_ai_response(request: Request, file: UploadFile = File(...), user: User = Depends(get_current_user)):
-    # async with AsyncClient(base_url='http://127.0.0.1:8001/') as client:
     client = AsyncClient()
     num = str(random.random()).split('.')[1]
     if file.content_type.find("audio") == 0:
         stt_response = await client.post(f"{settings.AI_SERVER_URL}/stt",
                                          files={"file": (f'{user.id}_{user.nickname}_{num}_{file.filename}.wav', file.file)})
         await file.seek(0)
-        return JSONResponse(content=stt_response.json())
+        return stt_response.json()
     else:
         return JSONResponse(content=CommonFailedResponse(detail=f'파일명: {file.filename}, 유형: {file.content_type}').dict())
 
 
-@router.get("/detail/{recipe_id}", description="레시피 상세", response_model=ObjectResponse)
+@router.get("/detail/{recipe_id}", description="레시피 상세", response_model=RecipeDetailResponse)
 async def recipe_detail(recipe_id: int):
     recipe = await Recipe.get_or_none(id=recipe_id).select_related('user')
     if recipe is None:
@@ -88,36 +86,40 @@ async def recipe_detail(recipe_id: int):
         recipe.views += 1
         await recipe.save()
         ingredients = [
-            IngredientRecipeForm(**dict(await ingredient.ingredient), amount=ingredient.amount)
-            for ingredient in await RecipeIngredient.filter(recipe_id=recipe_id)
+            IngredientRecipeForm(name=recipe_ingredient.ingredient.name, amount=recipe_ingredient.amount)
+            for recipe_ingredient in await RecipeIngredient.filter(recipe_id=recipe_id).select_related("ingredient")
         ]
-        data = {
-            "recipe": recipe,
-            "user": CurrentUser(**dict(recipe.user)),
-            "tags": await recipe.tags.all(),
-            "ingredients": ingredients,
-            "like_users": await recipe.like_users.all().values("id", "nickname"),
-        }
-    return ObjectResponse(data=data)
+    return RecipeDetailResponse(data=RecipeDetail(
+            recipe=CommonArticleDetail(**dict(recipe)),
+            user=CurrentUser(**dict(recipe.user)),
+            tags=await recipe.tags.all(),
+            ingredients=ingredients,
+            like_users=await recipe.like_users.all().values("id", "nickname")
+        ))
 
 
-@router.get("/comment/{recipe_id}", description="레시피 댓글 리스트", response_model=MultipleObjectResponse)
+@router.get("/comment/{recipe_id}", description="레시피 댓글 리스트", response_model=CommentListResponse)
 async def get_comment_list(recipe_id: int):
     comments = await RecipeComment.filter(recipe_id=recipe_id).select_related('user').order_by('-id')
-    data = [RecipeCommentList(**dict(comment), user=CurrentUser(**dict(comment.user))) for comment in comments]
-    return MultipleObjectResponse(data=data)
+    return CommentListResponse(
+        data=[
+            CommentList(
+                **dict(comment),
+                user=CurrentUser(**dict(comment.user)),
+                deleted=True if comment.group < 0 else False
+            ) for comment in comments
+        ]
+    )
 
 
 @router.post("/comment/{recipe_id}", description="레시피 댓글 작성", response_model=CommonResponse, status_code=201)
-async def create_comment(recipe_id: int, req: RecipeCommentForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
+async def create_comment(recipe_id: int, req: CommentForm, user: User = Depends(get_current_user)):
     await RecipeComment.create(recipe_id=recipe_id, user_id=user.id, **req.dict())
     return CommonResponse()
 
 
 @router.put("/comment/{comment_id}", description="레시피 댓글 수정", response_model=CommonResponse)
-async def edit_comment(comment_id: int, req: RecipeCommentForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
+async def edit_comment(comment_id: int, req: CommentForm, user: User = Depends(get_current_user)):
     comment = await RecipeComment.get_or_none(id=comment_id)
     if comment is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 댓글입니다.").dict())
@@ -132,46 +134,38 @@ async def edit_comment(comment_id: int, req: RecipeCommentForm, user: User = Dep
 
 @router.delete("/comment/{comment_id}", description="레시피 댓글 삭제", response_model=CommonResponse)
 async def delete_comment(comment_id: int, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     comment = await RecipeComment.get_or_none(id=comment_id)
     if comment is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 댓글입니다.").dict())
-    else:
-        if user.id == comment.user_id:
-            await RecipeComment.filter(id=comment_id).delete()
-        else:
-            return JSONResponse(status_code=404, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    if user.id != comment.user_id:
+        return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    if comment.group >= 0:
+        comment.group = -(comment.group+1)
+    if comment.group < 0 and user.is_admin:
+        comment.group = -(comment.group+1)
+    await comment.save(update_fields=("group",))
     return CommonResponse()
 
 
-@router.post("/like/{recipe_id}", description="레시피 좋아요", response_model=ObjectResponse, status_code=201)
+@router.post("/like/{recipe_id}", description="레시피 좋아요", response_model=CommonLikeArticleResponse)
 async def like_recipe(recipe_id: int, response: Response, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     recipe = await Recipe.get_or_none(id=recipe_id)
-    like_recipe_list = await LikeRecipe.filter(user_id=user.id, recipe_id=recipe_id)
     if recipe is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="추천할 레시피가 없습니다.").dict())
-    else:
-        data = {
-            "method": "",
-            "like": True
-        }
-        if not like_recipe_list:
-            await LikeRecipe.create(user_id=user.id, recipe_id=recipe_id)
-            data["method"] = 'post'
-            data["like"] = True
-        else:
-            await LikeRecipe.filter(user_id=user.id, recipe_id=recipe_id).delete()
-            data["method"] = 'delete'
-            data["like"] = False
-            response.status_code = 200
-        data["likes_count"] = await LikeRecipe.filter(recipe_id=recipe_id).count()
-        return ObjectResponse(data=data)
+    likes, created = await LikeRecipe.get_or_create(user_id=user.id, recipe_id=recipe_id)
+    method = "post"
+    if not created:
+        await likes.delete()
+        method = "delete"
+    return CommonLikeArticleResponse(
+        data=CommonLikeData(
+            method=method, like=created, likes_count=await LikeRecipe.filter(recipe_id=recipe_id).count()
+        )
+    )
 
 
 @router.put("/{recipe_id}", description="레시피 수정", response_model=SingleResponse)
 async def edit_recipe(recipe_id: int, req: RecipeCreateForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     recipe = await Recipe.get_or_none(id=recipe_id)
     if recipe is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 레시피입니다.").dict())
@@ -183,7 +177,6 @@ async def edit_recipe(recipe_id: int, req: RecipeCreateForm, user: User = Depend
 
 @router.delete("/{recipe_id}", description="레시피 삭제", response_model=CommonResponse)
 async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     recipe = await Recipe.get_or_none(id=recipe_id)
     if recipe is not None and user.id == recipe.user_id:
         await Recipe.filter(id=recipe_id).delete()
@@ -192,7 +185,7 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
     return CommonResponse()
 
 
-@router.get("/search-by-id/{page}", description="유저 id로 작성한 레시피 목록 조회", response_model=ObjectResponse)
+@router.get("/search-by-id/{page}", description="유저 id로 작성한 레시피 목록 조회", response_model=RecipeListResponse)
 async def get_recipe_list_by_id(page: int, mid: int):
     filtered_recipes = list(await Recipe.filter(user_id=mid).prefetch_related('tags', 'ingredients').select_related('user').order_by('-id'))
     total_pages = 1 + len(filtered_recipes)//15
@@ -203,24 +196,14 @@ async def get_recipe_list_by_id(page: int, mid: int):
         current_page = 1
         recipes = filtered_recipes[:15]
     post = [
-        {
-            **SimpleRecipeList(**dict(recipe)).dict(),
-            # "tags": await recipe.tags.all(),
-            # "ingredients": await recipe.ingredients.all(),
-            # "likes": len(await recipe.like_users.all()),
-            # "comments_count": len(await RecipeComment.filter(recipe_id=recipe.id))
-        }
+
+        SimpleRecipeList(**dict(recipe))
         for recipe in recipes
     ]
-    data = {
-        "post": post,
-        "total_pages": total_pages,
-        "current_page": current_page
-    }
-    return ObjectResponse(data=data)
+    return RecipeListResponse(data=RecipeListPagination(post=post, total_pages=total_pages, current_page=current_page))
 
 
-@router.get("/{page}", description="레시피 목록 조회", response_model=ObjectResponse)
+@router.get("/{page}", description="레시피 목록 조회", response_model=RecipeListResponse)
 async def get_recipe_list(page: int,
                           mid: Union[int, None] = None,
                           tag: Union[str, None] = None,
@@ -247,21 +230,15 @@ async def get_recipe_list(page: int,
     else:
         current_page = 1
         recipes = filtered_recipes[:10]
-    post = [
-        {
+    return RecipeListResponse(data=RecipeListPagination(post=[
+        CompleteRecipeList(
             **RecipeList(**dict(recipe)).dict(),
-            "user": CurrentUser(**dict(recipe.user)),
-            "tags": await recipe.tags.all(),
-            "ingredients": await recipe.ingredients.all(),
-            "likes": len(await recipe.like_users.all()),
-            "comments_count": len(await RecipeComment.filter(recipe_id=recipe.id))
-        }
+            user=CurrentUser(**dict(recipe.user)),
+            tags=await recipe.tags.all(),
+            ingredients=await recipe.ingredients.all(),
+            likes=len(await recipe.like_users.all()),
+            comments_count=len(await RecipeComment.filter(recipe_id=recipe.id))
+        )
         for recipe in recipes
-    ]
-    data = {
-        "post": post,
-        "total_pages": total_pages,
-        "current_page": current_page
-    }
-    return ObjectResponse(data=data)
+    ], total_pages=total_pages, current_page=current_page))
 
