@@ -16,7 +16,7 @@ import RecipeDetailIngredients from "./ingredients";
 import RecipedetailTitleArea from "./title_area";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import SpatialTrackingIcon from "@mui/icons-material/SpatialTracking";
-import RecipeDeatilAIvoiceControll from "./AIvoice_controll";
+// import RecipeDeatilAIvoiceControll from "./AIvoice_controll";
 import Comments from "../../../common/components/comments/comments";
 import { useFetchDetail } from "../../../hooks/useFetch";
 import { useParams } from "react-router-dom";
