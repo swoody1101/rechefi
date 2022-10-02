@@ -32,6 +32,7 @@ const ProfileFollowingList = () => {
     <ProfileFollowItem
       email={following}
       isFollow={isFollowHandler(following)}
+      key={following}
     />
   ));
 };
