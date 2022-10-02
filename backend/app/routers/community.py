@@ -5,20 +5,11 @@ from starlette.responses import JSONResponse
 
 from app.routers.accounts import get_current_user
 
-from app.models.community import Article, ArticleComment, LikeArticle, Notice, Cooking, CookingComment, LikeCooking
+from app.models.community import *
 from app.models.accounts import User
 from app.schemas.accounts import CurrentUser
 
-from app.schemas.community import (
-    ArticleCreateForm,
-    ArticleCommentForm,
-    ArticleDetail,
-    CookingCreateForm,
-    NoticeDetail,
-    CookingDetail,
-    ArticleList,
-    SimpleArticleList,
-)
+from app.schemas.community import *
 from app.schemas.common import *
 
 router = APIRouter(prefix="/community", tags=["community"])
@@ -30,14 +21,14 @@ async def create_notice(req: ArticleCreateForm, user: User = Depends(get_current
     return CommonResponse()
 
 
-@router.get("/notice-board/detail/{article_id}", description="공지사항 상세", response_model=ObjectResponse)
+@router.get("/notice-board/detail/{article_id}", description="공지사항 상세", response_model=ArticleDetailResponse)
 async def notice_detail(article_id: int):
     article = await Notice.get_or_none(id=article_id).select_related('user')
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
     article.views += 1
     await article.save(update_fields=("views",))
-    return ObjectResponse(data=NoticeDetail(
+    return ArticleDetailResponse(data=NoticeDetail(
         user=CurrentUser(**dict(article.user)),
         **dict(article)
     ))
@@ -70,14 +61,14 @@ async def create_article(req: ArticleCreateForm, user: User = Depends(get_curren
     return CommonResponse()
 
 
-@router.get("/free-board/detail/{article_id}", description="게시물 상세", response_model=ObjectResponse)
+@router.get("/free-board/detail/{article_id}", description="게시물 상세", response_model=ArticleDetailResponse)
 async def article_detail(article_id: int):
     article = await Article.get_or_none(id=article_id).select_related('user')
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
     article.views += 1
     await article.save()
-    return ObjectResponse(data=ArticleDetail(
+    return ArticleDetailResponse(data=ArticleDetail(
         user=CurrentUser(**dict(article.user)),
         like_users=await article.like_users.all().values("id", "nickname"),
         **dict(article)
@@ -132,28 +123,22 @@ async def delete_article_comment(comment_id: int, user: User = Depends(get_curre
     await comment.save(update_fields=("group",))
     return CommonResponse()
 
-@router.post("/free-board/like/{article_id}", description="게시물 좋아요", response_model=ObjectResponse, status_code=201)
+
+@router.post("/free-board/like/{article_id}", description="게시물 좋아요", response_model=CommonLikeArticleResponse)
 async def like_article(article_id: int, response: Response, user: User = Depends(get_current_user)):
     article = await Article.get_or_none(id=article_id)
-    like_article_list = await LikeArticle.filter(user_id=user.id, article_id=article_id)
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="추천할 게시물이 없습니다.").dict())
-    else:
-        data = {
-            "method": "",
-            "like": True
-        }
-        if not like_article_list:
-            await LikeArticle.create(user_id=user.id, article_id=article_id)
-            data["method"] = 'post'
-            data["like"] = True
-        else:
-            await LikeArticle.filter(user_id=user.id, article_id=article_id).delete()
-            data["method"] = 'delete'
-            data["like"] = False
-            response.status_code = 200
-        data["likes_count"] = await LikeArticle.filter(article_id=article_id).count()
-        return ObjectResponse(data=data)
+    likes, created = await LikeArticle.get_or_create(user_id=user.id, article_id=article_id)
+    if not created:
+        await likes.delete()
+    return CommonLikeArticleResponse(
+        data=CommonLikeData(
+            method="post" if created else "deleted",
+            like=created,
+            likes_count=await LikeArticle.filter(article_id=article_id).count(),
+        )
+    )
 
 
 @router.put("/free-board/{article_id}", description="게시물 수정", response_model=SingleResponse)
@@ -182,7 +167,7 @@ async def create_cooking(req: CookingCreateForm, user: User = Depends(get_curren
     return CommonResponse()
 
 
-@router.get("/gallery/detail/{article_id}", description="게시물 상세", response_model=ObjectResponse)
+@router.get("/gallery/detail/{article_id}", description="게시물 상세", response_model=ArticleDetailResponse)
 async def cooking_detail(article_id: int):
     article = await Cooking.get_or_none(id=article_id).select_related('user', 'recipe')
     if article is None:
@@ -194,7 +179,7 @@ async def cooking_detail(article_id: int):
         like_users=await article.like_users.all().values("id", "nickname"),
         **dict(article)
     )
-    return ObjectResponse(data=data)
+    return ArticleDetailResponse(data=data)
 
 
 @router.get("/gallery/comment/{article_id}", description="게시물 댓글 리스트", response_model=CommentListResponse)
@@ -297,20 +282,15 @@ async def get_article_list(page: int, q: Union[str, None] = None, opt: Union[str
         current_page = 1
         articles = articles[:10]
     post = [
-        {
-            **ArticleList(**dict(article)).dict(),
-            "likes": len(await article.like_users.all()),
-            "comments_count": len(await ArticleComment.filter(article_id=article.id)),
-            "user": CurrentUser(**dict(article.user)).dict()
-        }
+        CompleteArticleList(
+            **dict(article),
+            likes=len(await article.like_users.all()),
+            comments_count=len(await ArticleComment.filter(article_id=article.id)),
+            user=CurrentUser(**dict(article.user)).dict()
+        )
         for article in articles
     ]
-    data = {
-        'posts': post,
-        'total_pages': pages,
-        'current_page': current_page
-    }
-    return ObjectResponse(data=data)
+    return ArticleListResponse(data=ArticleListPagination(posts=post, total_pages=pages, current_page=current_page))
 
 
 @router.get("/notice-board/{page}", description="공지사항 목록 조회", response_model=ObjectResponse)
@@ -328,20 +308,8 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
     else:
         current_page = 1
         articles = articles[:10]
-
-    post = [
-        {
-            **ArticleList(**dict(article)).dict(),
-            "user": CurrentUser(**dict(article.user))
-        }
-        for article in articles
-    ]
-    data = {
-        'posts': post,
-        'total_pages': pages,
-        'current_page': current_page
-    }
-    return ObjectResponse(data=data)
+    post = [ArticleList(**dict(article), user=CurrentUser(**dict(article.user))) for article in articles]
+    return ArticleListResponse(data=ArticleListPagination(posts=post, total_pages=pages, current_page=current_page))
 
 
 @router.get("/gallery/search-by-id/{page}", description="유저 id로 작성된 요리자랑 목록 조회", response_model=ObjectResponse)
@@ -354,20 +322,8 @@ async def get_cooking_list_by_id(page: int, mid: int):
     else:
         current_page = 1
         cooking = cooking[:15]
-    post = [
-        {
-            **SimpleArticleList(**dict(article)).dict(),
-            # "likes": len(await article.like_users.all()),
-            # "comments_count": len(await CookingComment.filter(cooking_id=article.id)),
-        }
-        for article in cooking
-    ]
-    data = {
-        'posts': post,
-        'total_pages': pages,
-        'current_page': current_page
-    }
-    return ObjectResponse(data=data)
+    post = [SimpleArticleList(**dict(article)) for article in cooking]
+    return ArticleListResponse(data=ArticleListPagination(posts=post, total_pages=pages, current_page=current_page))
 
 
 @router.get("/gallery/{page}", description="갤러리 목록 조회", response_model=ObjectResponse)
@@ -385,20 +341,14 @@ async def get_cooking_list(page: int, q: Union[str, None] = None, opt: Union[str
     else:
         current_page = 1
         cooking = cooking[:20]
-
     post = [
-        {
-            **ArticleList(**dict(article)).dict(),
-            "user": CurrentUser(**dict(article.user)),
-            "likes": len(await article.like_users.all()),
-            "comments_count": len(await CookingComment.filter(cooking_id=article.id)),
-        }
+        CompleteArticleList(
+            **dict(article),
+            user=CurrentUser(**dict(article.user)),
+            likes=len(await article.like_users.all()),
+            comments_count=len(await CookingComment.filter(cooking_id=article.id))
+        )
         for article in cooking
     ]
-    data = {
-        'posts': post,
-        'total_pages': pages,
-        'current_page': current_page
-    }
-    return ObjectResponse(data=data)
+    return ArticleListResponse(data=ArticleListPagination(posts=post, total_pages=pages, current_page=current_page))
 

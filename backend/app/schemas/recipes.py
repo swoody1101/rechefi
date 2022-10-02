@@ -58,19 +58,19 @@ class RecipeList(SimpleRecipeList):
     updated_at: datetime
 
 
-class RecipeRecommendation(RecipeList):
+class IncompleteRecipeList(RecipeList):
     likes: int
     user: CurrentUser
     comments_count: int
     tags: List[TagList]
 
 
-class CompleteRecipeList(RecipeRecommendation):
+class CompleteRecipeList(IncompleteRecipeList):
     ingredients: List[IngredientList]
 
 
 class RecipeListPagination(BaseModel):
-    post: List[Union[CompleteRecipeList, RecipeRecommendation, RecipeList, SimpleRecipeList]]
+    post: List[Union[CompleteRecipeList, IncompleteRecipeList, RecipeList, SimpleRecipeList]]
     total_pages: int
     current_page: int
 
@@ -89,3 +89,7 @@ class RecipeDetail(BaseModel):
 
 class RecipeDetailResponse(CommonResponse):
     data: RecipeDetail
+
+
+class BestRecipeResponse(CommonResponse):
+    data: List[IncompleteRecipeList]
