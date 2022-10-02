@@ -30,7 +30,7 @@ function RecipeFilterIngredItem({ ingredId, ingredName, onInclude, onDelete }) {
             aria-label="ingred_included"
             sx={{ m: 1 }}
           >
-            <ToggleButton
+            {/* <ToggleButton
               value={true}
               aria-label="include"
               sx={{
@@ -46,7 +46,7 @@ function RecipeFilterIngredItem({ ingredId, ingredName, onInclude, onDelete }) {
               }}
             >
               {isIncluded ? "포함" : "제외"}
-            </ToggleButton>
+            </ToggleButton> */}
           </ToggleButtonGroup>
           <IconButton
             onClick={() => onDelete(ingredId)}

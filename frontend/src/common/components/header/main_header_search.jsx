@@ -3,26 +3,21 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Divider,
-  IconButton,
   OutlinedInput,
 } from "@mui/material";
 import React, { useState } from "react";
-import SearchIcon from "@mui/icons-material/Search";
-import RecipeFilterIngredSearchedItem from "./recipe_list_filter_ingredient_searched_item";
+import RecipeFilterBtn from "../../../pages/Recipe/List/components/filter/recipe_list_filter_btn";
+import RecipeListFilter from "../../../pages/Recipe/List/components/filter/recipe_list_filter_container";
 
-function RecipeListFilterSearch({
-  dialogOpen,
-  setDialogOpen,
-  handleSearch,
-  searchResult,
-  addSearchedItem,
-}) {
+function RecipeSearchDialog({ dialogOpen, setDialogOpen, handleSearch }) {
   const [keyword, setKeyword] = useState("");
-  const [title, setTitle] = useState("재료 검색");
+
+  const [filter, setFilter] = useState({
+    tags: [],
+    ingreds: [],
+  });
 
   const handleClose = () => {
-    setTitle("");
     setKeyword("");
     setDialogOpen(false);
   };
@@ -36,24 +31,15 @@ function RecipeListFilterSearch({
 
   // send to parent
   const search = () => {
-    setTitle(`"${keyword}" 의 검색 결과`);
-    handleSearch(keyword);
+    handleSearch({ keyword: keyword, ...filter });
   };
-
-  // shown result
-  const searchItems = searchResult.map((item) => (
-    <RecipeFilterIngredSearchedItem
-      key={item.id}
-      itemName={item.name}
-      onClick={(e) => addSearchedItem(item)}
-    ></RecipeFilterIngredSearchedItem>
-  ));
 
   return (
     <Dialog
       open={dialogOpen}
       onClose={handleClose}
       fullWidth
+      maxWidth="md"
       sx={{
         // for dialog position
         "& .MuiDialog-container": {
@@ -64,7 +50,7 @@ function RecipeListFilterSearch({
       }}
       PaperProps={{ sx: { mt: 10 } }}
     >
-      {title !== "" && <DialogTitle>{title}</DialogTitle>}
+      <DialogTitle>레시피 검색</DialogTitle>
       <DialogContent>
         <Box sx={{ display: "flex" }}>
           <OutlinedInput
@@ -75,20 +61,14 @@ function RecipeListFilterSearch({
             sx={{ flexGrow: 1, mr: 1 }}
             onKeyUp={onKeyUp}
           ></OutlinedInput>
-          <IconButton onClick={search} type="button" aria-label="search">
-            <SearchIcon />
-          </IconButton>
         </Box>
+        {/* recipe filter */}
+        <RecipeListFilter onFilterApplied={setFilter} />
 
-        <Divider sx={{ mt: 2, mb: 1 }} />
-
-        {/* shown searched result */}
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          {searchItems}
-        </Box>
+        <RecipeFilterBtn Content={"검색"} onClick={search} />
       </DialogContent>
     </Dialog>
   );
 }
 
-export default RecipeListFilterSearch;
+export default RecipeSearchDialog;
