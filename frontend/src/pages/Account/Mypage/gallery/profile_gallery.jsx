@@ -4,7 +4,7 @@ import ProfileGalleryMyCookList from "./profile_gallery_mycook_list";
 import ProfileGalleryRecipeList from "./profile_gallery_recipe_list";
 import { useDispatch } from "react-redux";
 
-const ProfileGallery = () => {
+const ProfileGallery = (props) => {
   const dispatch = useDispatch();
   const [isRecipeBoard, setIsRecipeBoard] = useState(true);
 
@@ -39,9 +39,9 @@ const ProfileGallery = () => {
         </GalleryButton>
       </Box>
       {isRecipeBoard ? (
-        <ProfileGalleryMyCookList />
+        <ProfileGalleryRecipeList userId={props.userId} />
       ) : (
-        <ProfileGalleryRecipeList />
+        <ProfileGalleryMyCookList userId={props.userId} />
       )}
     </Box>
   );

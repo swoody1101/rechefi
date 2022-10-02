@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit/dist/createSlice";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import http from "../../utils/http-commons";
 
 const intialState = {};
 
@@ -9,12 +10,26 @@ export const recipeSlice = createSlice({
   extraReducers: {},
 });
 
-export const loadRecipeById = createAsyncThunk(
-  "recipe/loadRecipeById",
-  async (page) => {
+export const loadRecipeThunk = createAsyncThunk(
+  "recipe/loadRecipeThunk",
+  async (param) => {
     try {
-      const response = await http.get(`/recipe/${page}`);
+      const response = await http.get(`/recipe/${param.page}?mid=${param.mid}`);
       return response.data.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+
+export const loadMyCookThunk = createAsyncThunk(
+  "recipe/loadMyCookListThunk",
+  async (param) => {
+    try {
+      const response = await http.get(
+        `/community/gallery/search-by-id/${param.page}?mid=${param.mid}`
+      );
+      return response.data;
     } catch (error) {
       return error.response;
     }
