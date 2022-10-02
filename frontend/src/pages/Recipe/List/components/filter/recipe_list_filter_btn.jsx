@@ -9,9 +9,11 @@ function RecipeFilterBtn({ Content, onClick }) {
       onClick={onClick}
       sx={{
         mx: 1,
+        mt: 2,
         background: Palette.mainColor5,
         fontWeight: "bold",
       }}
+      fullWidth
     >
       {Content}
     </Button>
