@@ -17,6 +17,7 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [id, setId] = useState();
   const [email, setEmail] = useState();
   const [nickname, setNickname] = useState();
   const [imgUrl, setImgUrl] = useState();
@@ -30,6 +31,7 @@ const ProfilePage = () => {
       dispatch(loadProfileThunk(state))
         .unwrap()
         .then((res) => {
+          setId(res.id);
           setEmail(res.email);
           setNickname(res.nickname);
           setImgUrl(res.img_url);
@@ -67,7 +69,7 @@ const ProfilePage = () => {
           following={following}
           email={email}
         />
-        <ProfileGallery />
+        <ProfileGallery userId={id} />
       </Box>
     </Container>
   );
