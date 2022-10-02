@@ -35,17 +35,16 @@ class NoticeDetail(ArticleCreateForm):
     views: int
 
 
-class ArticleDetail(ArticleCreateForm):
-    user_id: int
-    created_at: datetime
-    updated_at: datetime
-    user: CurrentUser
-    views: int
+class ArticleDetail(NoticeDetail):
     like_users: List[dict] = Field(Nullable=True)
 
 
 class CookingDetail(ArticleDetail):
     recipe_id: int = Field(Nullable=True)
+
+
+class ArticleDetailResponse(CommonResponse):
+    data: Union[CookingDetail, ArticleDetail, NoticeDetail]
 
 
 class CookingCreateForm(ArticleCreateForm):
@@ -61,15 +60,11 @@ class SimpleArticleList(BaseModel):
 
 
 class ArticleList(SimpleArticleList):
-    user_id: int
-    id: int
-    title: str
-    views: int
-    img_url: str = Field(nullable=True)
     created_at: datetime
     updated_at: datetime
     recipe_id: Union[int, None] = None
     category: int = Field(nullable=True)
+    user: CurrentUser
 
 
 class LikeUsers(BaseModel):
@@ -77,12 +72,16 @@ class LikeUsers(BaseModel):
     nickname: str = Field(description="좋아요 유저 닉네임")
 
 
-class RecipeDetail(BaseModel):
-    recipe: str
-    user: str
-    tags: str
-    ingredients: str
-    like_users: list[LikeUsers] = Field(description="좋아요 유저 리스트")
+class CompleteArticleList(ArticleList):
+    likes: int
+    comments_count: int
 
-class RecipeDetailResponse(CommonResponse):
-    data: RecipeDetail
+
+class ArticleListPagination(BaseModel):
+    posts: List[Union[CompleteArticleList, ArticleList, SimpleArticleList]]
+    total_pages: int
+    current_page: int
+
+
+class ArticleListResponse(CommonResponse):
+    data: ArticleListPagination
