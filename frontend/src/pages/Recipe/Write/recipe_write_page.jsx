@@ -30,6 +30,9 @@ function RecipeWritePage() {
   // ingredients for recipe
   const [ingreds, setIngred] = useState([]);
 
+  // thumbnail
+  const [thumbnail, setThumbnail] = useState("");
+
   // add text or image block
   const imageInput = useRef();
 
@@ -56,9 +59,11 @@ function RecipeWritePage() {
 
   // handle bottom bar buttons
   const writeComplete = () => {
+    let first_image_link = "";
+
+    // for processing
     let tmp_contents = "";
     contents.forEach((item, index) => {
-      console.log(item);
       tmp_contents = tmp_contents.concat(
         item.type === "text"
           ? convertToHTML(item.content.getCurrentContent())
@@ -69,6 +74,15 @@ function RecipeWritePage() {
       if (index !== contents.length - 1) {
         tmp_contents = tmp_contents.concat("```");
       }
+
+      // setThumbnail first image
+      if (
+        item.type === "image" &&
+        thumbnail === "" &&
+        first_image_link === ""
+      ) {
+        first_image_link = item.content;
+      }
     });
 
     let recipe = {
@@ -76,7 +90,7 @@ function RecipeWritePage() {
       ingredients: ingreds.filter((ingred) => ingred.name !== ""),
       tags: selectedTags,
       content: tmp_contents,
-      img_url: "",
+      img_url: thumbnail === "" ? first_image_link : thumbnail,
     };
 
     http
@@ -86,7 +100,7 @@ function RecipeWritePage() {
         navigate("/recipe", { replace: true });
       })
       .catch((error) => {
-        Warn(error + " : " + "레시피 작성 중 문제가 발생하였습니다");
+        Warn(`${error} + " : 레시피 작성 중 문제가 발생하였습니다`);
       });
   };
 
@@ -136,7 +150,11 @@ function RecipeWritePage() {
           >
             {/* image or text */}
             {block.type === "image" ? (
-              <RecipeWriteContentImage link={block.content} />
+              <RecipeWriteContentImage
+                link={block.content}
+                thumbnail={thumbnail}
+                setThumbnail={setThumbnail}
+              />
             ) : (
               <RecipeWriteContentText
                 index={index}

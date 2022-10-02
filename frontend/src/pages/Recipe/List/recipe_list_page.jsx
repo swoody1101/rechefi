@@ -1,80 +1,65 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import RecipeListBests from "./components/bests/recipe_list_bests";
 import RecipeList from "./components/recipe_list";
 import RecipeListFab from "./components/recipe_list_fab";
+import useFetchList from "../../../hooks/useFetch";
 import { Container } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useBestRecipes } from "../../../hooks/Recipe/list/useBestRecipes";
-import { useRecipes } from "../../../hooks/Recipe/list/useRecipes";
 import { getToken } from "../../../utils/JWT-token";
+import { useInView } from "react-intersection-observer";
+import RecipeListLoadingSpinner from "./components/recipe_list_loading_spinner";
 
 function RecipeListPage() {
-  const [recipes, getRecipes] = useRecipes();
-  const [shownRecipes, setShownRecipes] = useState([]);
-  const [bestRecipes] = useBestRecipes([]);
-  const [loading, setLoading] = useState(false);
-
-  // list Value init
-  useEffect(() => {
-    setShownRecipes(recipes.slice(0, 5));
-  }, [recipes]);
-
-  /**
-   * add recipe list item
-   * @param {Integer} nAddedRecipes number of added recipes
-   */
-  const addRecipesBeingShown = useCallback(
-    async (nAddedRecipes) => {
-      // for spinner UI
-      setLoading(true);
-
-      if (shownRecipes.length + nAddedRecipes <= recipes.length) {
-        await setTimeout(() => {
-          setShownRecipes(
-            shownRecipes.concat(
-              recipes.slice(
-                shownRecipes.length,
-                shownRecipes.length + nAddedRecipes
-              )
-            )
-          );
-        }, 1000);
-      } else {
-        // TODO
-        getRecipes();
-      }
-
-      setLoading(false);
-    },
-    [shownRecipes, setLoading, recipes]
-  );
-
-  let ticking = false;
-  const onScroll = useCallback(() => {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        let documentScrollPos = window.scrollY + window.innerHeight;
-
-        // if scroll end
-        if (documentScrollPos <= document.documentElement.scrollHeight - 20) {
-          addRecipesBeingShown(5);
-        }
-
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, [addRecipesBeingShown]);
-
-  // attach on Scroll event
-  useEffect(() => {
-    window.addEventListener("scroll", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [onScroll]);
-
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state;
+
+  // get search keywords
+  let query = "";
+  if (state) {
+    if (state.keyword) query += `title=${state.keyword}&`;
+    if (state.tags) {
+      if (state.tags.length !== 0) {
+        query += "tag=";
+        state.tags.forEach((tag, idx) => {
+          query += `${tag}${idx !== state.tags.length - 1 ? "," : "&"}`;
+        });
+      }
+    }
+
+    if (state.ingreds) {
+      if (state.ingreds && state.ingreds.length !== 0) {
+        query += "ingredient=";
+        state.ingreds.forEach((ingred, idx) => {
+          query += `${ingred.name}${
+            idx !== state.ingreds.length - 1 ? "," : ""
+          }`;
+        });
+      }
+    }
+  }
+
+  // loading best Recipe
+  const [bestRecipes] = useBestRecipes([]);
+
+  // recipe List loading
+  const { data, isLoading, fetchNextPage, hasNextPage } = useFetchList({
+    queryKey: "RECIPES",
+    articleId: 1,
+    uri: "/recipe/",
+    query: query,
+  });
+
+  // for infinity scroll trigger
+  const [ref, inView] = useInView();
+
+  // loading scroll
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, inView, fetchNextPage]);
 
   // see recipe detail
   const onRecipeItemClicked = (id, title) => {
@@ -85,11 +70,23 @@ function RecipeListPage() {
   return (
     <Container sx={{ pt: 2, px: 1, pb: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
-      <RecipeList
-        recipes={shownRecipes}
-        loading={loading}
-        onRecipeItemClicked={onRecipeItemClicked}
-      />
+      <Container sx={{ mt: 2 }}>
+        {isLoading ? (
+          <RecipeListLoadingSpinner loading={isLoading} />
+        ) : (
+          data.pages.map((page, index) => (
+            <RecipeList
+              key={index}
+              recipes={page.result.data.post}
+              loading={isLoading}
+              onRecipeItemClicked={onRecipeItemClicked}
+            />
+          ))
+        )}
+      </Container>
+
+      {/* for infinity scroll trigger */}
+      <Container ref={ref}></Container>
 
       {/* show write btn when login */}
       {getToken() ? (

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
 export const TagListDiv = styled.div`
-  margin-top: 15%;
+  margin-top: 5%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -20,6 +20,6 @@ export const TagElementButton = styled.button`
 `;
 
 export const TagFoodImg = styled.img`
-  height: 5vh;
+  height: 10vh;
   width: auto; ;
 `;
