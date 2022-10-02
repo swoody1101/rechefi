@@ -296,7 +296,7 @@ async def signup(email, token):
     redis_session.delete(token)
 
     # 우리 메인 페이지로 리다이렉트
-    return RedirectResponse("http://localhost:8000/")
+    return RedirectResponse("https://j7b303.p.ssafy.io/")
 
 @router.delete("/", description="회원탈퇴", response_model=CommonResponse)
 async def delete_user(current_user: User = Depends(get_current_user)):
