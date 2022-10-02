@@ -9,15 +9,16 @@ import {
   FormControl,
   Grid,
 } from "@mui/material";
-import NicknameInputElement from "../components/nickname_input_element";
-import PasswordInputElement from "../components/password_input_element";
-import ConfirmPasswordInputElement from "../components/confim_password_input_element";
-import ProfileModifyIntroduce from "./components/profile_modify_introduce";
+import NicknameInputElement from "../../components/nickname_input_element";
+import PasswordInputElement from "../../components/password_input_element";
+import ConfirmPasswordInputElement from "../../components/confim_password_input_element";
+import ProfileModifyIntroduce from "./profile_modify_introduce";
 import {
   checkNicknameThunk,
+  loadMyProfileThunk,
   porfileModifyThunk,
-} from "../../../store/module/accountReducer";
-import InputImage from "../../../common/components/input_image";
+} from "../../../../store/module/accountReducer";
+import InputImage from "../../../../common/components/input_image";
 
 const ProfileModifyPage = () => {
   const loginInfo = useSelector((store) => store.account);
@@ -74,6 +75,7 @@ const ProfileModifyPage = () => {
       img_url: imgUrl,
     };
     dispatch(porfileModifyThunk(profileInfo));
+    dispatch(loadMyProfileThunk());
     navigate(`/mypage`);
   };
 
