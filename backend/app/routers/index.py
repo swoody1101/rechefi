@@ -26,7 +26,7 @@ async def get_monthly_recipe():
         user=CurrentUser(**dict(recipe.user)),
         likes=await recipe.like_users.all().count(),
         tags=await recipe.tags,
-        comment_count=len(await recipe.comments),
+        comments_count=len(await recipe.comments),
         **dict(recipe))
         for recipe in recipes]
     data.sort(key=lambda x: x.likes, reverse=True)
@@ -41,7 +41,7 @@ async def get_best_recipe():
         user=CurrentUser(**dict(recipe.user)),
         likes=await recipe.like_users.all().count(),
         tags=await recipe.tags,
-        comment_count=len(await recipe.comments),
+        comments_count=len(await recipe.comments),
         **dict(recipe))
         for recipe in recipes]
     data.sort(key=lambda x: x.likes, reverse=True)
