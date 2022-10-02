@@ -34,7 +34,7 @@ function RecipeListFilterIngredients({
       key={item.id}
       ingredId={item.id}
       ingredName={item.name}
-      onInclude={onSelectedIngredChanged}
+      // onInclude={onSelectedIngredChanged}
       onDelete={onSelectedIngredDeleted}
     ></RecipeFilterIngredItem>
   ));
