@@ -19,17 +19,24 @@ function RecipeListPage() {
   let query = "";
   if (state) {
     if (state.keyword) query += `title=${state.keyword}&`;
-    if (state.tags.length !== 0) {
-      query += "tag=";
-      state.tags.forEach((tag, idx) => {
-        query += `${tag}${idx !== state.tags.length - 1 ? "," : "&"}`;
-      });
+    if (state.tags) {
+      if (state.tags.length !== 0) {
+        query += "tag=";
+        state.tags.forEach((tag, idx) => {
+          query += `${tag}${idx !== state.tags.length - 1 ? "," : "&"}`;
+        });
+      }
     }
-    if (state.ingreds.length !== 0) {
-      query += "ingredient=";
-      state.ingreds.forEach((ingred, idx) => {
-        query += `${ingred.name}${idx !== state.ingreds.length - 1 ? "," : ""}`;
-      });
+
+    if (state.ingreds) {
+      if (state.ingreds && state.ingreds.length !== 0) {
+        query += "ingredient=";
+        state.ingreds.forEach((ingred, idx) => {
+          query += `${ingred.name}${
+            idx !== state.ingreds.length - 1 ? "," : ""
+          }`;
+        });
+      }
     }
   }
 
