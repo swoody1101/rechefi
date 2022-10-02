@@ -1,9 +1,4 @@
-import {
-  ImageList,
-  ImageListItem,
-  ImageListItemBar,
-  IconButton,
-} from "@mui/material";
+import { ImageList, ImageListItem } from "@mui/material";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -15,6 +10,16 @@ const ProfileGalleryMyCookList = (props) => {
   const [totalPage, setTotalPage] = useState();
   const [myCookList, setMyCookList] = useState([]);
 
+  window.addEventListener("scroll", () => {
+    const val = window.innerHeight + window.scrollY;
+
+    if (val >= document.body.offsetHeight) {
+      if (page < totalPage) {
+        setPage(page + 1);
+      }
+    }
+  });
+
   useEffect(() => {
     const param = {
       page: page,
@@ -24,8 +29,15 @@ const ProfileGalleryMyCookList = (props) => {
       dispatch(loadMyCookThunk(param))
         .unwrap()
         .then((res) => {
-          setMyCookList(res.post);
           setTotalPage(res.total_pages);
+          res.post.map((r) => {
+            setMyCookList((myCookList) => {
+              return [
+                ...myCookList,
+                { id: r.id, title: r.title, img_url: r.img_url },
+              ];
+            });
+          });
         })
         .catch((err) => {
           alert("잘못된 요청입니다.");
@@ -35,25 +47,15 @@ const ProfileGalleryMyCookList = (props) => {
   }, [props.userId]);
 
   return (
-    <ImageList sx={{ width: "100%", height: "100%" }} cols={3} rowHeight="130">
+    <ImageList sx={{ width: "100%", height: "100%" }} cols={3}>
       {myCookList ? (
         myCookList.map((myCook) => (
-          <ImageListItem key={myCook.id}>
+          <ImageListItem key={myCook.id} onClick={() => {}}>
             <img
               src={`${myCook.img_url}?w=248&fit=crop&auto=format`}
               srcSet={`${myCook.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
               alt={myCook.title}
               loading="lazy"
-              onClick={() => {}}
-            />
-            <ImageListItemBar
-              title={myCook.title}
-              actionIcon={
-                <IconButton
-                  sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                  aria-label={`info about ${myCook.title}`}
-                />
-              }
             />
           </ImageListItem>
         ))

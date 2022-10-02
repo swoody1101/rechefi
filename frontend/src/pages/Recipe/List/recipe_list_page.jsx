@@ -10,7 +10,6 @@ import { getToken } from "../../../utils/JWT-token";
 
 function RecipeListPage() {
   const [recipes, getRecipes] = useRecipes();
-
   const [shownRecipes, setShownRecipes] = useState([]);
   const [bestRecipes] = useBestRecipes([]);
   const [loading, setLoading] = useState(false);
