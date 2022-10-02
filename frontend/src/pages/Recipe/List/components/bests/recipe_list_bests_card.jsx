@@ -1,7 +1,7 @@
 import { Box, Chip } from "@mui/material";
 import React from "react";
 
-function BestRecipeCard({ bestRecipe }) {
+function BestRecipeCard({ bestRecipe, onClick }) {
   return (
     <Box sx={{ position: "relative" }}>
       <Chip
@@ -31,6 +31,7 @@ function BestRecipeCard({ bestRecipe }) {
               require("../../../../../assets/img/default_food.png")
         }
         alt={bestRecipe.title}
+        onClick={onClick}
       />
     </Box>
   );

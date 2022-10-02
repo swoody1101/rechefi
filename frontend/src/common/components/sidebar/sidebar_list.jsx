@@ -35,14 +35,6 @@ const SidebarElementList = ({ sidebarClose }) => {
         <SideBarCommunityDivWrapper>커뮤니티</SideBarCommunityDivWrapper>
         <SideBarCommunityElementDiv
           onClick={() => {
-            navigate("/community/free-board");
-            sidebarClose();
-          }}
-        >
-          자유게시판
-        </SideBarCommunityElementDiv>
-        <SideBarCommunityElementDiv
-          onClick={() => {
             navigate("/community/my-cook");
             sidebarClose();
           }}
