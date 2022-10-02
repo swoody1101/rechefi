@@ -103,7 +103,7 @@ const AiListen = ({ synth, toggleAI, recognition }) => {
               alignItems: "center",
             }}
           >
-            <h2>신호음이 끝나면 말하세요!</h2>
+            {audioFile === undefined && <h2>신호음이 끝나면 말하세요!</h2>}
           </Box>
         )}
       </Box>
