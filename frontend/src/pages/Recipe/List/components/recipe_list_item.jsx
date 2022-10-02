@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import RecipeListItemLikeBtn from "./recipe_list_item_like_btn";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
 
 function RecipeListItem({ recipe, onClick }) {
   return (
@@ -28,9 +29,15 @@ function RecipeListItem({ recipe, onClick }) {
           justifyContent: "flex-start",
         }}
       >
+        {/* thumbnail */}
         <CardMedia
           component="img"
-          image={require("../../../../assets/img/food_example_2.jpg")}
+          src={
+            recipe.img_url
+              ? recipe.img_url
+              : // default image
+                require("../../../../assets/img/default_food.png")
+          }
           alt={recipe.title + "_img"}
           sx={{
             maxHeight: "120px",
@@ -72,10 +79,11 @@ function RecipeListItem({ recipe, onClick }) {
                 src="/assets/img/food_example_2.jpg"
                 sx={{ width: 24, height: 24, mr: 1 }}
               /> */}
-              <Typography varaint="h6">{recipe.author}</Typography>
+              <Typography varaint="h6">{recipe.user.nickname}</Typography>
             </Box>
           </Box>
 
+          {/* views and like */}
           <Box
             sx={{
               display: "flex",

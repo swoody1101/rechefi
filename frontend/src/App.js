@@ -27,6 +27,10 @@ import { getToken } from "./utils/JWT-token";
 import { loadMyProfileThunk } from "./store/module/accountReducer";
 import { useEffect } from "react";
 
+import FreeBoardList from "./pages/community/FreeBoard/List/free_board_list_page";
+import FreeBoardWrite from "./pages/community/FreeBoard/Write/free_board_write_page";
+import FreeBoardDetail from "./pages/community/FreeBoard/Detail/free_board_detail_page";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -52,6 +56,11 @@ function App() {
               <Route path="/account" element={<MainPage />} />
               <Route path="/recipe/postId=:detail" element={<RecipeDetail />} />
               <Route path="/community">
+                <Route path="free-board">
+                  <Route index element={<FreeBoardList />} />
+                  <Route path="write" element={<FreeBoardWrite />} />
+                  <Route path="detail/:postId" element={<FreeBoardDetail />} />
+                </Route>
                 <Route path="write" element={<MyCookWriter />} />
                 <Route path="my-cook" element={<MyCook />} />
               </Route>

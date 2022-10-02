@@ -7,8 +7,10 @@ function FreeBoardDetailCommentContainer({ children }) {
     <Container
       sx={{
         mt: 2,
-        borderRadius: 2,
-        background: Palette.mainColor3,
+        py: 1,
+        px: 2,
+        borderRadius: 1,
+        background: Palette.mainColor2,
       }}
     >
       {children}

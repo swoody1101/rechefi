@@ -1,10 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Container } from "@mui/material";
-import {
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useFetch } from "../../../../hooks/useFetch";
 import ErrorMessagePaper from "../../../../common/components/error_message_paper";
 import ReadOnlyEditor from "../../../../common/components/read_only_editor";
@@ -14,14 +10,13 @@ import FreeBoardDetailPostInfo from "./components/free_board_detail_post_info";
 import FreeBoardDetailBottombar from "./components/free_board_detail_bottombar";
 import FreeBoardDetailCommentContainer from "./components/free_board_detail_comments_container";
 import Comments from "../../../../common/components/comments/comments";
-import http from "../../../../utils/http-commons";
-import { useUserInfo } from "../../../../hooks/FreeBoard/useUserInfo";
 import { useDelete } from "../../../../hooks/useMutations";
 import {
   Confirm,
   Success,
   Warn,
 } from "../../../../common/components/sweatAlert";
+import { useSelector } from "react-redux";
 
 function FreeBoardDetailPage() {
   const navigate = useNavigate();
@@ -37,35 +32,17 @@ function FreeBoardDetailPage() {
   const { isLoading, isError, data, error } = useFetch({
     queryKey: DETAIL_QUERY_KEY,
     param: postId,
-    uri: `/community/${
-      isNotice ? "notice-board" : "free-board"
-    }/detail`,
+    uri: `/community/${isNotice ? "notice-board" : "free-board"}/detail`,
   });
 
-  // const [data, setData] = useState(null);
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [isError, setIsError] = useState(false);
-  // const [error, setError] = useState({});
-
-  // useEffect(() => {
-  //   http
-  //     .get(`/community/free-board/detail/${postId}`)
-  //     .then((response) => {
-  //       setData(response.data.data);
-  //       setIsLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       setError(error);
-  //       setIsError(true);
-  //     });
-  // }, []);
-
   // get user info from store
-  const { userId, isAdmin } = useUserInfo();
+  const login_info = useSelector((store) => store.account);
+  const isAdmin = login_info.admin || false;
+  const userId = login_info.user_id || -2;
   const writerId = data ? data.user_id : -1;
 
   // for delete and modify authority
-  const isBoardAuth = () => {
+  const hasAuth = () => {
     if (isAdmin) return false;
     if (userId !== writerId) return true;
     else return false;
@@ -123,16 +100,13 @@ function FreeBoardDetailPage() {
         // shown contents
         <>
           <TitleWithDivider
-            title={`${isNotice ? "[공지]" : ""} ${
-              data.title
-            }`}
+            title={`${isNotice ? "[공지]" : ""} ${data.title}`}
             textVariant={"h5"}
           />
           <FreeBoardDetailPostInfo
-            // TODO : match with back
-            userEmail={""}
-            userImage={""}
-            userNickname={data.nickname}
+            userEmail={data.user.email}
+            userImage={data.user.img_url}
+            userNickname={data.user.nickname}
             postDate={data.created_at}
             postViews={data.views}
           />
@@ -149,12 +123,15 @@ function FreeBoardDetailPage() {
           navigate("/community/free-board");
         }}
         onModifyClick={() => {
+          // add if notice
           navigate(
-            `/community/free-board/write?modify=${postId}`
+            `/community/free-board/write?${
+              isNotice ? "notice=y&" : ""
+            }modify=${postId}`
           );
         }}
         onDeleteClick={deletePost}
-        disabledCondition={isBoardAuth}
+        disabledCondition={hasAuth}
       />
 
       {/* comments */}
