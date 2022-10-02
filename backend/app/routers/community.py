@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, status, Header, Depends
+from fastapi import APIRouter, Response, Depends
 from typing import Union
 
 from starlette.responses import JSONResponse
@@ -9,17 +9,26 @@ from app.models.community import Article, ArticleComment, LikeArticle, Notice, C
 from app.models.accounts import User
 from app.schemas.accounts import CurrentUser
 
-from app.schemas.community import ArticleCreateForm, ArticleCommentForm, ArticleCommentList, ArticleDetail, \
-    CookingCreateForm, NoticeDetail, CookingDetail, ArticleList, SimpleArticleList
+from app.schemas.community import (
+    ArticleCreateForm,
+    ArticleCommentForm,
+    ArticleDetail,
+    CookingCreateForm,
+    NoticeDetail,
+    CookingDetail,
+    ArticleList,
+    SimpleArticleList,
+)
 from app.schemas.common import *
 
 router = APIRouter(prefix="/community", tags=["community"])
 
+
 @router.post("/notice-board", description="공지사항 작성", response_model=CommonResponse, status_code=201)
 async def create_notice(req: ArticleCreateForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     await Notice.create(user_id=user.id, **req.dict())
     return CommonResponse()
+
 
 @router.get("/notice-board/detail/{article_id}", description="공지사항 상세", response_model=ObjectResponse)
 async def notice_detail(article_id: int):
@@ -27,31 +36,26 @@ async def notice_detail(article_id: int):
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
     article.views += 1
-    await article.save()
-    data = NoticeDetail(
+    await article.save(update_fields=("views",))
+    return ObjectResponse(data=NoticeDetail(
         user=CurrentUser(**dict(article.user)),
         **dict(article)
-    )
-    return ObjectResponse(data=data)
+    ))
 
 
 @router.put("/notice-board/{article_id}", description="공지사항 수정", response_model=SingleResponse)
 async def edit_notice(article_id: int, req: ArticleCreateForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     article = await Notice.get_or_none(id=article_id)
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
-    else:
-        if article.user_id == user.id:
-            await article.update(**req.dict())
-        else:
-            return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
-        return SingleResponse(id=article_id)
+    if article.user_id != user.pk:
+        return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    await article.update(**req.dict())
+    return SingleResponse(id=article_id)
 
 
 @router.delete("/notice-board/{article_id}", description="공지사항 삭제", response_model=CommonResponse)
 async def delete_notice(article_id: int, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     article = await Notice.get_or_none(id=article_id)
     if article is not None and user.id == article.user_id:
         await Article.filter(id=article_id).delete()
@@ -62,7 +66,6 @@ async def delete_notice(article_id: int, user: User = Depends(get_current_user))
 
 @router.post("/free-board", description="게시물 작성", response_model=CommonResponse, status_code=201)
 async def create_article(req: ArticleCreateForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     await Article.create(user_id=user.id, **req.dict())
     return CommonResponse()
 
@@ -74,31 +77,35 @@ async def article_detail(article_id: int):
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
     article.views += 1
     await article.save()
-    data = ArticleDetail(
+    return ObjectResponse(data=ArticleDetail(
         user=CurrentUser(**dict(article.user)),
         like_users=await article.like_users.all().values("id", "nickname"),
         **dict(article)
-    )
-    return ObjectResponse(data=data)
+    ))
 
 
-@router.get("/free-board/comment/{article_id}", description="게시물 댓글 리스트", response_model=MultipleObjectResponse)
+@router.get("/free-board/comment/{article_id}", description="게시물 댓글 리스트", response_model=CommentListResponse)
 async def get_article_comment_list(article_id: int):
     comments = await ArticleComment.filter(article_id=article_id).select_related('user').order_by('-id')
-    data = [ArticleCommentList(**dict(comment), user=CurrentUser(**dict(comment.user))) for comment in comments]
-    return MultipleObjectResponse(data=data)
+    return CommentListResponse(
+        data=[
+            CommentList(
+                **dict(comment),
+                user=CurrentUser(**dict(comment.user)),
+                deleted=True if comment.group < 0 else False
+            ) for comment in comments
+        ]
+    )
 
 
 @router.post("/free-board/comment/{article_id}", description="게시물 댓글 작성", response_model=CommonResponse, status_code=201)
-async def create_article_comment(article_id: int, req: ArticleCommentForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
+async def create_article_comment(article_id: int, req: CommentForm, user: User = Depends(get_current_user)):
     await ArticleComment.create(article_id=article_id, user_id=user.id, **req.dict())
     return CommonResponse()
 
 
 @router.put("/free-board/comment/{comment_id}", description="게시물 댓글 수정", response_model=CommonResponse)
-async def edit_article_comment(comment_id: int, req: ArticleCommentForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
+async def edit_article_comment(comment_id: int, req: CommentForm, user: User = Depends(get_current_user)):
     comment = await ArticleComment.get_or_none(id=comment_id)
     if comment is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 댓글입니다.").dict())
@@ -113,21 +120,20 @@ async def edit_article_comment(comment_id: int, req: ArticleCommentForm, user: U
 
 @router.delete("/free-board/comment/{comment_id}", description="게시물 댓글 삭제", response_model=CommonResponse)
 async def delete_article_comment(comment_id: int, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     comment = await ArticleComment.get_or_none(id=comment_id)
     if comment is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 댓글입니다.").dict())
-    else:
-        if user.id == comment.user_id:
-            await ArticleComment.filter(id=comment_id).delete()
-        else:
-            return JSONResponse(status_code=404, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    if user.id != comment.user_id:
+        return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    if comment.group >= 0:
+        comment.group = -(comment.group + 1)
+    if comment.group < 0 and user.is_admin:
+        comment.group = -(comment.group + 1)
+    await comment.save(update_fields=("group",))
     return CommonResponse()
-
 
 @router.post("/free-board/like/{article_id}", description="게시물 좋아요", response_model=ObjectResponse, status_code=201)
 async def like_article(article_id: int, response: Response, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     article = await Article.get_or_none(id=article_id)
     like_article_list = await LikeArticle.filter(user_id=user.id, article_id=article_id)
     if article is None:
@@ -152,32 +158,26 @@ async def like_article(article_id: int, response: Response, user: User = Depends
 
 @router.put("/free-board/{article_id}", description="게시물 수정", response_model=SingleResponse)
 async def edit_article(article_id: int, req: ArticleCreateForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     article = await Article.get_or_none(id=article_id)
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
-    else:
-        if article.user_id == user.id:
-            await article.update(**req.dict())
-        else:
-            return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
-        return SingleResponse(id=article_id)
+    if article.user_id != user.id:
+        return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    await article.update(**req.dict())
+    return SingleResponse(id=article_id)
 
 
 @router.delete("/free-board/{article_id}", description="게시물 삭제", response_model=CommonResponse)
 async def delete_article(article_id: int, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
-    article = await Article.get_or_none(id=article_id)
-    if article is not None and user.id == article.user_id:
-        await Article.filter(id=article_id).delete()
-    else:
+    article = await Article.get_or_none(id=article_id, user_id=user.pk)
+    if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
+    await article.delete()
     return CommonResponse()
 
 
 @router.post("/gallery", description="게시물 작성", response_model=CommonResponse, status_code=201)
 async def create_cooking(req: CookingCreateForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     await Cooking.create(user_id=user.id, **req.dict())
     return CommonResponse()
 
@@ -197,97 +197,88 @@ async def cooking_detail(article_id: int):
     return ObjectResponse(data=data)
 
 
-@router.get("/gallery/comment/{article_id}", description="게시물 댓글 리스트", response_model=MultipleObjectResponse)
+@router.get("/gallery/comment/{article_id}", description="게시물 댓글 리스트", response_model=CommentListResponse)
 async def get_cooking_comment_list(article_id: int):
     comments = await CookingComment.filter(cooking_id=article_id).select_related('user').order_by('-id')
-    data = [ArticleCommentList(**dict(comment), user=CurrentUser(**dict(comment.user)).dict()) for comment in comments]
-    return MultipleObjectResponse(data=data)
+    return CommentListResponse(
+        data=[
+            CommentList(
+                **dict(comment),
+                user=CurrentUser(**dict(comment.user)),
+                deleted=True if comment.group < 0 else False
+            ) for comment in comments
+        ]
+    )
 
 
 @router.post("/gallery/comment/{article_id}", description="게시물 댓글 작성", response_model=CommonResponse, status_code=201)
 async def create_cooking_comment(article_id: int, req: ArticleCommentForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     await CookingComment.create(cooking_id=article_id, user_id=user.id, **req.dict())
     return CommonResponse()
 
 
 @router.put("/gallery/comment/{comment_id}", description="게시물 댓글 수정", response_model=CommonResponse)
 async def edit_cooking_comment(comment_id: int, req: ArticleCommentForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     comment = await CookingComment.get_or_none(id=comment_id)
     if comment is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 댓글입니다.").dict())
-    else:
-        if user.id == comment.user_id:
-            comment.content = req.content
-            await comment.save()
-        else:
-            return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    if user.id != comment.user_id:
+        return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    comment.content = req.content
+    await comment.save(update_fields=("content",))
     return CommonResponse()
 
 
 @router.delete("/gallery/comment/{comment_id}", description="게시물 댓글 삭제", response_model=CommonResponse)
 async def delete_cooking_comment(comment_id: int, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     comment = await CookingComment.get_or_none(id=comment_id)
     if comment is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 댓글입니다.").dict())
-    else:
-        if user.id == comment.user_id:
-            await ArticleComment.filter(id=comment_id).delete()
-        else:
-            return JSONResponse(status_code=404, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    if user.id != comment.user_id:
+        return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    if comment.group >= 0:
+        comment.group = -(comment.group + 1)
+    if comment.group < 0 and user.is_admin:
+        comment.group = -(comment.group + 1)
+    await comment.save(update_fields=("group",))
     return CommonResponse()
 
 
-@router.post("/gallery/like/{article_id}", description="게시물 좋아요", response_model=ObjectResponse, status_code=201)
+@router.post("/gallery/like/{article_id}", description="게시물 좋아요", response_model=CommonLikeArticleResponse)
 async def like_cooking(article_id: int, response: Response, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     cooking = await Cooking.get_or_none(id=article_id)
-    like_cooking_list = await LikeCooking.filter(user_id=user.id, cooking_id=article_id)
     if cooking is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="추천할 게시물이 없습니다.").dict())
-    else:
-        data = {
-            "method": "",
-            "like": True
-        }
-        if not like_cooking_list:
-            await LikeCooking.create(user_id=user.id, cooking_id=article_id)
-            data["method"] = 'post'
-            data["like"] = True
-        else:
-            await LikeCooking.filter(user_id=user.id, cooking_id=article_id).delete()
-            data["method"] = 'delete'
-            data["like"] = False
-            response.status_code = 200
-        data["likes_count"] = await LikeCooking.filter(cooking_id=article_id).count()
-        return ObjectResponse(data=data)
+    likes, created = await LikeCooking.get_or_create(user_id=user.id, cooking_id=article_id)
+    if not created:
+        await likes.delete()
+    return CommonLikeArticleResponse(
+        data=CommonLikeData(
+            method="post" if created else "deleted",
+            like=created,
+            likes_count=await LikeCooking.filter(cooking_id=article_id).count(),
+        )
+    )
 
 
 @router.put("/gallery/{article_id}", description="게시물 수정", response_model=SingleResponse)
 async def edit_cooking(article_id: int, req: CookingCreateForm, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     article = await Cooking.get_or_none(id=article_id)
     if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
-    else:
-        if article.user_id == user.id:
-            await article.update(**req.dict())
-        else:
-            return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
-        return SingleResponse(id=article_id)
+    if article.user_id != user.id:
+        return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    await article.update(**req.dict())
+    return SingleResponse(id=article_id)
 
 
 @router.delete("/gallery/{article_id}", description="게시물 삭제", response_model=CommonResponse)
 async def delete_cooking(article_id: int, user: User = Depends(get_current_user)):
-    # 유저 인증 로직
     article = await Cooking.get_or_none(id=article_id)
     if article is not None and user.id == article.user_id:
-        await Cooking.filter(id=article_id).delete()
-    else:
-        return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
-    return CommonResponse()
+        await article.delete()
+        return CommonResponse()
+    return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
 
 
 @router.get("/free-board/{page}", description="게시물 목록 조회", response_model=ObjectResponse)

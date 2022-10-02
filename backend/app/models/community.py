@@ -25,7 +25,7 @@ class Article(Model):
 
 class LikeArticle(Model):
     user = fields.ForeignKeyField('b303.User', on_delete='CASCADE')
-    article = fields.ForeignKeyField('b303.Article', on_delete='CASCADE')
+    article = fields.ForeignKeyField('b303.Article', on_delete='CASCADE', related_name="like_articles")
     created_at = fields.DatetimeField(auto_now_add=True)
 
 
@@ -41,6 +41,8 @@ class ArticleComment(Model):
 
 
 class Notice(Model):
+    id: int
+    user_id: int
     user = fields.ForeignKeyField('b303.User', related_name='notices', description='공지 작성자')
     title = fields.CharField(max_length=50)
     content = fields.CharField(max_length=10000)
