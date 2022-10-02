@@ -12,16 +12,22 @@ const moveSideBar = keyframes`
 `;
 export const AiAreaWrapper = styled.div`
   width: 85%;
-  height: 85vh;
-  background-color: ${Palette.white3};
+  height: 60vh;
+  background-color: ${Palette.mainColor2};
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 15;
-  border-radius: 14px;
-  padding: 5px;
+  border-radius: 3px;
+  padding: 5%;
   animation: ${moveSideBar} 0.3s ease;
+  @media only screen and (min-width: 1025px) {
+    width: 50%;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    width: 65%;
+  }
 `;
 
 export const AiAreaContentWrapper = styled.div`
@@ -63,19 +69,24 @@ export const AiAreaContentCloseButtonWrapper = styled.div`
 `;
 
 export const AiAreaListenWrapper = styled.div`
-  background-color: ${Palette.mainColor3};
+  background-color: ${Palette.mainColor2};
   padding: 5%;
   position: fixed;
   top: 50%;
   left: 50%;
   width: 75%;
-  min-height: 50vh;
-  max-height: 85vh;
-  overflow-y: scroll;
-  border-radius: 14px;
+  min-height: 25vh;
+  max-height: 25vh;
+  border-radius: 8px;
   z-index: 35;
   animation: ${moveSideBar} 0.3s ease;
   transform: translate(-50%, -50%);
+  @media only screen and (min-width: 1025px) {
+    width: 40%;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    width: 55%;
+  }
 `;
 
 export const AiAreaListenBackDrop = styled.div`
@@ -92,17 +103,12 @@ export const AiAreaListenButton = styled.button`
   display: flex;
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 10%;
   background: none;
   border: none;
-  background-color: ${Palette.mainColor5};
   width: 100%;
   height: 5vh;
   border-radius: 14px;
-  font-size: larger;
-  font-weight: bolder;
-  align-items: center;
-  justify-content: center;
 `;
 
 export const AiAreaTextWrapper = styled.div`
@@ -114,4 +120,14 @@ export const AiAreaTextWrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   font-weight: bolder;
+`;
+
+export const OpenAiButton = styled.div`
+  margin-right: 3%;
+`;
+
+export const AiRecipeTitleLine = styled.h2`
+  width: 100%;
+  text-align: center;
+  padding-bottom: 5%;
 `;
