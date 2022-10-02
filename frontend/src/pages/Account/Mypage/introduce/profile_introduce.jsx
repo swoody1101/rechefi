@@ -1,10 +1,10 @@
 import React from "react";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, Grid, Tooltip, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 
-const ProfileDetail = (props) => {
+const ProfileIntroduce = (props) => {
   const loginInfo = useSelector((store) => store.account);
   const imgUrl = props.imgUrl;
   const email = props.email;
@@ -32,6 +32,7 @@ const ProfileDetail = (props) => {
           width: 140,
           height: 140,
           mx: "auto",
+          border: "2px solid #aaaaaa",
         }}
       ></Avatar>
       <Box
@@ -41,7 +42,11 @@ const ProfileDetail = (props) => {
           justifyContent: "center",
         }}
       >
-        <Typography align="center" sx={{ verticalAlign: "middle" }}>
+        <Typography
+          align="center"
+          variant="h5"
+          sx={{ verticalAlign: "middle" }}
+        >
           {nickname}
         </Typography>
         {email === loginInfo.email ? (
@@ -52,11 +57,16 @@ const ProfileDetail = (props) => {
           <AddCircleOutlineOutlinedIcon />
         )}
       </Box>
-      <Typography textAlign={"center"}>
-        {introduce ? introduce : "아직 소개 글이 없습니다."}
+      <Typography
+        textAlign={"center"}
+        variant="body1"
+        marginLeft={3}
+        marginRight={3}
+      >
+        {introduce ? introduce : "소개 글이 없습니다."}
       </Typography>
     </Box>
   );
 };
 
-export default ProfileDetail;
+export default ProfileIntroduce;
