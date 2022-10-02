@@ -16,22 +16,42 @@ import {
   RecommentElementWrapper,
 } from "../../styles/comments/comments_styles";
 import { useSelector } from "react-redux/es/exports";
+import {
+  Box,
+  Divider,
+  IconButton,
+  Input,
+  Paper,
+  Typography,
+} from "@mui/material";
+import LoadingSpinner from "../../../pages/Recipe/List/components/recipe_list_loading_spinner";
+import { useState } from "react";
+import CommentWriteField from "./comment_write_field";
 
-const Comments = ({ aiButton, postId, uri, queryKey }) => {
+const Comments = ({ postId, uri, queryKey }) => {
   const handle = useParams();
-  const commentContentRef = useRef(null);
+  const post_id = postId || handle.detail;
+
+  // check logined
+  const auth = useSelector((store) => store.account.auth);
+
+  const [comment, setComment] = useState("");
   const { data, isLoading } = useFetchComments({
     queryKey: queryKey,
-    articleId: postId !== undefined ? postId : handle.detail,
+    articleId: post_id,
     uri,
   });
+
   const { mutate } = useAddComment(handle.detail, queryKey);
-  const auth = useSelector((store) => store.account.auth);
+
   const reCommentPush = (reComment) => {
+    if (reComment.content === "") return;
+
     let commentList = data;
     const lastIndex = commentList.filter((e) => {
       return e.group === reComment.group;
     });
+
     lastIndex.sort(function (a, b) {
       if (a.sequence > b.sequence) {
         return 1;
@@ -39,9 +59,10 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
         return -1;
       }
     });
+
     mutate({
       uri: uri,
-      articleId: handle.detail === undefined ? postId : handle.detail,
+      articleId: post_id,
       sendData: {
         content: reComment.content,
         root: 1,
@@ -49,19 +70,20 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
         sequence: lastIndex[lastIndex.length - 1].sequence + 1,
       },
     });
-    commentContentRef.current.value = "";
+    setComment("");
   };
-  const commentPush = (e) => {
-    e.preventDefault();
+
+  const commentPush = () => {
+    if (comment === "") return;
+
     let commentList = data;
     if (commentList.length === 0) {
       const lastIndex = 1;
-      const content = commentContentRef.current.value;
       const sendData = {
         uri,
-        articleId: handle.detail === undefined ? postId : handle.detail,
+        articleId: post_id,
         sendData: {
-          content,
+          content: comment,
           root: 0,
           group: lastIndex,
           sequence: 1,
@@ -70,52 +92,72 @@ const Comments = ({ aiButton, postId, uri, queryKey }) => {
       mutate(sendData);
     } else {
       const lastIndex = commentList[commentList.length - 1].group + 1;
-      const content = commentContentRef.current.value;
       mutate({
         uri,
-        articleId: handle.detail === undefined ? postId : handle.detail,
+        articleId: post_id,
         sendData: {
-          content,
+          content: comment,
           root: 0,
           group: lastIndex,
           sequence: 1,
         },
       });
     }
-    commentContentRef.current.value = "";
+    setComment("");
   };
+
   if (isLoading) {
-    return <div>로딩중...</div>;
+    return <LoadingSpinner isLoading={true} />;
   }
 
   return (
-    <CommentWraper aiButton={aiButton}>
-      {Object.keys(data).map((e, i) => (
-        <CommentElementBox key={i}>
-          {data[e].root === 0 ? (
-            <CommentElement comment={data[e]} reCommentPush={reCommentPush} />
-          ) : (
-            <RecommentElementWrapper>
-              <CommentCreateWrapperDiv>
-                <CommentElementNameDiv>
-                  {data[e].nickname}
-                </CommentElementNameDiv>
-                <CommentCreateAtDiv>{data[e].create_at}</CommentCreateAtDiv>
-              </CommentCreateWrapperDiv>
-              <div>{data[e].content}</div>
-            </RecommentElementWrapper>
-          )}
-        </CommentElementBox>
-      ))}
-      {auth && (
-        <CommentElementInputBox>
-          <CommentContentInputWrapper>
-            <CommentInput ref={commentContentRef} />
-            <CommentButton onClick={commentPush}>댓글 달기</CommentButton>
-          </CommentContentInputWrapper>
-        </CommentElementInputBox>
+    <>
+      <Typography fontWeight={"bold"} sx={{ my: 1 }}>
+        댓글 목록
+      </Typography>
+      <Divider sx={{ mb: 1 }} />
+      {data.length === 0 ? (
+        <Typography sx={{ my: 2 }}>작성된 댓글이 없습니다</Typography>
+      ) : (
+        Object.keys(data).map((e, i) => (
+          <Box
+            key={i}
+            sx={{ display: "flex", flexDirection: "column", rowGap: 1 }}
+          >
+            {data[e].root === 0 ? (
+              // root element
+              <CommentElement
+                comment={data[e]}
+                reCommentPush={reCommentPush}
+                queryKey={queryKey}
+              />
+            ) : (
+              // recommented element
+              <Box sx={{ width: "85%", ml: "auto" }}>
+                <CommentElement
+                  comment={data[e]}
+                  reCommentPush={reCommentPush}
+                  isRoot={false}
+                  queryKey={queryKey}
+                />
+              </Box>
+            )}
+          </Box>
+        ))
       )}
-    </CommentWraper>
+
+      {/* comment write */}
+      {auth && (
+        <Box sx={{ mt: 2 }}>
+          <Divider />
+          <CommentWriteField
+            comment={comment}
+            setComment={setComment}
+            onClick={commentPush}
+          />
+        </Box>
+      )}
+    </>
   );
 };
 

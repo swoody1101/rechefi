@@ -1,11 +1,13 @@
 import { useInfiniteQuery, useQuery } from "react-query";
 import http from "../utils/http-commons";
 
-export default function useFetchList({ queryKey, articleId, uri }) {
+export default function useFetchList({ queryKey, articleId, uri, query }) {
   return useInfiniteQuery(
     queryKey,
     async ({ pageParam = articleId }) => {
-      const response = await http.get(uri + pageParam);
+      const response = await http.get(
+        uri + pageParam + (query ? `?${query}` : "")
+      );
       return {
         result: response.data,
         nextPage: pageParam + 1,

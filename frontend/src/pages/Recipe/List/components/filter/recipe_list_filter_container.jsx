@@ -3,9 +3,9 @@ import React from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import RecipeListFilterTags from "./tag/recipe_list_filter_tags";
 import RecipeListFilterIngredients from "./ingredient/recipe_list_filter_ingredient";
-import RecipeFilterBtn from "./recipe_list_filter_btn";
 import { useSelectedTag } from "../../../../../hooks/Recipe/tag/useSelectedTags";
 import { useSelectedIngreds } from "../../../../../hooks/Recipe/ingredient/useSelectedIngreds";
+import { useEffect } from "react";
 
 function RecipeListFilterContainer({ onFilterApplied }) {
   // handle tag information
@@ -15,12 +15,20 @@ function RecipeListFilterContainer({ onFilterApplied }) {
   const [selectedIngreds, addIngred, deleteIngred, changeIngred] =
     useSelectedIngreds();
 
+  useEffect(() => {
+    onFilterApplied({
+      tags: selectedTags,
+      ingreds: selectedIngreds,
+    });
+  }, [selectedIngreds, selectedTags, onFilterApplied]);
+
   return (
     <Accordion
       sx={{
         border: 0,
         elevation: 0,
         boxShadow: "none",
+        m: 0,
       }}
     >
       {/* set expand event only icon */}
@@ -54,15 +62,6 @@ function RecipeListFilterContainer({ onFilterApplied }) {
           onSelectedIngredDeleted={deleteIngred}
           onSelectedIngredChanged={changeIngred}
           selectedIngred={selectedIngreds}
-        />
-        <RecipeFilterBtn
-          Content={"적용"}
-          onClick={() =>
-            onFilterApplied({
-              tags: selectedTags,
-              ingreds: selectedIngreds,
-            })
-          }
         />
       </Paper>
     </Accordion>

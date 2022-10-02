@@ -26,9 +26,9 @@ function FreeBoardDetailUserAvartar({ email, nickname, imageLink, style }) {
         component={RouterLink}
         sx={{ pb: 0.1 }}
         // TODO : change with match implemented
-        to={`/mypage`}
+        to={`/profile`}
         state={{
-          user_id: email,
+          email,
         }}
       >
         {nickname}
