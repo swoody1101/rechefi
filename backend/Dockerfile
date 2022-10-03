@@ -16,4 +16,4 @@ COPY ./app /backend/app
 COPY ./migrations /backend/migrations
 #CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 #
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--access-logfile", "./gunicorn-access.log", "--error-logfile", "./errors.log", "-R", "app.main:app", "--bind", "0.0.0.0:8000", "--workers", "4"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--access-logfile", "./gunicorn-access.log", "--error-logfile", "./errors.log", "--keep-alive", "10", "-R", "app.main:app", "--bind", "0.0.0.0:8000", "--workers", "4"]
