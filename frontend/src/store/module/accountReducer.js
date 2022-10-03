@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import http from "../../utils/http-commons";
 import { deleteToken, getToken, saveToken } from "../../utils/JWT-token";
 
@@ -27,7 +26,7 @@ export const signupThunk = createAsyncThunk(
   "auth/signup",
   async (signupInfo) => {
     try {
-      const response = await axios.post(
+      const response = await http.post(
         "http://localhost:8000/members",
         signupInfo,
         { headers: { "Content-Type": `application/json` } }
@@ -56,7 +55,7 @@ export const loginThunk = createAsyncThunk(
       loginInfo.append("username", email);
       loginInfo.append("password", password);
 
-      const responseTemp = await axios.post(
+      const responseTemp = await http.post(
         "http://localhost:8000/members/login/1",
         loginInfo
       );
