@@ -183,6 +183,7 @@ export const authSlice = createSlice({
         state.email = payload.data.email;
         state.nickname = payload.data.nickname;
         state.admin = payload.data.is_admin;
+        state.imgUrl = payload.data.img_url;
 
         // save in local storage
         saveToken(state.loginToken);
