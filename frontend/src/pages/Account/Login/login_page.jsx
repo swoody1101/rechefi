@@ -21,6 +21,7 @@ import {
   NOT_FOUND,
   CONFLICT,
 } from "../../../utils/CustomConst";
+import { Warn } from "../../../common/components/sweatAlert";
 
 const LoginView = () => {
   const dispatch = useDispatch();
@@ -36,11 +37,11 @@ const LoginView = () => {
     const password = refPassword.current.value;
 
     if (email === "") {
-      alert("이메일을 입력해주세요.");
+      Warn("이메일을 입력해주세요.");
       return;
     }
     if (password === "") {
-      alert("비밀번호를 입력해주세요.");
+      Warn("비밀번호를 입력해주세요.");
       return;
     }
 
@@ -50,18 +51,18 @@ const LoginView = () => {
         if (res.status === OK) {
           navigate("/");
         } else {
-          alert("적절한 요청이 아닙니다.");
+          Warn("적절한 요청이 아닙니다.");
           refEmail.current.value = "";
           refPassword.current.value = "";
         }
       })
       .catch((err) => {
         if (err.response.status === BAD_REQUEST) {
-          alert("없는 아이디 이거나 잘못된 비밀번호입니다.");
+          Warn("없는 아이디 이거나 잘못된 비밀번호입니다.");
         } else if (err.response.status === NOT_FOUND) {
-          alert("없는 아이디 이거나 잘못된 비밀번호입니다.");
+          Warn("없는 아이디 이거나 잘못된 비밀번호입니다.");
         } else if (err.response.status === CONFLICT) {
-          alert("이미 중복으로 접속된 아이디입니다.");
+          Warn("이미 중복으로 접속된 아이디입니다.");
         }
       });
   };
