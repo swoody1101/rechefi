@@ -54,7 +54,7 @@ async def create_ingredient(req: IngredientForm, user: User = Depends(get_curren
     return CommonResponse()
 
 
-@router.post("/", description="레시피 작성", response_model=CommonResponse, status_code=201)
+@router.post("", description="레시피 작성", response_model=CommonResponse, status_code=201)
 async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_user)):
     recipe = await Recipe.create(user_id=user.id, title=req.title, content=req.content, img_url=req.img_url)
     for ingredient in req.ingredients:
