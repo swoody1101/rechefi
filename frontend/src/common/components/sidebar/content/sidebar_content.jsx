@@ -10,6 +10,7 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 
 const SidebarContent = ({ isLogin, userEmail, sidebarClose }) => {
   const navigate = useNavigate();
@@ -95,11 +96,11 @@ const SidebarContent = ({ isLogin, userEmail, sidebarClose }) => {
               }}
             />
             <SidebarContentItem
-              icon={<GroupsOutlinedIcon sx={{ fontSize: icon_size_m }} />}
-              text={"팔로우"}
+              icon={<ManageAccountsIcon sx={{ fontSize: icon_size_m }} />}
+              text={"내 정보수정"}
               textSize={text_size_m}
               onClick={() => {
-                navigate("/follower", { state: userEmail });
+                navigate("/profile-modify", { state: userEmail });
                 sidebarClose();
               }}
             />
