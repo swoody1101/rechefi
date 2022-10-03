@@ -23,7 +23,7 @@ import NotFound from "./pages/NotFound/not_found_page";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { useDispatch } from "react-redux";
-import { deleteToken, getToken } from "./utils/JWT-token";
+import { getToken } from "./utils/JWT-token";
 import { loadMyProfileThunk, logout } from "./store/module/accountReducer";
 import { useEffect } from "react";
 

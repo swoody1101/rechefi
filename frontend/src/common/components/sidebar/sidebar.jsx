@@ -1,12 +1,16 @@
 import { SwipeableDrawer } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../../store/module/accountReducer";
+import {
+  loadMyProfileThunk,
+  logout,
+} from "../../../store/module/accountReducer";
 import useWidthQuery from "../../../hooks/Main/useWidthQuery";
 import SideBarHeader from "./sidebar_header";
 import SidebarContent from "./content/sidebar_content.jsx";
 import SideBarFooter from "./sidebar_footer";
 import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useEffect } from "react";
 
 const SideBar = ({ anchor, sidebarClose }) => {
   // for logout action
@@ -18,6 +22,10 @@ const SideBar = ({ anchor, sidebarClose }) => {
   const [sm, m, xl] = useWidthQuery();
   const sidebarWidth = xl ? "28%" : m ? "36%" : sm ? "72%" : "72%";
   const icon_size = xl ? "large" : m ? "medium" : "small";
+
+  useEffect(() => {
+    dispatch(loadMyProfileThunk());
+  });
 
   return (
     <SwipeableDrawer
