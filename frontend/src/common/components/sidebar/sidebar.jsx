@@ -7,10 +7,12 @@ import SidebarContent from "./content/sidebar_content.jsx";
 import SideBarFooter from "./sidebar_footer";
 import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 
 const SideBar = ({ anchor, sidebarClose }) => {
   // for logout action
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // for checking login
   const loginInfo = useSelector((store) => store.account);
@@ -41,6 +43,8 @@ const SideBar = ({ anchor, sidebarClose }) => {
           icon={<LogoutIcon fontSize={icon_size} />}
           onClick={() => {
             dispatch(logout());
+            navigate("/");
+            sidebarClose();
           }}
         />
       ) : (
