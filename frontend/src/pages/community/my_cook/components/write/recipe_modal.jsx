@@ -16,6 +16,7 @@ const RecipeModal = ({ onRecipeItemClicked }) => {
     articleId: 1,
     uri: `/recipe/`,
   });
+
   const [searchKeyword, setSearchKeyword] = useState("");
 
   const searchWordOnChange = (e) => {
@@ -44,7 +45,7 @@ const RecipeModal = ({ onRecipeItemClicked }) => {
           />
         </RecipeListSearchWrapper>
         <RecipeList
-          recipes={data.pages[0].result.data}
+          recipes={data.pages[0].result.data.post}
           loading={isLoading}
           onRecipeItemClicked={onRecipeItemClicked}
         />
