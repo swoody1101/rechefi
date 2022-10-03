@@ -129,6 +129,7 @@ const Comments = ({ postId, uri, queryKey }) => {
               <CommentElement
                 comment={data[e]}
                 reCommentPush={reCommentPush}
+                uri={uri}
                 queryKey={queryKey}
               />
             ) : (
@@ -138,6 +139,7 @@ const Comments = ({ postId, uri, queryKey }) => {
                   comment={data[e]}
                   reCommentPush={reCommentPush}
                   isRoot={false}
+                  uri={uri}
                   queryKey={queryKey}
                 />
               </Box>

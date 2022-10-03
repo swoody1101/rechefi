@@ -25,8 +25,10 @@ const SidebarMyAccount = ({ sidebarClose }) => {
 
   // page move
   const moveLogin = () => {
-    navigate("/login");
-    sidebarClose();
+    if (loginInfo.auth) {
+      navigate("/login");
+      sidebarClose();
+    }
   };
 
   return (
