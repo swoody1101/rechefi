@@ -57,7 +57,6 @@ export const loginThunk = createAsyncThunk(
         data: responseTemp.data,
         status: responseTemp.status,
       };
-      console.log(response);
       return response;
     } catch (error) {
       console.log(error);

@@ -30,7 +30,8 @@ const ProfileGalleryMyCookList = (props) => {
         .unwrap()
         .then((res) => {
           setTotalPage(res.total_pages);
-          res.post.map((r) => {
+          console.log(res);
+          res.posts.map((r) => {
             setMyCookList((myCookList) => {
               return [
                 ...myCookList,
