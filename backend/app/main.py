@@ -4,7 +4,7 @@ from tortoise.contrib.fastapi import register_tortoise
 from app.config import TORTOISE_ORM, settings
 from app.routers import router
 
-app = FastAPI(title="B303", version="0.61")
+app = FastAPI(title="Rechefi", version="0.6３")
 
 app.add_middleware(
     CORSMiddleware,
