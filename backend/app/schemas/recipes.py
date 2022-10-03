@@ -1,24 +1,11 @@
-from typing import List
-
-from pydantic import BaseModel, Field
-
+import typing
+from typing import List, Union, Any
 from datetime import datetime
 
 from app.schemas.accounts import CurrentUser
+from app.schemas.common import CommonResponse, CommonArticleDetail
 
-
-class RecipeCommentForm(BaseModel):
-    content: str
-    root: int
-    group: int
-    sequence: int
-
-
-class RecipeCommentList(RecipeCommentForm):
-    user_id: int
-    user: CurrentUser
-    created_at: datetime
-    updated_at: datetime
+from pydantic import BaseModel, Field
 
 
 class TagForm(BaseModel):
@@ -31,6 +18,10 @@ class TagList(TagForm):
 
 class IngredientForm(BaseModel):
     name: str = Field()
+
+
+class IngredientList(IngredientForm):
+    id: int
 
 
 class IngredientRecipeForm(IngredientForm):
@@ -46,18 +37,59 @@ class RecipeCreateForm(BaseModel):
 
 
 class RecipeLikeUser(BaseModel):
-    user_id: int
+    id: int
 
 
-class RecipeList(BaseModel):
+class RecipeLikeUserNickname(RecipeLikeUser):
+    nickname: str
+
+
+class SimpleRecipeList(BaseModel):
     user_id: int
     id: int
-    user: CurrentUser
     title: str
-    content: str
+    views: int
     img_url: str = Field(nullable=True)
-    tags: List[TagList]
-    likes: int
-    comment_count: int
+
+
+class RecipeList(SimpleRecipeList):
+    img_url: str = Field(nullable=True)
     created_at: datetime
     updated_at: datetime
+
+
+class IncompleteRecipeList(RecipeList):
+    likes: int
+    user: CurrentUser
+    comments_count: int
+    tags: List[TagList]
+
+
+class CompleteRecipeList(IncompleteRecipeList):
+    ingredients: List[IngredientList]
+
+
+class RecipeListPagination(BaseModel):
+    post: List[Union[CompleteRecipeList, IncompleteRecipeList, RecipeList, SimpleRecipeList]]
+    total_pages: int
+    current_page: int
+
+
+class RecipeListResponse(CommonResponse):
+    data: RecipeListPagination
+
+
+class RecipeDetail(BaseModel):
+    recipe: CommonArticleDetail
+    user: CurrentUser
+    tags: List[TagList]
+    ingredients: List[IngredientRecipeForm]
+    like_users: List[RecipeLikeUserNickname]
+
+
+class RecipeDetailResponse(CommonResponse):
+    data: RecipeDetail
+
+
+class BestRecipeResponse(CommonResponse):
+    data: List[IncompleteRecipeList]
