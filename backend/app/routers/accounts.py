@@ -170,7 +170,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     # }
 
     # return ObjectResponse(data=data)
-    return {"message": "success", "access_token": access_token, "token_type": "bearer", "user_id": user.id, "email": user.email, "nickname": user.nickname, "is_admin": user.is_admin}
+    return {"message": "success", "access_token": access_token, "token_type": "bearer", "user_id": user.id, "email": user.email, "nickname": user.nickname, "img_url": user.img_url, "is_admin": user.is_admin}
 
 
 #나중에 구현

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response, Depends, UploadFile, Request, File
 from typing import Union
-
+import asyncio
 from starlette.responses import JSONResponse
 from tortoise.expressions import F
 
@@ -68,13 +68,24 @@ async def create_recipe(req: RecipeCreateForm, user: User = Depends(get_current_
 async def get_ai_response(request: Request, file: UploadFile = File(...), user: User = Depends(get_current_user)):
     client = AsyncClient()
     num = str(random.random()).split('.')[1]
+    try_count = 0
     if file.content_type.find("audio") == 0:
-        stt_response = await client.post(f"{settings.AI_SERVER_URL}/stt",
-                                         files={"file": (f'{user.id}_{user.nickname}_{num}_{file.filename}.wav', file.file)})
-        await file.seek(0)
-        return stt_response.json()
-    else:
-        return JSONResponse(content=CommonFailedResponse(detail=f'파일명: {file.filename}, 유형: {file.content_type}').dict())
+        try:
+            try_count += 1
+            stt_response = await client.post(f"{settings.AI_SERVER_URL}/stt",
+                                             files={"file": (f'{user.id}_{user.nickname}_{num}_{file.filename}.wav', file.file)})
+            await file.seek(0)
+            return stt_response.json()
+        except asyncio.exceptions.CancelledError:
+            print('ttt')
+            if try_count < 2:
+                try_count += 1
+                stt_response = await client.post(f"{settings.AI_SERVER_URL}/stt",
+                                                 files={"file": (f'{user.id}_{user.nickname}_{num}_{file.filename}.wav',
+                                                                 file.file)})
+                await file.seek(0)
+                return stt_response.json()
+    return JSONResponse(content=CommonFailedResponse(detail=f'파일명: {file.filename}, 유형: {file.content_type}').dict())
 
 
 @router.get("/detail/{recipe_id}", description="레시피 상세", response_model=RecipeDetailResponse)
