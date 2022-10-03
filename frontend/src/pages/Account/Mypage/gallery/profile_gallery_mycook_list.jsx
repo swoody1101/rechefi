@@ -44,7 +44,7 @@ const ProfileGalleryMyCookList = (props) => {
           console.log(err);
         });
     }
-  }, [props.userId]);
+  }, [props.userId, page]);
 
   return (
     <ImageList sx={{ width: "100%", height: "100%" }} cols={3}>
