@@ -49,7 +49,6 @@ const LoginView = () => {
       .then((res) => {
         if (res.status === OK) {
           navigate("/");
-          alert("안녕하세요");
         } else {
           alert("적절한 요청이 아닙니다.");
           refEmail.current.value = "";
