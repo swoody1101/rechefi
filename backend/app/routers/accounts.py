@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 from typing import Union
 from passlib.context import CryptContext
 from app.schemas.accounts import TokenData
+import time
 
 # 비밀번호 발급
 import string, secrets
@@ -98,6 +99,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     user = await User.get_or_none(email=token_data.email)
     if user is None:
         raise credentials_exception
+    # 로그아웃된 토큰인지 확인
+    if redis_session.get(token) is not None:
+        raise credentials_exception
     return user
 
 ####### 타 유저정보 받아오기 #######
@@ -166,7 +170,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     # }
 
     # return ObjectResponse(data=data)
-    return {"message": "success", "access_token": access_token, "token_type": "bearer", "user_id": user.id, "email": user.email, "nickname": user.nickname, "is_admin": user.is_admin}
+    return {"message": "success", "access_token": access_token, "token_type": "bearer", "user_id": user.id, "email": user.email, "nickname": user.nickname, "img_url": user.img_url, "is_admin": user.is_admin}
 
 
 #나중에 구현
@@ -191,10 +195,23 @@ async def nickname_check(nickname):
     return DuplicateResponse()
 
 
-@router.get("/logout", description="로그아웃") 
-def logout():
-    # redis 연동되면 블랙리스트 처리하고, 안되면 프론트에서 토큰삭제만
-    pass
+@router.post("/logout", description="로그아웃", response_model=CommonResponse) 
+def logout(token: str = Depends(oauth2_scheme)):
+    # unix timestamp로 토큰의 잔여시간 계산
+    credentials_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="권한이 없습니다.",
+    headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        exp: str = payload.get("exp")
+        if exp is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    redis_session.setex(token, int(exp-time.time()), "")
+    return CommonResponse()
 
 
 @router.get("/", description="마이페이지 조회", response_model=ObjectResponse)
@@ -279,7 +296,7 @@ async def signup(email, token):
     redis_session.delete(token)
 
     # 우리 메인 페이지로 리다이렉트
-    return RedirectResponse("http://localhost:8000/")
+    return RedirectResponse("https://j7b303.p.ssafy.io/")
 
 @router.delete("/", description="회원탈퇴", response_model=CommonResponse)
 async def delete_user(current_user: User = Depends(get_current_user)):

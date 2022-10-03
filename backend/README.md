@@ -227,7 +227,7 @@ docker pull  hamelin92/b303:ver
 - 컨테이너 생성
 - 작업 시 미리 이전 컨테이너 삭제 해놓기.
 ```commandline
-docker run -p 3000:3000 --name frontend supermilktank8/b303frontend:(ver)
+docker run -p 3000:80 -d --name frontend supermilktank8/b303frontend:(ver)
 docker run --env-file ./.env -d --name api -p 8000:8000 hamelin92/b303:ver
 ```
 
