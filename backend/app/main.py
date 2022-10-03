@@ -4,7 +4,7 @@ from tortoise.contrib.fastapi import register_tortoise
 from app.config import TORTOISE_ORM, settings
 from app.routers import router
 
-app = FastAPI(title="new project", version="0.51")
+app = FastAPI(title="Rechefi", version="0.6３")
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,6 +19,5 @@ app.include_router(router)
 
 @app.get("/")
 async def index():
-    print(settings.DB_URL)
-    return {"message": "Hello World"}
+    return {"message": "Hello, B303"}
 

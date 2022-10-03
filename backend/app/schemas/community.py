@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Union
 from datetime import datetime
 
 from app.schemas.accounts import CurrentUser
+from app.schemas.common import CommonResponse
 
 
 class ArticleCreateForm(BaseModel):
@@ -34,12 +35,7 @@ class NoticeDetail(ArticleCreateForm):
     views: int
 
 
-class ArticleDetail(ArticleCreateForm):
-    user_id: int
-    created_at: datetime
-    updated_at: datetime
-    user: CurrentUser
-    views: int
+class ArticleDetail(NoticeDetail):
     like_users: List[dict] = Field(Nullable=True)
 
 
@@ -47,9 +43,45 @@ class CookingDetail(ArticleDetail):
     recipe_id: int = Field(Nullable=True)
 
 
+class ArticleDetailResponse(CommonResponse):
+    data: Union[CookingDetail, ArticleDetail, NoticeDetail]
+
+
 class CookingCreateForm(ArticleCreateForm):
     recipe_id: int = Field(nullable=False)
 
 
-class ArticleList(BaseModel):
-    pass
+class SimpleArticleList(BaseModel):
+    user_id: int
+    id: int
+    title: str
+    views: int
+    img_url: str = Field(nullable=True)
+
+
+class ArticleList(SimpleArticleList):
+    created_at: datetime
+    updated_at: datetime
+    recipe_id: Union[int, None] = None
+    category: int = Field(nullable=True)
+    user: CurrentUser
+
+
+class LikeUsers(BaseModel):
+    id: int = Field(description="좋아요 유저 id")
+    nickname: str = Field(description="좋아요 유저 닉네임")
+
+
+class CompleteArticleList(ArticleList):
+    likes: int
+    comments_count: int
+
+
+class ArticleListPagination(BaseModel):
+    posts: List[Union[CompleteArticleList, ArticleList, SimpleArticleList]]
+    total_pages: int
+    current_page: int
+
+
+class ArticleListResponse(CommonResponse):
+    data: ArticleListPagination
