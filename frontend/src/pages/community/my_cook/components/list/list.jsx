@@ -29,7 +29,7 @@ const MyCookList = () => {
     if (inView && hasNextPage) {
       fetchNextPage();
     }
-  }, [hasNextPage, inView, fetchNextPage]);
+  }, [inView]);
 
   const modalClose = () => {
     setOpenDetail(false);

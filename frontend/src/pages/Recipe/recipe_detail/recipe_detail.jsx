@@ -16,7 +16,7 @@ import RecipeDetailIngredients from "./ingredients";
 import RecipedetailTitleArea from "./title_area";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import SpatialTrackingIcon from "@mui/icons-material/SpatialTracking";
-import RecipeDeatilAIvoiceControll from "./AIvoice_controll";
+// import RecipeDeatilAIvoiceControll from "./AIvoice_controll";
 import Comments from "../../../common/components/comments/comments";
 import { useFetchDetail } from "../../../hooks/useFetch";
 import { useParams } from "react-router-dom";
@@ -27,8 +27,11 @@ import { MyCookDetailListLoadingWrapper } from "../../community/my_cook/styles/l
 import RecipeListLoadingSpinner from "../List/components/recipe_list_loading_spinner";
 import AiArea from "./ai_area";
 import { Backdrop } from "../../../common/styles/sidebar_styles";
+import { aiReadingFormat } from "../../../store/module/AiReducer";
+import { useDispatch } from "react-redux";
 
 const RecipeDetail = () => {
+  const dispatch = useDispatch();
   const [aiButton, setAiButton] = useState(false);
   const { detail } = useParams();
   const { data, isLoading } = useFetchDetail({
@@ -38,6 +41,8 @@ const RecipeDetail = () => {
   });
   const userInfo = useSelector((store) => store.account);
   const toggleAI = () => {
+    dispatch(aiReadingFormat());
+
     setAiButton((prev) => {
       return !prev;
     });
@@ -51,6 +56,9 @@ const RecipeDetail = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(aiReadingFormat());
+  }, []);
   useEffect(() => {
     if (userInfo.auth && data && data.data.like_users.length >= 0) {
       const like_users = data.data.like_users;
