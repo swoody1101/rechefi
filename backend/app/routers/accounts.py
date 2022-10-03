@@ -132,7 +132,7 @@ async def create_new_password(background_tasks: BackgroundTasks, email, new_pass
     return MessageResponse(detail=f'{email}로 임시 비밀번호가 발송되었습니다.')
 
 
-@router.post("/", description="인증 메일 발송") 
+@router.post("", description="인증 메일 발송")
 async def email_authentication(background_tasks: BackgroundTasks, req: UserSignupForm, signup_token: str = Depends(create_random)):
     # 아이디 중복체크
     user = await User.get_or_none(email=req.email)
@@ -214,7 +214,7 @@ def logout(token: str = Depends(oauth2_scheme)):
     return CommonResponse()
 
 
-@router.get("/", description="마이페이지 조회", response_model=ObjectResponse)
+@router.get("", description="마이페이지 조회", response_model=ObjectResponse)
 async def get_my_page(current_user: User = Depends(get_current_user)):
     # follower: 나를 팔로우한 사람 수, following: 내가 팔로우하고있는 사람 수
     follower = await current_user.followers.all().count()
@@ -223,7 +223,7 @@ async def get_my_page(current_user: User = Depends(get_current_user)):
     return ObjectResponse(data=data)
 
 
-@router.put("/", description="마이페이지 수정", response_model=ObjectResponse, status_code=201)
+@router.put("", description="마이페이지 수정", response_model=ObjectResponse, status_code=201)
 async def edit_my_page(req: MyPageForm, current_user: User = Depends(get_current_user)):
     current_user.nickname = req.nickname
     current_user.about_me = req.about_me
@@ -298,7 +298,7 @@ async def signup(email, token):
     # 우리 메인 페이지로 리다이렉트
     return RedirectResponse("https://j7b303.p.ssafy.io/")
 
-@router.delete("/", description="회원탈퇴", response_model=CommonResponse)
+@router.delete("", description="회원탈퇴", response_model=CommonResponse)
 async def delete_user(current_user: User = Depends(get_current_user)):
     await current_user.delete()
     return CommonResponse()
