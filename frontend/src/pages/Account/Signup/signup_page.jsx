@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { signupThunk } from "../../../store/module/accountReducer";
 import InputElement from "../components/input_element";
+import { Warn } from "../../../common/components/sweatAlert";
 
 const SignUp = () => {
   const theme = createTheme();
@@ -66,7 +67,7 @@ const SignUp = () => {
     dispatch(signupThunk(signupInfo))
       .unwrap()
       .then(() => {
-        alert("회원가입이 완료되었습니다.");
+        Warn("이메일을 확인해주세요.");
         navigate(`/login`);
       })
       .catch((err) => {
