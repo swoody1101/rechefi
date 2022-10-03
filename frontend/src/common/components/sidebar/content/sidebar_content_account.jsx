@@ -17,14 +17,18 @@ const SidebarMyAccount = ({ sidebarClose }) => {
 
   // page move
   const moveMypage = () => {
-    navigate("/profile", { state: loginInfo.email });
-    sidebarClose();
+    if (loginInfo.auth) {
+      navigate("/profile", { state: loginInfo.email });
+      sidebarClose();
+    }
   };
 
   // page move
   const moveLogin = () => {
-    navigate("/login");
-    sidebarClose();
+    if (loginInfo.auth) {
+      navigate("/login");
+      sidebarClose();
+    }
   };
 
   return (
