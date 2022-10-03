@@ -12,7 +12,7 @@ function Logo({ sm, onClick, leftShift }) {
       sx={{ mr: 2 }}
     >
       <Typography fontSize={sm ? 32 : 20} fontWeight={"bold"}>
-        RECHEF
+        RECHEFI
       </Typography>
     </Link>
   );
