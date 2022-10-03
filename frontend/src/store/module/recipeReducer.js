@@ -29,7 +29,7 @@ export const loadMyCookThunk = createAsyncThunk(
       const response = await http.get(
         `/community/gallery/search-by-id/${param.page}?mid=${param.mid}`
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       return error.response;
     }
