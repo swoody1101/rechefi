@@ -23,8 +23,8 @@ import NotFound from "./pages/NotFound/not_found_page";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { useDispatch } from "react-redux";
-import { getToken } from "./utils/JWT-token";
-import { loadMyProfileThunk } from "./store/module/accountReducer";
+import { deleteToken, getToken } from "./utils/JWT-token";
+import { loadMyProfileThunk, logout } from "./store/module/accountReducer";
 import { useEffect } from "react";
 
 import FreeBoardList from "./pages/community/FreeBoard/List/free_board_list_page";
@@ -37,7 +37,13 @@ function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     if (getToken()) {
-      dispatch(loadMyProfileThunk());
+      dispatch(loadMyProfileThunk())
+        .unwrap()
+        .then((res) => {
+          if (res.status === 401) {
+            dispatch(logout());
+          }
+        });
     }
   }, []);
 
