@@ -26,11 +26,9 @@ export const signupThunk = createAsyncThunk(
   "auth/signup",
   async (signupInfo) => {
     try {
-      const response = await http.post(
-        "http://localhost:8000/members",
-        signupInfo,
-        { headers: { "Content-Type": `application/json` } }
-      );
+      const response = await http.post("/members", signupInfo, {
+        headers: { "Content-Type": `application/json` },
+      });
       return response.data;
     } catch (error) {
       return error.response;
@@ -40,7 +38,7 @@ export const signupThunk = createAsyncThunk(
 
 export const signoutThunk = createAsyncThunk("auth/signout", async () => {
   try {
-    const response = await http.delete("http://localhost:8000/members");
+    const response = await http.delete("/members");
     return response.data;
   } catch (error) {
     return error.response;
@@ -55,17 +53,15 @@ export const loginThunk = createAsyncThunk(
       loginInfo.append("username", email);
       loginInfo.append("password", password);
 
-      const responseTemp = await http.post(
-        "http://localhost:8000/members/login/1",
-        loginInfo
-      );
+      const responseTemp = await http.post("/members/login/1", loginInfo);
       const response = {
         data: responseTemp.data,
         status: responseTemp.status,
       };
-
+      console.log(response);
       return response;
     } catch (error) {
+      console.log(error);
       return error.response;
     }
   }
