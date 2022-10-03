@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 import http from "../../utils/http-commons";
 import { deleteToken, getToken, saveToken } from "../../utils/JWT-token";
 
@@ -26,9 +27,7 @@ export const signupThunk = createAsyncThunk(
   "auth/signup",
   async (signupInfo) => {
     try {
-      const response = await http.post("/members", signupInfo, {
-        headers: { "Content-Type": `application/json` },
-      });
+      const response = await http.post("/members", signupInfo);
       return response.data;
     } catch (error) {
       return error.response;
@@ -195,16 +194,17 @@ export const authSlice = createSlice({
       state.error = null;
     },
     [loadMyProfileThunk.fulfilled]: (state, { payload }) => {
-      // loading
-      state.loading = false;
-      state.auth = true;
+      if (payload.status === 200) {
+        state.loading = false;
+        state.auth = true;
 
-      state.email = payload.email;
-      state.nickname = payload.nickname;
-      state.imgUrl = payload.img_url;
-      state.introduce = payload.about_me;
-      state.follower = payload.follower;
-      state.following = payload.following;
+        state.email = payload.email;
+        state.nickname = payload.nickname;
+        state.imgUrl = payload.img_url;
+        state.introduce = payload.about_me;
+        state.follower = payload.follower;
+        state.following = payload.following;
+      }
     },
     [loadFollowingListThunk.fulfilled]: (state, { payload }) => {
       // loading
