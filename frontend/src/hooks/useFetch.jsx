@@ -26,10 +26,14 @@ export default function useFetchList({ queryKey, articleId, uri, query }) {
 }
 
 export function useFetchDetail({ queryKey, articleId, uri }) {
-  return useQuery([queryKey, articleId], async () => {
-    const response = await http.get(uri + articleId);
-    return response.data;
-  });
+  return useQuery(
+    [queryKey, articleId],
+    async () => {
+      const response = await http.get(uri + articleId);
+      return response.data;
+    },
+    { refetchOnWindowFocus: false }
+  );
 }
 
 export function useFetchComments({ queryKey, articleId, uri }) {
