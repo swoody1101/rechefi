@@ -1,25 +1,44 @@
 import { useEffect, useState } from "react";
-import { AiAreaTextWrapper } from "../styles/recipe_ai_styles";
-import AudioReactRecorder, { RecordState } from "audio-react-recorder";
 import { AiVoiceTimer } from "./ai_voice_timer";
 import { AiVoiceRequest } from "./ai_voice_request";
-import { QueryClient } from "react-query";
 import { Box, Card } from "@mui/material";
+import Recorder from "recorder-js";
 
 const AiListen = ({ synth, toggleAI, recognition }) => {
   const [alertAudio] = useState(new Audio("/sound/alert.wav"));
+  const [audioContext] = useState(
+    new (window.AudioContext || window.webkitAudioContext)({
+      sampleRate: 16000,
+    })
+  );
+  const [recorder, setRecorder] = useState(undefined);
   const [playing, setPlaying] = useState(true);
-  const [talk, setTalk] = useState("듣는 중입니다...");
   const [recTrigger, setRecTrigger] = useState(false);
   const [alertPlay, setAlertPlay] = useState(false);
-  const [recordState, setRecordState] = useState(null);
   const [audioFile, setAudioFile] = useState(undefined);
-  const queryClient = new QueryClient();
+  let isRecording = false;
+
+  useEffect(() => {
+    if (audioContext) {
+      setRecorder(new Recorder(audioContext, {}));
+    }
+  }, [audioContext]);
+
+  useEffect(() => {
+    if (audioContext && recorder) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => recorder.init(stream))
+        .catch((err) => console.log("문제가 발생했습니다.: ", err));
+    }
+  }, [recorder]);
+
   useEffect(() => {
     setAlertPlay((prev) => {
       return !prev;
     });
   }, []);
+
   useEffect(() => {
     if (playing) {
       alertAudio.play();
@@ -28,6 +47,7 @@ const AiListen = ({ synth, toggleAI, recognition }) => {
       setRecTrigger(true);
     }
   }, [playing]);
+
   useEffect(() => {
     alertAudio.addEventListener("ended", () => {
       setPlaying(false);
@@ -42,26 +62,28 @@ const AiListen = ({ synth, toggleAI, recognition }) => {
       recordeStart();
     }
   }, [recTrigger]);
+
   const recordeStart = () => {
-    setRecordState(RecordState.START);
+    if (recorder) {
+      recorder.start().then(() => {
+        isRecording = true;
+      });
+    } else {
+      console.log("준비되지 않음...");
+    }
   };
 
   const recordeStop = () => {
-    setRecordState(RecordState.STOP);
+    if (recorder) {
+      const blob = undefined;
+      recorder.stop().then(({ blob, buffer }) => {
+        setAudioFile(blob);
+      });
+    }
     setRecTrigger(false);
-  };
-  const recStop = (audioData) => {
-    console.log(audioData);
-    setAudioFile(audioData);
   };
   return (
     <Box sx={{ height: "100%" }}>
-      <AudioReactRecorder
-        state={recordState}
-        onStop={recStop}
-        canvasWidth="0"
-        canvasHeight="0"
-      ></AudioReactRecorder>
       {audioFile === undefined ? (
         <></>
       ) : (
