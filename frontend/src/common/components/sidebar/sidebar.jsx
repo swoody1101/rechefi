@@ -1,9 +1,6 @@
 import { SwipeableDrawer } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  loadMyProfileThunk,
-  logout,
-} from "../../../store/module/accountReducer";
+import { logout } from "../../../store/module/accountReducer";
 import useWidthQuery from "../../../hooks/Main/useWidthQuery";
 import SideBarHeader from "./sidebar_header";
 import SidebarContent from "./content/sidebar_content.jsx";

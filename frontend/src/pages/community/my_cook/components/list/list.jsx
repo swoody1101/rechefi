@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 import {
   MyCookDetailListLoadingWrapper,
-  MyCookGridButton,
   MyCookGridImage,
   MyCookGridLi,
   MyCookGridUl,

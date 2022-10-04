@@ -18,7 +18,7 @@ import ProfileFollowerList from "./pages/Account/Mypage/follow/profile_follower_
 import ProfileFollowingList from "./pages/Account/Mypage/follow/profile_following_list";
 import ProfileModifyPage from "./pages/Account/Mypage/modify/profile_modify_page";
 
-import NotFound from "./pages/Main/NotFound/not_found_page";
+import NotFound from "./pages/NotFound/not_found_page";
 
 import { QueryClientProvider, QueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
