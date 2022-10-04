@@ -7,7 +7,7 @@ import MyCook from "./pages/community/my_cook/my_cook_container";
 import MyCookWriter from "./pages/community/my_cook/components/write/write";
 
 import RecipeList from "./pages/Recipe/List/recipe_list_page";
-import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail";
+import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail_page";
 import RecipeWrite from "./pages/Recipe/Write/recipe_write_page";
 
 import SignUp from "./pages/Account/Signup/signup_page";

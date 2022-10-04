@@ -11,6 +11,7 @@ function FreeBoardDetailCommentContainer({ children }) {
         px: 2,
         borderRadius: 1,
         background: Palette.mainColor2,
+        width: "100%",
       }}
     >
       {children}
