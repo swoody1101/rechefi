@@ -27,9 +27,8 @@ const ProfilePage = () => {
   const [following, setFollowing] = useState();
 
   useEffect(() => {
-    dispatch(loadMyProfileThunk());
-    if (getToken()) {
-      dispatch(loadProfileThunk(state))
+    if (state === null) {
+      dispatch(loadMyProfileThunk())
         .unwrap()
         .then((res) => {
           setId(res.id);
@@ -45,8 +44,26 @@ const ProfilePage = () => {
           console.log(err);
         });
     } else {
-      alert("로그인 후 접근해 주세요");
-      navigate("/login");
+      if (getToken()) {
+        dispatch(loadProfileThunk(state))
+          .unwrap()
+          .then((res) => {
+            setId(res.id);
+            setEmail(res.email);
+            setNickname(res.nickname);
+            setImgUrl(res.img_url);
+            setIntroduce(res.about_me);
+            setFollower(res.follower);
+            setFollowing(res.following);
+          })
+          .catch((err) => {
+            alert("잘못된 요청입니다.");
+            console.log(err);
+          });
+      } else {
+        alert("로그인 후 접근해 주세요");
+        navigate("/login");
+      }
     }
   }, [state]);
 
