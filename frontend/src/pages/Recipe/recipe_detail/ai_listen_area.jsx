@@ -12,7 +12,6 @@ import {
 import AiListen from "./ai_listen";
 import { useEffect } from "react";
 import { Box, Button } from "@mui/material";
-import AiListenRecorder from "./ai_listen_recorder";
 
 const AiListenArea = ({ synth, toggleAI, recognition }) => {
   const aiListen = useSelector((store) => store.aiReducer.aiListen.nowListen);
@@ -28,7 +27,7 @@ const AiListenArea = ({ synth, toggleAI, recognition }) => {
     <div>
       <AiAreaListenWrapper>
         <Box sx={{ height: "100%" }}>
-          <AiListenRecorder
+          <AiListen
             synth={synth}
             toggleAI={toggleAI}
             recognition={recognition}
