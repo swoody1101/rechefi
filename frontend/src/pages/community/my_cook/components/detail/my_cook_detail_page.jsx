@@ -45,8 +45,6 @@ export const MyCookDetail = ({ postId, modalClose }) => {
       </MyCookDetailListLoadingWrapper>
     );
   }
-  console.log(data);
-  console.log(userInfo);
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
