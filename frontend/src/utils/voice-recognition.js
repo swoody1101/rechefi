@@ -8,7 +8,7 @@ import {
 const VoiceRecogition = ({ recognition }) => {
   const dispatch = useDispatch();
 
-  recognition.interimResults = true;
+  // recognition.interimResults = true;
   recognition.lang = "ko-KR";
   recognition.continuous = true;
   recognition.maxAlternatives = 1;
