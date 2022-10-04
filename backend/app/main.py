@@ -5,6 +5,7 @@ from app.config import TORTOISE_ORM, settings
 from app.routers import router
 
 app = FastAPI(title="Rechefi", version="0.6３")
+# app.router.redirect_slashes = False
 
 app.add_middleware(
     CORSMiddleware,
