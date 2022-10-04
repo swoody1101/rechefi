@@ -250,7 +250,7 @@ async def get_other_page(other_user: User = Depends(get_other_user)):
 async def get_follower(member_id, user: User = Depends(get_other_user)):
     # follower: 나를 팔로우한 사람, following: 내가 팔로우 하고있는 사람
     follower = await user.followers
-    follower = list(map(lambda followers: followers.email, follower))
+    follower = list(map(lambda followers: {"id": followers.id, "email": followers.email, "nickname": followers.nickname, "img_url": followers.img_url}, follower))
     data = {
         "follower": follower, 
     }
@@ -261,7 +261,7 @@ async def get_follower(member_id, user: User = Depends(get_other_user)):
 async def get_following(member_id, user: User = Depends(get_other_user)):
     # follower: 나를 팔로우한 사람, following: 내가 팔로우 하고있는 사람
     following = await user.following
-    following = list(map(lambda follows: follows.email, following))
+    following = list(map(lambda follows: {"id": follows.id, "email": follows.email, "nickname": follows.nickname, "img_url": follows.img_url}, following))
     data = {
         "following": following
     }
