@@ -13,7 +13,7 @@ import {
 } from "../styles/recipe_detail_styles";
 import RecipeDetailContent from "./content";
 import RecipeDetailIngredients from "./ingredients";
-import RecipedetailTitleArea from "./title_area";
+import RecipedetailTitleArea from "./components/recipe_detail_title";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import SpatialTrackingIcon from "@mui/icons-material/SpatialTracking";
 // import RecipeDeatilAIvoiceControll from "./AIvoice_controll";
@@ -29,25 +29,16 @@ import AiArea from "./ai_area";
 import { Backdrop } from "../../../common/styles/sidebar_styles";
 import { aiReadingFormat } from "../../../store/module/AiReducer";
 import { useDispatch } from "react-redux";
-import { Container } from "@mui/material";
 import ReponsiveContainer from "../../../common/components/responsive_container";
+import FreeBoardDetailPostInfo from "../../community/FreeBoard/Detail/components/free_board_detail_post_info";
+import TitleWithDivider from "../../../common/components/title_with_divider";
+import { Box } from "@mui/material";
 
 const RecipeDetail = () => {
   const dispatch = useDispatch();
+
+  // handling AI UI
   const [aiButton, setAiButton] = useState(false);
-
-  //
-  const { detail } = useParams();
-
-  // get recipe data
-  const { data, isLoading } = useFetchDetail({
-    queryKey: "recipeDetail",
-    articleId: detail,
-    uri: "/recipe/detail/",
-  });
-
-  const userInfo = useSelector((store) => store.account);
-
   const toggleAI = () => {
     dispatch(aiReadingFormat());
     setAiButton((prev) => {
@@ -55,6 +46,24 @@ const RecipeDetail = () => {
     });
   };
 
+  useEffect(() => {
+    dispatch(aiReadingFormat());
+  }, []);
+
+  // for getting Recipe data
+  const { detail } = useParams();
+
+  const { data, isLoading } = useFetchDetail({
+    queryKey: "recipeDetail",
+    articleId: detail,
+    uri: "/recipe/detail/",
+  });
+
+  console.log(data);
+
+  const userInfo = useSelector((store) => store.account);
+
+  // for like this recipe
   const [like, setLike] = useState(false);
   const { mutate } = useLike("recipeDetail");
   const likeHandler = () => {
@@ -62,10 +71,6 @@ const RecipeDetail = () => {
       mutate({ articleId: detail, uri: "/recipe/like/" });
     }
   };
-
-  useEffect(() => {
-    dispatch(aiReadingFormat());
-  }, []);
 
   useEffect(() => {
     if (userInfo.auth && data && data.data.like_users.length >= 0) {
@@ -92,28 +97,22 @@ const RecipeDetail = () => {
     <ReponsiveContainer
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
+      {/* AI dialog component */}
       {aiButton ? (
         <div>
           <AiArea content={data.data.recipe.content} toggleAI={toggleAI} />
           <Backdrop />
         </div>
       ) : null}
-      <RecipeDetailTitleWrapperDiv>
-        <RecipedetailTitleArea
-          post={{
-            title: data.data.recipe.title,
-            member_nickname: data.data.user.nickname,
-            date: data.data.recipe.created_at,
-          }}
-        />
-      </RecipeDetailTitleWrapperDiv>
+
+      {/* title area */}
+      <RecipedetailTitleArea post={data.data} />
 
       <RecipeDetailAIButtonWrapper>
         <RecipeDetailAIButton onClick={toggleAI}>
           레시피 읽어주기<SpatialTrackingIcon></SpatialTrackingIcon>
         </RecipeDetailAIButton>
       </RecipeDetailAIButtonWrapper>
-
       <RecipeDetailIngredinetsContentDiv>
         <RecipeDetailIngredients ingredients={data.data.ingredients} />
       </RecipeDetailIngredinetsContentDiv>
@@ -139,7 +138,6 @@ const RecipeDetail = () => {
           </RecipeDetailLikeCount>
         </RecipeDetailLikeBorderDiv>
       </RecipeDetailLikeWrppaerDiv>
-
       <RecipeDetailIngredinetsContentDiv>
         <Comments
           uri={"/recipe/comment/"}
