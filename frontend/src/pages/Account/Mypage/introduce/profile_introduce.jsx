@@ -34,6 +34,7 @@ const ProfileIntroduce = (props) => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
+        marginBottom: "20px",
       }}
     >
       <Avatar
