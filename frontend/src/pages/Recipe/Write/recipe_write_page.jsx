@@ -126,7 +126,7 @@ function RecipeWritePage() {
         setValue={setTitle}
         placeholder="제목을 입력하세요"
         validation={titleValidation}
-        errorMessage={"1 - 21자내로 입력해요"}
+        errorMessage={"1 - 35자내로 입력해요"}
       />
       {/* tags */}
       <RecipeWriteBox>
