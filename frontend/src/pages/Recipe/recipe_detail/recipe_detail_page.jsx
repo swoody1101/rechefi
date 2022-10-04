@@ -30,9 +30,8 @@ import { Backdrop } from "../../../common/styles/sidebar_styles";
 import { aiReadingFormat } from "../../../store/module/AiReducer";
 import { useDispatch } from "react-redux";
 import ReponsiveContainer from "../../../common/components/responsive_container";
-import FreeBoardDetailPostInfo from "../../community/FreeBoard/Detail/components/free_board_detail_post_info";
-import TitleWithDivider from "../../../common/components/title_with_divider";
 import { Box } from "@mui/material";
+import CommentContainer from "../../community/FreeBoard/Detail/components/free_board_detail_comments_container";
 
 const RecipeDetail = () => {
   const dispatch = useDispatch();
@@ -58,8 +57,6 @@ const RecipeDetail = () => {
     articleId: detail,
     uri: "/recipe/detail/",
   });
-
-  console.log(data);
 
   const userInfo = useSelector((store) => store.account);
 
@@ -113,6 +110,7 @@ const RecipeDetail = () => {
           레시피 읽어주기<SpatialTrackingIcon></SpatialTrackingIcon>
         </RecipeDetailAIButton>
       </RecipeDetailAIButtonWrapper>
+
       <RecipeDetailIngredinetsContentDiv>
         <RecipeDetailIngredients ingredients={data.data.ingredients} />
       </RecipeDetailIngredinetsContentDiv>
@@ -138,13 +136,14 @@ const RecipeDetail = () => {
           </RecipeDetailLikeCount>
         </RecipeDetailLikeBorderDiv>
       </RecipeDetailLikeWrppaerDiv>
-      <RecipeDetailIngredinetsContentDiv>
+
+      <CommentContainer>
         <Comments
           uri={"/recipe/comment/"}
           aiButton={aiButton}
           queryKey="recipeComments"
         />
-      </RecipeDetailIngredinetsContentDiv>
+      </CommentContainer>
     </ReponsiveContainer>
   );
 };

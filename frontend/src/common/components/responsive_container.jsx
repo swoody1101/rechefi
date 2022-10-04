@@ -7,7 +7,9 @@ function ReponsiveContainer({ children, style }) {
   // avartar size
   const width = xl ? "50%" : m ? "75%" : sm ? "100%" : "100%";
 
-  return <Container sx={{ width: width, ...style }}>{children}</Container>;
+  return (
+    <Container sx={{ width: width, py: 2, ...style }}>{children}</Container>
+  );
 }
 
 export default ReponsiveContainer;
