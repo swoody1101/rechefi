@@ -1,21 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import { Avatar, Box, Grid, Tooltip, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import { Avatar, Box, Typography } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { profileFollowThunk } from "../../../../store/module/accountReducer";
+import { useEffect } from "react";
 
 const ProfileIntroduce = (props) => {
   const loginInfo = useSelector((store) => store.account);
+  const dispatch = useDispatch();
+  const [follow, setfollow] = useState(props.isFollow);
   const imgUrl = props.imgUrl;
   const email = props.email;
   const nickname = props.nickname;
   const introduce = props.introduce;
 
-  const isFollowHandler = (prop) => {
-    if (loginInfo.followingList.includes(prop)) {
-      return true;
-    }
-    return false;
+  useEffect(() => {
+    setfollow(props.isFollow);
+  }, [props.isFollow]);
+
+  const followHandler = () => {
+    dispatch(profileFollowThunk(props.email))
+      .unwrap()
+      .then((res) => {
+        alert(res.detail);
+      });
+    setfollow(!follow);
   };
 
   return (
@@ -51,10 +61,10 @@ const ProfileIntroduce = (props) => {
         </Typography>
         {email === loginInfo.email ? (
           <></>
-        ) : isFollowHandler(email) ? (
-          <CheckCircleOutlineIcon />
+        ) : follow ? (
+          <CheckCircleOutlineIcon onClick={followHandler} />
         ) : (
-          <AddCircleOutlineOutlinedIcon />
+          <PersonAddAlt1Icon onClick={followHandler} />
         )}
       </Box>
       <Typography

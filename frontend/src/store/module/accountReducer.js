@@ -23,8 +23,32 @@ const initialState = {
   followingList: [],
 };
 
+export const emailValidationThunk = createAsyncThunk(
+  "auth/emailValidationThunk",
+  async (email) => {
+    try {
+      const response = await http.get(`/members/validation/1/${email}`);
+      return response.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+
+export const nicknameValidationThunk = createAsyncThunk(
+  "auth/nicknameValidationThunk",
+  async (nickname) => {
+    try {
+      const response = await http.get(`/members/validation/2/${nickname}`);
+      return response.data;
+    } catch (error) {
+      return error.response;
+    }
+  }
+);
+
 export const signupThunk = createAsyncThunk(
-  "auth/signup",
+  "auth/signupThunk",
   async (signupInfo) => {
     try {
       const response = await http.post("/members", signupInfo);
@@ -35,7 +59,7 @@ export const signupThunk = createAsyncThunk(
   }
 );
 
-export const signoutThunk = createAsyncThunk("auth/signout", async () => {
+export const signoutThunk = createAsyncThunk("auth/signoutThunk", async () => {
   try {
     const response = await http.delete("/members");
     return response.data;
@@ -45,7 +69,7 @@ export const signoutThunk = createAsyncThunk("auth/signout", async () => {
 });
 
 export const loginThunk = createAsyncThunk(
-  "auth/login",
+  "auth/loginThunk",
   async ({ email, password }) => {
     try {
       const loginInfo = new FormData();
