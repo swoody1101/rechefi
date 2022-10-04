@@ -134,7 +134,7 @@ function FreeBoardWritePage() {
         setValue={setTitle}
         validation={titleValidation}
         placeholder={"제목을 입력해주세요"}
-        errorMessage={"1 - 21자내로 입력해요"}
+        errorMessage={"1 - 35자내로 입력해요"}
       />
 
       {/* write notice checkbox */}

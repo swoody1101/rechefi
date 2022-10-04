@@ -8,7 +8,7 @@ export function useTitle() {
   const titleValidation = () => {
     // dismiss value at first
     if (title === null) return true;
-    if (0 < title.length && title.length < 17) return true;
+    if (0 < title.length && title.length < 35) return true;
     else return false;
   };
 
