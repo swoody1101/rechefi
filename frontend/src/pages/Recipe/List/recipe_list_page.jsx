@@ -9,6 +9,7 @@ import { useBestRecipes } from "../../../hooks/Recipe/list/useBestRecipes";
 import { getToken } from "../../../utils/JWT-token";
 import { useInView } from "react-intersection-observer";
 import RecipeListLoadingSpinner from "./components/recipe_list_loading_spinner";
+import ReponsiveContainer from "../../../common/components/responsive_container";
 
 function RecipeListPage() {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ function RecipeListPage() {
   };
 
   return (
-    <Container sx={{ pt: 2, px: 1, pb: 1 }}>
+    <ReponsiveContainer style={{ pt: 2, px: 1, pb: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
       <Container sx={{ mt: 2 }}>
         {isLoading ? (
@@ -98,7 +99,7 @@ function RecipeListPage() {
       ) : (
         ""
       )}
-    </Container>
+    </ReponsiveContainer>
   );
 }
 

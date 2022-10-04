@@ -1,29 +1,9 @@
-import { useRef } from "react";
 import { useFetchComments } from "../../../hooks/useFetch";
 import { useParams } from "react-router-dom";
 import { useAddComment } from "../../../hooks/comments/useAddComments";
 import CommentElement from "./comment_element";
-import {
-  CommentButton,
-  CommentContentInputWrapper,
-  CommentCreateAtDiv,
-  CommentCreateWrapperDiv,
-  CommentElementBox,
-  CommentElementInputBox,
-  CommentElementNameDiv,
-  CommentInput,
-  CommentWraper,
-  RecommentElementWrapper,
-} from "../../styles/comments/comments_styles";
 import { useSelector } from "react-redux/es/exports";
-import {
-  Box,
-  Divider,
-  IconButton,
-  Input,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 import LoadingSpinner from "../../../pages/Recipe/List/components/recipe_list_loading_spinner";
 import { useState } from "react";
 import CommentWriteField from "./comment_write_field";

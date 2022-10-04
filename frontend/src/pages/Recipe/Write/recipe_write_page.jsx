@@ -17,6 +17,7 @@ import { useSelectedTag } from "../../../hooks/Recipe/tag/useSelectedTags";
 import { useTitle } from "../../../hooks/Recipe/write/useTitle";
 import { useContents } from "../../../hooks/Recipe/write/useContents";
 import InputImage from "../../../common/components/input_image";
+import ReponsiveContainer from "../../../common/components/responsive_container";
 
 function RecipeWritePage() {
   const navigate = useNavigate();
@@ -118,14 +119,14 @@ function RecipeWritePage() {
   };
 
   return (
-    <Container sx={{ p: 1 }}>
+    <ReponsiveContainer style={{ p: 1 }}>
       {/* title */}
       <RecipeWriteTitleInput
         value={title}
         setValue={setTitle}
         placeholder="제목을 입력하세요"
         validation={titleValidation}
-        errorMessage={"1 - 21자내로 입력해요"}
+        errorMessage={"1 - 35자내로 입력해요"}
       />
       {/* tags */}
       <RecipeWriteBox>
@@ -173,7 +174,7 @@ function RecipeWritePage() {
       />
 
       <InputImage setRef={imageInput} onInput={addImageBlock} />
-    </Container>
+    </ReponsiveContainer>
   );
 }
 
