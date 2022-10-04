@@ -11,11 +11,12 @@ const VoiceRequest = ({ audioFile, synth, toggleAI, recognition }) => {
   const aiRequest = useSelector((store) => store.aiReducer.aiRequest);
   const [loading, setLoading] = useState(true);
   const sound = useState(
-    new File([audioFile.blob], "soundBlob", {
+    new File([audioFile], "soundBlob", {
       lastModified: new Date().getTime(),
       type: "audio/wav",
     })
   );
+  console.log(sound);
   const dispatch = useDispatch();
   useEffect(() => {
     if (loading) {
