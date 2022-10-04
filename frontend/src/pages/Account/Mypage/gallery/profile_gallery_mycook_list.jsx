@@ -3,12 +3,16 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { loadMyCookThunk } from "../../../../store/module/recipeReducer";
+import { MyCookDetail } from "../../../community/my_cook/components/detail/my_cook_detail_page";
+import { Backdrop } from "../../../../common/styles/sidebar_styles";
 
 const ProfileGalleryMyCookList = (props) => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState();
   const [myCookList, setMyCookList] = useState([]);
+  const [openDetail, setOpenDetail] = useState(false);
+  const [postId, setPostId] = useState(0);
 
   window.addEventListener("scroll", () => {
     const val = window.innerHeight + window.scrollY;
@@ -46,23 +50,47 @@ const ProfileGalleryMyCookList = (props) => {
     }
   }, [props.userId, page]);
 
+  const modalClose = () => {
+    setOpenDetail(false);
+  };
+
   return (
-    <ImageList sx={{ width: "100%", height: "100%" }} cols={3}>
-      {myCookList ? (
-        myCookList.map((myCook) => (
-          <ImageListItem key={myCook.id} onClick={() => {}}>
-            <img
-              src={`${myCook.img_url}?w=248&fit=crop&auto=format`}
-              srcSet={`${myCook.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
-              alt={myCook.title}
-              loading="lazy"
-            />
-          </ImageListItem>
-        ))
-      ) : (
-        <></>
+    <>
+      {openDetail && (
+        <div>
+          <MyCookDetail postId={postId} modalClose={modalClose} />
+          <Backdrop
+            onClick={() => {
+              setOpenDetail(false);
+            }}
+          />
+        </div>
       )}
-    </ImageList>
+      <ImageList sx={{ width: "100%", height: "100%" }} cols={3}>
+        {myCookList ? (
+          myCookList.map((myCook) => (
+            <ImageListItem
+              key={myCook.id}
+              onClick={() => {
+                setOpenDetail((prev) => {
+                  return !prev;
+                });
+                setPostId(myCook.id);
+              }}
+            >
+              <img
+                src={`${myCook.img_url}?w=248&fit=crop&auto=format`}
+                srcSet={`${myCook.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                alt={myCook.title}
+                loading="lazy"
+              />
+            </ImageListItem>
+          ))
+        ) : (
+          <></>
+        )}
+      </ImageList>
+    </>
   );
 };
 
