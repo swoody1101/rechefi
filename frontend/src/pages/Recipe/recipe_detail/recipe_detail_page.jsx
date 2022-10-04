@@ -1,8 +1,4 @@
 import { useEffect, useState } from "react";
-import {
-  RecipeDetailAIButton,
-  RecipeDetailAIButtonWrapper,
-} from "../styles/recipe_detail_styles";
 import RecipeDetailContent from "./components/recipe_detail_content";
 import RecipedetailTitleArea from "./components/recipe_detail_title";
 
@@ -25,20 +21,9 @@ import CommentContainer from "../../community/FreeBoard/Detail/components/free_b
 import RecipeDetailIngredient from "./components/recipe_detail_ingredient";
 import RecipeDetailLikeBtn from "./components/recipe_detail_like_btn";
 import AlertSnackbar from "../../../common/components/alert_snackbar";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Popover,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { Palette } from "../../../common/styles/palette";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RecipeDetailPopover from "./components/recipe_detail_popover";
 
 const RecipeDetail = () => {
