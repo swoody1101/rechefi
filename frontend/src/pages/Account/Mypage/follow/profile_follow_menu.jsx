@@ -1,18 +1,33 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Box, styled, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const ProfileFollow = (props) => {
+const ProfileFollowMenu = (props) => {
+  const navigate = useNavigate();
   const email = props.email;
   const followerCount = props.follower;
   const followingCount = props.following;
-  const navigate = useNavigate();
 
   const followerClickHandler = () => {
-    navigate("/follower", { state: email });
+    navigate("/follow", {
+      state: {
+        email: email,
+        follower: followerCount,
+        following: followingCount,
+        isFollower: true,
+      },
+    });
   };
+
   const followingClickHandler = () => {
-    navigate("/following", { state: email });
+    navigate("/follow", {
+      state: {
+        email: email,
+        follower: followerCount,
+        following: followingCount,
+        isFollower: false,
+      },
+    });
   };
 
   return (
@@ -20,7 +35,6 @@ const ProfileFollow = (props) => {
       sx={{
         display: "flex",
         justifyContent: "space-evenly",
-        marginTop: "20px",
         paddingTop: "5px",
         paddingBottom: "5px",
         borderBottom: 1,
@@ -31,14 +45,18 @@ const ProfileFollow = (props) => {
     >
       <Box
         sx={{ display: "flex", flexDirection: "column" }}
-        onClick={followerClickHandler}
+        onClick={() => {
+          followerClickHandler();
+        }}
       >
         <FollowTypography>팔로워</FollowTypography>
         <FollowCountTypography>{followerCount}</FollowCountTypography>
       </Box>
       <Box
         sx={{ display: "flex", flexDirection: "column" }}
-        onClick={followingClickHandler}
+        onClick={() => {
+          followingClickHandler();
+        }}
       >
         <FollowTypography>팔로잉</FollowTypography>
         <FollowCountTypography>{followingCount}</FollowCountTypography>
@@ -47,7 +65,7 @@ const ProfileFollow = (props) => {
   );
 };
 
-export default ProfileFollow;
+export default ProfileFollowMenu;
 
 const FollowTypography = styled(Typography)({
   color: "#E38B29",
