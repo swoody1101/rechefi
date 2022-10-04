@@ -34,7 +34,7 @@ def convert_size(size_bytes):
 
 
 
-@router.post("/", description="이미지 업로드", status_code=201)
+@router.post("", description="이미지 업로드", status_code=201)
 async def upload_img(file: UploadFile, User = Depends(get_current_user)):
     # 이미지 사이즈 및 확장자 확인
     file_content = await file.read()
