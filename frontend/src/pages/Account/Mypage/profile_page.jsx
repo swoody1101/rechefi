@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { useNavigate } from "react-router-dom";
 import { Box, Container } from "@mui/material";
@@ -13,6 +13,7 @@ import {
 import { getToken } from "../../../utils/JWT-token";
 
 const ProfilePage = () => {
+  const loginInfo = useSelector((store) => store.account);
   const { state } = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -49,6 +50,13 @@ const ProfilePage = () => {
     }
   }, [state]);
 
+  const isFollowHandler = (prop) => {
+    if (loginInfo.followingList.includes(prop)) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <Container
       sx={{
@@ -63,6 +71,7 @@ const ProfilePage = () => {
           email={email}
           nickname={nickname}
           introduce={introduce}
+          isFollow={isFollowHandler(email)}
         />
         <ProfileFollow
           follower={follower}
