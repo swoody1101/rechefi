@@ -12,9 +12,7 @@ const AiListenRecorder = () => {
   );
   const dispatch = useDispatch();
   const [recorder, setRecorder] = useState(undefined);
-  //   const [isRecording, setIsRecording] = useState(false);
   let isRecording = false;
-  //   const [blob, setBlob] = useState(null);
   let exblob = null;
   const [testWav, setTestWav] = useState(undefined);
 
@@ -22,7 +20,6 @@ const AiListenRecorder = () => {
     if (audioContext) {
       setRecorder(
         new Recorder(audioContext, {
-          //   onAnalysed: (data) => console.log(data),
         })
       );
     }
@@ -38,7 +35,6 @@ const AiListenRecorder = () => {
 
   function startRecording() {
     if (recorder) {
-      //   recorder.start().then(() => setIsRecording(true));
       recorder.start().then(() => (isRecording = true));
     } else {
     }
@@ -55,13 +51,6 @@ const AiListenRecorder = () => {
         console.log(sound);
         dispatch(requestAiThunk(sound));
       });
-      //   recorder &&
-      //     recorder.exportWAV((exblob) => {
-      //       console.log(exblob);
-      //       const url = URL.createObjectURL(exblob);
-      //       const filename = new Date().toISOString();
-      //       console.log(url);
-      //     }, "audio/wav");
     }
   }
 
