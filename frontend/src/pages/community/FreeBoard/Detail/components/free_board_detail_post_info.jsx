@@ -9,6 +9,7 @@ function FreeBoardDetailPostInfo({
   userNickname,
   postDate,
   postViews,
+  style,
 }) {
   return (
     <Box
@@ -16,6 +17,7 @@ function FreeBoardDetailPostInfo({
         display: "flex",
         flexWrap: "wrap",
         alignItems: "center",
+        ...style,
       }}
     >
       <FreeBoardDetailUserAvartar

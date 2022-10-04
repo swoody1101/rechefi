@@ -5,10 +5,11 @@ import { Link, useLocation } from "react-router-dom";
 function FreeBoardPagination({ totalPages, urlLink }) {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
-  const page = parseInt(query.get("page") || "1", totalPages);
+  const page = parseInt(query.get("page"), totalPages);
+
   return (
     <Pagination
-      page={page}
+      page={page || 1}
       count={totalPages}
       siblingCount={1}
       sx={{
