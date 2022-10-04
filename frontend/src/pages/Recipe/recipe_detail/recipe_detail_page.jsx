@@ -2,17 +2,8 @@ import { useEffect, useState } from "react";
 import {
   RecipeDetailAIButton,
   RecipeDetailAIButtonWrapper,
-  RecipeDetailAllContentWrapper,
-  RecipeDetailContentWrapper,
-  RecipeDetailIngredinetsContentDiv,
-  RecipeDetailLikeBorderDiv,
-  RecipeDetailLikeCount,
-  RecipeDetailLikeWrppaerDiv,
-  RecipeDetailTitleWrapperDiv,
-  RecipteDetailWrapperDiv,
 } from "../styles/recipe_detail_styles";
-import RecipeDetailContent from "./content";
-import RecipeDetailIngredients from "./ingredients";
+import RecipeDetailContent from "./components/recipe_detail_content";
 import RecipedetailTitleArea from "./components/recipe_detail_title";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import SpatialTrackingIcon from "@mui/icons-material/SpatialTracking";
@@ -30,8 +21,10 @@ import { Backdrop } from "../../../common/styles/sidebar_styles";
 import { aiReadingFormat } from "../../../store/module/AiReducer";
 import { useDispatch } from "react-redux";
 import ReponsiveContainer from "../../../common/components/responsive_container";
-import { Box } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import CommentContainer from "../../community/FreeBoard/Detail/components/free_board_detail_comments_container";
+import { Palette } from "../../../common/styles/palette";
+import RecipeDetailIngredient from "./components/recipe_detail_ingredient";
 
 const RecipeDetail = () => {
   const dispatch = useDispatch();
@@ -111,32 +104,29 @@ const RecipeDetail = () => {
         </RecipeDetailAIButton>
       </RecipeDetailAIButtonWrapper>
 
-      <RecipeDetailIngredinetsContentDiv>
-        <RecipeDetailIngredients ingredients={data.data.ingredients} />
-      </RecipeDetailIngredinetsContentDiv>
-      <RecipeDetailIngredinetsContentDiv>
-        <RecipeDetailContentWrapper>
-          <RecipeDetailContent content={data.data.recipe.content} />
-        </RecipeDetailContentWrapper>
-      </RecipeDetailIngredinetsContentDiv>
-      <RecipeDetailLikeWrppaerDiv onClick={likeHandler}>
-        <div>추천하기</div>
-        <RecipeDetailLikeBorderDiv>
-          {like ? (
-            <div>
-              <ThumbUpIcon />
-            </div>
-          ) : (
-            <div>
-              <ThumbUpOffAltIcon />
-            </div>
-          )}
-          <RecipeDetailLikeCount>
-            {data.data.like_users.length}
-          </RecipeDetailLikeCount>
-        </RecipeDetailLikeBorderDiv>
-      </RecipeDetailLikeWrppaerDiv>
+      {/* ingredients area */}
+      <RecipeDetailIngredient ingredients={data.data.ingredients} />
 
+      {/* contents */}
+      <RecipeDetailContent content={data.data.recipe.content} />
+
+      <IconButton
+        onClick={likeHandler}
+        sx={{
+          mt: 3,
+          mb: 1,
+          display: "flex",
+          alignItems: "center",
+          border: 1,
+        }}
+      >
+        {like ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
+        <Typography fontSize={"1.1rem"} fontWeight={"bold"} sx={{ ml: 1.8 }}>
+          {data.data.like_users.length}
+        </Typography>
+      </IconButton>
+
+      {/* comment area */}
       <CommentContainer>
         <Comments
           uri={"/recipe/comment/"}
