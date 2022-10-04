@@ -18,11 +18,11 @@ import ProfileFollowerList from "./pages/Account/Mypage/follow/profile_follower_
 import ProfileFollowingList from "./pages/Account/Mypage/follow/profile_following_list";
 import ProfileModifyPage from "./pages/Account/Mypage/modify/profile_modify_page";
 
-import NotFound from "./pages/NotFound/not_found_page";
+import NotFound from "./pages/Main/NotFound/not_found_page";
 
 import { QueryClientProvider, QueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getToken } from "./utils/JWT-token";
 import { loadMyProfileThunk, logout } from "./store/module/accountReducer";
 import { useEffect } from "react";
@@ -35,17 +35,20 @@ const queryClient = new QueryClient();
 
 function App() {
   const dispatch = useDispatch();
+  const authState = useSelector((store) => store.account.auth);
   useEffect(() => {
-    if (getToken()) {
-      dispatch(loadMyProfileThunk())
-        .unwrap()
-        .then((res) => {
-          if (res.status === 401) {
-            dispatch(logout());
-          }
-        });
+    if (!authState) {
+      if (getToken()) {
+        dispatch(loadMyProfileThunk())
+          .unwrap()
+          .then((res) => {
+            if (res.status === 401) {
+              dispatch(logout());
+            }
+          });
+      }
     }
-  }, []);
+  }, [authState]);
 
   return (
     <div className="App">

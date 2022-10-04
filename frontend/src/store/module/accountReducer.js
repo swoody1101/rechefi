@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import http from "../../utils/http-commons";
 import { deleteToken, getToken, saveToken } from "../../utils/JWT-token";
 
@@ -94,7 +93,7 @@ export const loadMyProfileThunk = createAsyncThunk(
   async () => {
     try {
       const response = await http.get("/members");
-      return response.data.data;
+      return response.data;
     } catch (error) {
       return error.response;
     }
@@ -217,16 +216,17 @@ export const authSlice = createSlice({
       state.error = null;
     },
     [loadMyProfileThunk.fulfilled]: (state, { payload }) => {
-      if (payload.status === 200) {
+      if (payload.message === "success") {
         state.loading = false;
         state.auth = true;
 
-        state.email = payload.email;
-        state.nickname = payload.nickname;
-        state.imgUrl = payload.img_url;
-        state.introduce = payload.about_me;
-        state.follower = payload.follower;
-        state.following = payload.following;
+        state.id = payload.data.id;
+        state.email = payload.data.email;
+        state.nickname = payload.data.nickname;
+        state.imgUrl = payload.data.img_url;
+        state.introduce = payload.data.about_me;
+        state.follower = payload.data.follower;
+        state.following = payload.data.following;
       }
     },
     [loadFollowingListThunk.fulfilled]: (state, { payload }) => {

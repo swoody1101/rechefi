@@ -10,7 +10,6 @@ import SidebarContent from "./content/sidebar_content.jsx";
 import SideBarFooter from "./sidebar_footer";
 import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SideBar = ({ anchor, sidebarClose }) => {
@@ -24,10 +23,6 @@ const SideBar = ({ anchor, sidebarClose }) => {
   const [sm, m, xl] = useWidthQuery();
   const sidebarWidth = xl ? "28%" : m ? "36%" : sm ? "72%" : "72%";
   const icon_size = xl ? "large" : m ? "medium" : "small";
-
-  useEffect(() => {
-    dispatch(loadMyProfileThunk());
-  });
 
   return (
     <SwipeableDrawer
