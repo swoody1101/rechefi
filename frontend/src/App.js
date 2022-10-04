@@ -14,8 +14,7 @@ import SignUp from "./pages/Account/Signup/signup_page";
 import Login from "./pages/Account/Login/login_page";
 import NewPassword from "./pages/Account/Login/new_password_page";
 import ProfilePage from "./pages/Account/Mypage/profile_page";
-import ProfileFollowerList from "./pages/Account/Mypage/follow/profile_follower_list";
-import ProfileFollowingList from "./pages/Account/Mypage/follow/profile_following_list";
+import ProfileFollowPage from "./pages/Account/Mypage/follow/profile_follow_page";
 import ProfileModifyPage from "./pages/Account/Mypage/modify/profile_modify_page";
 
 import NotFound from "./pages/NotFound/not_found_page";
@@ -78,8 +77,7 @@ function App() {
               <Route path="/new-password" element={<NewPassword />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile-modify" element={<ProfileModifyPage />} />
-              <Route path="/follower" element={<ProfileFollowerList />} />
-              <Route path="/following" element={<ProfileFollowingList />} />
+              <Route path="/follow" element={<ProfileFollowPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
