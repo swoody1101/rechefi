@@ -15,7 +15,7 @@ import WriteTextArea from "./write_text";
 import { useNavigate } from "react-router-dom";
 import useAddMyCook from "../../../../../hooks/my_cook/useAddMyCook";
 import { Confirm, Success } from "../../../../../common/components/sweatAlert";
-import WriteButtonBar from "./write_buttom_bar";
+import WriteButtonBar from "./components/my_cook_write_bottom_bar";
 import ReponsiveContainer from "../../../../../common/components/responsive_container";
 import TitleWithDivider from "../../../../../common/components/title_with_divider";
 import {
