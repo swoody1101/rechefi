@@ -75,6 +75,9 @@ const ProfileFollowItem = (props) => {
               sx={{
                 color: "white",
                 backgroundColor: "#E38B29",
+                "&:focus, &:hover": {
+                  backgroundColor: "#E38B29",
+                },
               }}
               onClick={() => {
                 followHandler();
@@ -89,6 +92,9 @@ const ProfileFollowItem = (props) => {
               sx={{
                 color: "white",
                 backgroundColor: "#E38B29",
+                "&:focus, &:hover": {
+                  backgroundColor: "#E38B29",
+                },
               }}
               onClick={() => {
                 followHandler();
