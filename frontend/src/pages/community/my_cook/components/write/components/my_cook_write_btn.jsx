@@ -1,12 +1,12 @@
 import { Button, Typography } from "@mui/material";
 import { Palette } from "../../../../../../common/styles/palette";
 
-function MyCookWriteBtn({ btnText, icon }) {
+function MyCookWriteBtn({ btnText, icon, onClick }) {
   return (
     <Button
       variant="outlined"
       sx={{
-        p: 1,
+        p: 0.8,
         borderColor: Palette.black2,
         color: Palette.black2,
         "&:focus, &:hover": {
@@ -14,10 +14,14 @@ function MyCookWriteBtn({ btnText, icon }) {
           backgroundColor: Palette.gray3,
           borderColor: Palette.gray3,
         },
+        "&.MuiButton-root": {
+          px: 0,
+        },
       }}
+      onClick={onClick}
     >
       {icon}
-      <Typography fontWeight={"bold"} sx={{ ml: 1 }}>
+      <Typography fontSize={"0.8rem"} fontWeight={"bold"}>
         {btnText}
       </Typography>
     </Button>
