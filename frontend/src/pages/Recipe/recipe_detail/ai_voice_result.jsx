@@ -1,17 +1,24 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   aiReadingPushPreButton,
   aiReadingNowPlaying,
   aiReadingPushNextButton,
   aiListenEndAction,
+  aiReadEndAction,
 } from "../../../store/module/AiReducer";
 
 const AiVoiceResult = ({ data, synth, toggleAI, recognition }) => {
   const [aiResult] = useState(new Audio("/sound/yes.wav"));
   const [aiWrong] = useState(new Audio("/sound/DDing.wav"));
   const [playing, setPlaying] = useState(true);
+  const currentCur = useSelector(
+    (store) => store.aiReducer.aiReading.currentCur
+  );
+  const contentsLength = useSelector(
+    (store) => store.aiReducer.aiReading.contents.length
+  );
   const dispatch = useDispatch();
   useEffect(() => {
     if (playing) {
@@ -40,6 +47,9 @@ const AiVoiceResult = ({ data, synth, toggleAI, recognition }) => {
       } else if (data.data === `"이전단계"`) {
         aiResult.pause();
         dispatch(aiReadingPushPreButton());
+        if (currentCur >= contentsLength) {
+          dispatch(aiReadEndAction());
+        }
         synth.cancel();
         recognition.start();
         dispatch(aiListenEndAction());
