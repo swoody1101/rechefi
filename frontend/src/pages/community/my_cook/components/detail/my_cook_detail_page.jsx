@@ -70,7 +70,6 @@ export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
         sx={{
           ...style,
         }}
-        scrollbarWidth="thin"
       >
         <CardHeader
           avatar={
