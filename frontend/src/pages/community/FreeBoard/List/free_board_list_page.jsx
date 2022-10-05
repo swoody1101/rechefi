@@ -11,6 +11,7 @@ import { useFetch } from "../../../../hooks/useFetch";
 import LoadingSpinner from "../../../Recipe/List/components/recipe_list_loading_spinner";
 import ErrorMessagePaper from "../../../../common/components/error_message_paper";
 import { getToken } from "../../../../utils/JWT-token";
+import { useEffect } from "react";
 
 function FreeBoardPage() {
   const navigate = useNavigate();
@@ -22,11 +23,15 @@ function FreeBoardPage() {
 
   // handle server data
   const QUERY_KEY = "FREEBOARD";
-  const { isLoading, isError, data } = useFetch({
+  const { isLoading, isError, data, refetch } = useFetch({
     queryKey: QUERY_KEY,
     param: page_num,
     uri: "/community/free-board",
   });
+
+  useEffect(() => {
+    refetch();
+  }, [page_num, refetch]);
 
   return (
     <Container
@@ -69,7 +74,7 @@ function FreeBoardPage() {
         )}
       </FreeBoardListItemContainer>
       <FreeBoardPagination
-        totalPages={data ? data.totalPages : 1}
+        totalPages={data ? data.total_pages : 1}
         urlLink="/community/free-board"
       />
 
