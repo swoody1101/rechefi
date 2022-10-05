@@ -10,7 +10,6 @@ import {
 } from "../../styles/list/list_style";
 import { useInView } from "react-intersection-observer";
 import { MyCookDetail } from "../detail/my_cook_detail_page";
-import { Backdrop } from "../../../../../common/styles/sidebar_styles";
 import useFetchList from "../../../../../hooks/useFetch";
 import RecipeListLoadingSpinner from "../../../../Recipe/List/components/recipe_list_loading_spinner";
 
@@ -30,28 +29,31 @@ const MyCookList = () => {
     }
   }, [inView]);
 
+  const modalOpen = () => {
+    setOpenDetail(true);
+  };
   const modalClose = () => {
     setOpenDetail(false);
   };
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <MyCookDetailListLoadingWrapper>
         <RecipeListLoadingSpinner loading={isLoading} />
       </MyCookDetailListLoadingWrapper>
     );
+  }
+
   return (
     <MyCookGridWrapper>
       {openDetail && (
-        <div>
-          <MyCookDetail postId={postId} modalClose={modalClose} />
-          <Backdrop
-            onClick={() => {
-              setOpenDetail(false);
-            }}
-          />
-        </div>
+        <MyCookDetail
+          postId={postId}
+          openDetail={openDetail}
+          modalClose={modalClose}
+        />
       )}
+
       <MyCookGridUlWrapperDiv>
         {data.pages.map((page, index) => (
           <MyCookGridUl key={index}>
@@ -61,9 +63,7 @@ const MyCookList = () => {
                   src={page.result.data.posts[e].img_url}
                   alt="test"
                   onClick={() => {
-                    setOpenDetail((prev) => {
-                      return !prev;
-                    });
+                    modalOpen();
                     setPostId(page.result.data.posts[e].id);
                   }}
                 ></MyCookGridImage>

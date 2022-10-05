@@ -9,7 +9,7 @@ function RecipeList({ recipes, onRecipeItemClicked }) {
         <RecipeListItem
           key={recipe.id}
           recipe={recipe}
-          onClick={() => onRecipeItemClicked(recipe.id, recipe.title)}
+          onClick={() => onRecipeItemClicked(recipe)}
         />
       ))}
     </Box>

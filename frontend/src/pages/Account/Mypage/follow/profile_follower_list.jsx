@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router";
-import { loadFollowerListThunk } from "../../../../store/module/accountReducer";
+import {
+  loadFollowerListThunk,
+  loadMyProfileThunk,
+} from "../../../../store/module/accountReducer";
 import ProfileFollowItem from "./profile_follow_item";
 
-const ProfileFollowerList = () => {
+const ProfileFollowerList = (props) => {
   const loginInfo = useSelector((store) => store.account);
-  const { state } = useLocation();
   const dispatch = useDispatch();
   const [followerList, setfollowerList] = useState([]);
 
   useEffect(() => {
-    dispatch(loadFollowerListThunk(loginInfo.email));
-    dispatch(loadFollowerListThunk(state))
+    dispatch(loadMyProfileThunk);
+    dispatch(loadFollowerListThunk(props.email))
       .unwrap()
       .then((res) => {
         setfollowerList([...res.follower]);
@@ -20,7 +21,11 @@ const ProfileFollowerList = () => {
   }, []);
 
   const isFollowHandler = (prop) => {
-    if (loginInfo.followingList.includes(prop)) {
+    const following = loginInfo.followingList.filter(
+      (following) => following.nickname === prop.nickname
+    );
+
+    if (following.length) {
       return true;
     }
     return false;
@@ -28,8 +33,10 @@ const ProfileFollowerList = () => {
 
   return followerList.map((follower) => (
     <ProfileFollowItem
-      key={follower}
-      email={follower}
+      key={follower.email}
+      email={follower.email}
+      nickname={follower.nickname}
+      imgUrl={follower.img_url}
       isFollow={isFollowHandler(follower)}
     />
   ));

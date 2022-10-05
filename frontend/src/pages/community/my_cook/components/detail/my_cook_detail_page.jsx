@@ -1,34 +1,26 @@
-import { useEffect } from "react";
 import {
-  MyCookDetailContent,
   MyCookDetailContentWithCommentWrapper,
-  MyCookDetailDeleteButtonWrapper,
-  MyCookDetailImage,
-  MyCookDetailImageWrapper,
   MyCookDetailListLoadingWrapper,
-  MyCookDetailWrapper,
 } from "../../styles/list/list_style";
-import { createPortal } from "react-dom";
 import { useFetchDetail } from "../../../../../hooks/useFetch";
 import Comments from "../../../../../common/components/comments/comments";
 import RecipeListLoadingSpinner from "../../../../Recipe/List/components/recipe_list_loading_spinner";
 import { useSelector } from "react-redux";
 import useDeleteMyCook from "../../../../../hooks/my_cook/useDeleteMyCook";
+import {
+  Avatar,
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  IconButton,
+  Modal,
+  Typography,
+} from "@mui/material";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 
-export const MyCookDetail = ({ postId, modalClose }) => {
+export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
   const userInfo = useSelector((store) => store.account);
-  useEffect(() => {
-    document.body.style.cssText = `
-      position: fixed; 
-      top: -${window.scrollY}px;
-      overflow-y: scroll;
-      width: 100%;`;
-    return () => {
-      const scrollY = document.body.style.top;
-      document.body.style.cssText = "";
-      window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
-    };
-  }, []);
 
   const { isLoading, isError, data, error } = useFetchDetail({
     queryKey: "myCookDetail",
@@ -48,41 +40,89 @@ export const MyCookDetail = ({ postId, modalClose }) => {
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
-  return createPortal(
-    <MyCookDetailWrapper>
-      <MyCookDetailImageWrapper>
-        <MyCookDetailImage
-          src={data.data.img_url}
-          alt="이미지"
-        ></MyCookDetailImage>
-        <div>작성자:{data.data.user.nickname}</div>
-        <MyCookDetailContent>{data.data.content}</MyCookDetailContent>
-        {userInfo.auth && (
-          <MyCookDetailDeleteButtonWrapper
-            onClick={() => {
-              mutate(
-                { uri: "/community/gallery/", article_id: postId },
-                {
-                  onSuccess: () => {
-                    modalClose();
-                  },
-                }
-              );
-            }}
-          >
-            삭제
-          </MyCookDetailDeleteButtonWrapper>
-        )}
-      </MyCookDetailImageWrapper>
-      <MyCookDetailContentWithCommentWrapper>
-        <Comments
-          aiButton={false}
-          postId={postId}
-          uri={"community/gallery/comment/"}
-          queryKey="myCookComments"
+
+  const style = {
+    maxWidth: "85%",
+    maxHeight: "85%",
+    overflowY: "scroll",
+    msOverflowStyle: "none",
+    bgcolor: "background.paper",
+    border: "1px solid #000",
+    boxShadow: 24,
+    pt: 1,
+    px: 1,
+    pb: 1,
+  };
+
+  return (
+    <Modal
+      open={openDetail}
+      onClose={modalClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Card
+        sx={{
+          ...style,
+        }}
+      >
+        <CardHeader
+          avatar={
+            <Avatar
+              src={data.data.user.img_url}
+              sx={{
+                width: 60,
+                height: 60,
+                border: "2px solid #E38B29",
+              }}
+            />
+          }
+          title={data.data.user.nickname}
+          subheader={data.data.created_at}
+          action={
+            <IconButton aria-label="settings">
+              {userInfo.auth && (
+                <DeleteForeverOutlinedIcon
+                  onClick={() => {
+                    mutate(
+                      { uri: "/community/gallery/", article_id: postId },
+                      {
+                        onSuccess: () => {
+                          modalClose();
+                        },
+                      }
+                    );
+                  }}
+                />
+              )}
+            </IconButton>
+          }
         />
-      </MyCookDetailContentWithCommentWrapper>
-    </MyCookDetailWrapper>,
-    document.getElementById("myCookDetail")
+        <CardMedia
+          component="img"
+          height="50%"
+          image={data.data.img_url}
+          alt="이미지"
+        />
+        <CardContent>
+          <Typography variant="body2" color="text.secondary">
+            {data.data.content}
+          </Typography>
+        </CardContent>
+        <MyCookDetailContentWithCommentWrapper>
+          <Comments
+            aiButton={false}
+            postId={postId}
+            uri={"community/gallery/comment/"}
+            queryKey="myCookComments"
+          />
+        </MyCookDetailContentWithCommentWrapper>
+      </Card>
+    </Modal>
   );
 };

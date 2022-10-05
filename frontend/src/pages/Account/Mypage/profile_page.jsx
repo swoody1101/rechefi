@@ -4,7 +4,7 @@ import { useLocation } from "react-router";
 import { useNavigate } from "react-router-dom";
 import { Box, Container } from "@mui/material";
 import ProfileIntroduce from "./introduce/profile_introduce";
-import ProfileFollow from "./follow/profile_follow";
+import ProfileFollowMenu from "./follow/profile_follow_menu";
 import ProfileGallery from "./gallery/profile_gallery";
 import {
   loadMyProfileThunk,
@@ -90,7 +90,7 @@ const ProfilePage = () => {
           introduce={introduce}
           isFollow={isFollowHandler(email)}
         />
-        <ProfileFollow
+        <ProfileFollowMenu
           follower={follower}
           following={following}
           email={email}
