@@ -1,18 +1,10 @@
 import { Box, Divider, Typography } from "@mui/material";
-import { Palette } from "../../../../common/styles/palette";
+import { Palette } from "../../../../../common/styles/palette";
 import RecipeDetailIngredientItem from "./recipe_detail_ingredient_item";
 
 function RecipeDetailIngredient({ ingredients }) {
   return (
-    <Box
-      sx={{
-        width: "100%",
-        background: Palette.mainColor1,
-        borderRadius: 2,
-        p: 2,
-        my: 2,
-      }}
-    >
+    <>
       <Typography
         fontSize={"1rem"}
         fontWeight="bold"
@@ -22,7 +14,7 @@ function RecipeDetailIngredient({ ingredients }) {
       </Typography>
       <Divider />
 
-      <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", mt: 2 }}>
         {ingredients.map((ingred, i) => (
           <RecipeDetailIngredientItem
             key={i}
@@ -31,7 +23,7 @@ function RecipeDetailIngredient({ ingredients }) {
           />
         ))}
       </Box>
-    </Box>
+    </>
   );
 }
 

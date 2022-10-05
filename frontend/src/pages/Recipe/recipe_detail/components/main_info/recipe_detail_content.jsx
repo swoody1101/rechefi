@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
-import { Palette } from "../../../../common/styles/palette";
-import { RecipeDetailContentImage } from "../../styles/recipe_detail_styles";
+import { Palette } from "../../../../../common/styles/palette";
+import { RecipeDetailContentImage } from "../../../styles/recipe_detail_styles";
 
 function RecipeDetailContent({ content }) {
   return (
