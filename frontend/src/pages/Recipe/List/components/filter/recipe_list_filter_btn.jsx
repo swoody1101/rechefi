@@ -16,7 +16,6 @@ function RecipeFilterBtn({ Content, onClick }) {
           backgroundColor: Palette.mainColor5,
         },
       }}
-      fullWidth
     >
       {Content}
     </Button>
