@@ -9,7 +9,12 @@ import React, { useState } from "react";
 import RecipeFilterBtn from "../../../pages/Recipe/List/components/filter/recipe_list_filter_btn";
 import RecipeListFilter from "../../../pages/Recipe/List/components/filter/recipe_list_filter_container";
 
-function RecipeSearchDialog({ dialogOpen, setDialogOpen, handleSearch }) {
+function RecipeSearchDialog({
+  dialogOpen,
+  setDialogOpen,
+  handleSearch,
+  children,
+}) {
   const [keyword, setKeyword] = useState("");
 
   const [filter, setFilter] = useState({
@@ -25,7 +30,7 @@ function RecipeSearchDialog({ dialogOpen, setDialogOpen, handleSearch }) {
   // enter event handling
   const onKeyUp = (e) => {
     if (e.keyCode === 13) {
-      search(keyword);
+      search(keyword, ...filter);
     }
   };
 
@@ -52,20 +57,20 @@ function RecipeSearchDialog({ dialogOpen, setDialogOpen, handleSearch }) {
     >
       <DialogTitle>레시피 검색</DialogTitle>
       <DialogContent>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <OutlinedInput
             placeholder="검색 내용"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             size="small"
-            sx={{ flexGrow: 1, mr: 1 }}
+            sx={{ flexGrow: 1, width: "100%" }}
             onKeyUp={onKeyUp}
-          ></OutlinedInput>
+          />
+          {/* recipe filter */}
+          <RecipeListFilter onFilterApplied={setFilter} />
+          <RecipeFilterBtn Content={"검색"} onClick={search} />
+          {children}
         </Box>
-        {/* recipe filter */}
-        <RecipeListFilter onFilterApplied={setFilter} />
-
-        <RecipeFilterBtn Content={"검색"} onClick={search} />
       </DialogContent>
     </Dialog>
   );
