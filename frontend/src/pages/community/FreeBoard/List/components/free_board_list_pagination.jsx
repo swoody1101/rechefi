@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 function FreeBoardPagination({ totalPages, urlLink }) {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
-  const page = parseInt(query.get("page"), totalPages);
+  const page = parseInt(query.get("page"));
 
   return (
     <Pagination
@@ -13,7 +13,7 @@ function FreeBoardPagination({ totalPages, urlLink }) {
       count={totalPages}
       siblingCount={1}
       sx={{
-        mt: 1.5,
+        my: 1.5,
         width: "100%",
         display: "flex",
         justifyContent: "center",
@@ -22,7 +22,7 @@ function FreeBoardPagination({ totalPages, urlLink }) {
       renderItem={(item) => (
         <PaginationItem
           component={Link}
-          to={`${urlLink}${item.page === 1 ? "" : `?page=${item.page}`}`}
+          to={`${urlLink}?page=${item.page}`}
           {...item}
         />
       )}

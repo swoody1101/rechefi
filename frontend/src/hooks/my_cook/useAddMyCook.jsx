@@ -8,7 +8,7 @@ export default function useAddMyCook(uniqueKey) {
       const { data } = await http.post(uri, {
         title: "타이틀",
         content: sendData.content,
-        img_url: sendData.imageUploadUrl,
+        img_url: sendData.image,
         category: 0,
         recipe_id: sendData.recipe_id === undefined ? 0 : sendData.recipe_id,
       });
