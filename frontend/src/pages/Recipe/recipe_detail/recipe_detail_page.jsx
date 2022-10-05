@@ -18,13 +18,15 @@ import { aiReadingFormat } from "../../../store/module/AiReducer";
 import { useDispatch } from "react-redux";
 import ReponsiveContainer from "../../../common/components/responsive_container";
 import CommentContainer from "../../community/FreeBoard/Detail/components/free_board_detail_comments_container";
-import RecipeDetailIngredient from "./components/recipe_detail_ingredient";
+import RecipeDetailIngredient from "./components/info/recipe_detail_ingredient";
 import RecipeDetailLikeBtn from "./components/recipe_detail_like_btn";
 import AlertSnackbar from "../../../common/components/alert_snackbar";
 import { Box, IconButton } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { Palette } from "../../../common/styles/palette";
 import RecipeDetailPopover from "./components/recipe_detail_popover";
+import RecipeListFilterTagChip from "../List/components/filter/tag/recipe_list_filter_tag_item";
+import RecipeDetailInfoContainer from "./components/info/recipe_detail info_container";
 
 const RecipeDetail = () => {
   const dispatch = useDispatch();
@@ -109,7 +111,7 @@ const RecipeDetail = () => {
       <Box
         sx={{
           display: "flex",
-          my: 2,
+          my: 1,
           justifyContent: "flex-end",
           width: "100%",
         }}
@@ -142,7 +144,10 @@ const RecipeDetail = () => {
       </Box>
 
       {/* ingredients area */}
-      <RecipeDetailIngredient ingredients={data.data.ingredients} />
+      <RecipeDetailInfoContainer
+        tags={data.data.tags}
+        ingredients={data.data.ingredients}
+      />
 
       {/* contents */}
       <RecipeDetailContent content={data.data.recipe.content} />
