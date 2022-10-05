@@ -1,12 +1,12 @@
 import { Box, Typography } from "@mui/material";
-import { Palette } from "../../../../common/styles/palette";
+import { Palette } from "../../../../../common/styles/palette";
 
 function RecipeDetailIngredientItem({ name, amount }) {
   return (
     <Box
       sx={{
         p: 1.2,
-        m: 1,
+        m: 0.5,
         textAlign: "center",
         background: Palette.mainColor2,
         borderRadius: 4,
