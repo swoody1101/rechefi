@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { WriteAreaWrapper } from "../../styles/write/write_page_styles";
-import WriteTextArea from "./write_text";
+import { convertToHTML } from "draft-convert";
 import { useNavigate } from "react-router-dom";
 import useAddMyCook from "../../../../../hooks/my_cook/useAddMyCook";
 import { Confirm } from "../../../../../common/components/sweatAlert";
@@ -9,6 +8,9 @@ import ReponsiveContainer from "../../../../../common/components/responsive_cont
 import MyCookWriteImageUploader from "./components/my_cook_write_image_uploader";
 import MyCookWriteReferenceRecipe from "./components/my_cook_write_reference_recipe";
 import MyCookWriteSearchDialog from "./components/my_cook_write_search_dialog";
+import FreeBoardWriteEditorContainer from "../../../FreeBoard/Write/components/editor/free_board_write_editor_container";
+import EditorWithImage from "../../../FreeBoard/Write/components/editor/free_board_write_editor_with_image";
+import { EditorState } from "draft-js";
 
 const MyCookWriter = () => {
   const navigate = useNavigate();
@@ -26,29 +28,25 @@ const MyCookWriter = () => {
     setIsShowSearchDialog(false);
   };
 
-  const [content, setContent] = useState("");
+  // text content
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
+  // post request to upload post
   const { mutate } = useAddMyCook("myCookPosts");
-
-  const textHandler = (keyword) => {
-    setContent(keyword);
-  };
-
-  const validation = () => {
-    if (image.length > 0 && content.length > 0) {
-      return false;
-    }
-    return true;
-  };
 
   const nextPage = () => {
     navigate("/community/my-cook");
   };
+
   const onConfirm = () => {
     mutate(
       {
         uri: "/community/gallery",
-        sendData: { content, image, recipe_id: referenceRecipe.id },
+        sendData: {
+          content: convertToHTML(editorState.getCurrentContent()),
+          image: image,
+          recipe_id: referenceRecipe.id,
+        },
       },
       {
         onSuccess: () => {
@@ -56,6 +54,13 @@ const MyCookWriter = () => {
         },
       }
     );
+  };
+
+  const validation = () => {
+    if (image.length > 0) {
+      return false;
+    }
+    return true;
   };
 
   const onCancel = () => {
@@ -86,9 +91,15 @@ const MyCookWriter = () => {
         onRecipeItemClicked={onRecipeItemClicked}
       />
 
-      <WriteAreaWrapper>
-        <WriteTextArea textHandler={textHandler} />
-      </WriteAreaWrapper>
+      {/* content */}
+      <FreeBoardWriteEditorContainer style={{ m: 0, mt: 2 }}>
+        <EditorWithImage
+          editorState={editorState}
+          setEditorState={setEditorState}
+        />
+      </FreeBoardWriteEditorContainer>
+
+      {/* confirm and cancle */}
       <WriteButtonBar
         confirmDisabled={validation()}
         onCancel={onCancel}

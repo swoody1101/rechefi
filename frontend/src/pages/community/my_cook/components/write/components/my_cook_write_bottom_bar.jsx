@@ -9,7 +9,7 @@ const WriteButtonBar = ({ onConfirm, onCancel, confirmDisabled }) => {
         width: "100%",
         display: "flex",
         justifyContent: "space-between",
-        mb: 2,
+        my: 2,
       }}
     >
       <RecipeWriteBottombarButton
