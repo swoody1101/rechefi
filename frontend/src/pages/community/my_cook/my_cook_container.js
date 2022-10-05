@@ -3,13 +3,14 @@ import RecipeListFab from "../../Recipe/List/components/recipe_list_fab";
 import MyCookList from "./components/list/list";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import ReponsiveContainer from "../../../common/components/responsive_container";
 
 const MyCook = () => {
   const navigate = useNavigate();
   const auth = useSelector((store) => store.account.auth);
 
   return (
-    <div>
+    <ReponsiveContainer>
       {auth && (
         <RecipeListFab
           onClick={() => {
@@ -18,7 +19,7 @@ const MyCook = () => {
         ></RecipeListFab>
       )}
       <MyCookList />
-    </div>
+    </ReponsiveContainer>
   );
 };
 

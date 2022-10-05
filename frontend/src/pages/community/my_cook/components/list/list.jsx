@@ -46,11 +46,14 @@ const MyCookList = () => {
 
   return (
     <MyCookGridWrapper>
-      <MyCookDetail
-        postId={postId}
-        openDetail={openDetail}
-        modalClose={modalClose}
-      />
+      {openDetail && (
+        <MyCookDetail
+          postId={postId}
+          openDetail={openDetail}
+          modalClose={modalClose}
+        />
+      )}
+
       <MyCookGridUlWrapperDiv>
         {data.pages.map((page, index) => (
           <MyCookGridUl key={index}>
