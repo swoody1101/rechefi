@@ -16,7 +16,6 @@ const ProfileGalleryMyCookList = (props) => {
 
   window.addEventListener("scroll", () => {
     const val = window.innerHeight + window.scrollY;
-
     if (val >= document.body.offsetHeight) {
       if (page < totalPage) {
         setPage(page + 1);
@@ -50,6 +49,9 @@ const ProfileGalleryMyCookList = (props) => {
     }
   }, [props.userId, page]);
 
+  const modalOpen = () => {
+    setOpenDetail(true);
+  };
   const modalClose = () => {
     setOpenDetail(false);
   };
@@ -58,7 +60,11 @@ const ProfileGalleryMyCookList = (props) => {
     <>
       {openDetail && (
         <div>
-          <MyCookDetail postId={postId} modalClose={modalClose} />
+          <MyCookDetail
+            postId={postId}
+            openDetail={openDetail}
+            modalClose={modalClose}
+          />
           <Backdrop
             onClick={() => {
               setOpenDetail(false);
@@ -72,9 +78,7 @@ const ProfileGalleryMyCookList = (props) => {
             <ImageListItem
               key={myCook.id}
               onClick={() => {
-                setOpenDetail((prev) => {
-                  return !prev;
-                });
+                modalOpen();
                 setPostId(myCook.id);
               }}
             >
