@@ -88,8 +88,8 @@ const MyCookWriter = () => {
     setContent(keyword);
   };
 
-  const onRecipeItemClicked = (id, title) => {
-    setReferenceRecipe({ id: id, title });
+  const onRecipeItemClicked = (recipe) => {
+    setReferenceRecipe(recipe);
   };
 
   const validation = () => {
