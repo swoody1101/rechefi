@@ -27,7 +27,6 @@ const VoiceRecogition = ({ recognition }) => {
   });
   useEffect(() => {
     recognition.start();
-    console.log("시작");
   }, []);
 };
 export default VoiceRecogition;
