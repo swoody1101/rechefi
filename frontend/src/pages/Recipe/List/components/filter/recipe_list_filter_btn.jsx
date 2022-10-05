@@ -12,6 +12,9 @@ function RecipeFilterBtn({ Content, onClick }) {
         mt: 2,
         background: Palette.mainColor5,
         fontWeight: "bold",
+        "&:focus, &:hover": {
+          backgroundColor: Palette.mainColor5,
+        },
       }}
       fullWidth
     >

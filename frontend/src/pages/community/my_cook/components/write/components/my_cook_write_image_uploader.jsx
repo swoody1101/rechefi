@@ -42,7 +42,7 @@ const MyCookWriteImageUploader = ({ imageFile, setImageFile }) => {
       />
 
       {/* show uploaded image */}
-      <Box sx={{ p: 1 }}>
+      <Box sx={{ p: imageFile !== "" ? 1 : 0 }}>
         {imageFile !== "" && imageFile.length > 0 && (
           <UploadImageImg src={imageFile} alt="test" />
         )}
