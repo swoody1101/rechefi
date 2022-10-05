@@ -31,12 +31,13 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { Palette } from "../../../../../common/styles/palette";
 import { useInView } from "react-intersection-observer";
 import MyCookWriteImageUploader from "./components/my_cook_write_image_uploader";
-import PostAddIcon from "@mui/icons-material/PostAdd";
 import RecipeSearchDialog from "../../../../../common/components/header/main_header_search";
 import RecipeListLoadingSpinner from "../../../../Recipe/List/components/recipe_list_loading_spinner";
 import RecipeList from "../../../../Recipe/List/components/recipe_list";
 import useFetchList from "../../../../../hooks/useFetch";
 import { QueryClient, useQueryClient } from "react-query";
+import RecipeListItem from "../../../../Recipe/List/components/recipe_list_item";
+import MyCookWriteReferenceRecipe from "./components/my_cook_write_reference_recipe";
 
 const MyCookWriter = () => {
   // get Recipe from server
@@ -64,7 +65,6 @@ const MyCookWriter = () => {
   const handleSearch = (filter) => {
     setQuery(makeRecipeListQuery(filter));
   };
-
   useEffect(() => {
     // apply search result
     refetch();
@@ -78,7 +78,12 @@ const MyCookWriter = () => {
     }
   }, [hasNextPage, inView, fetchNextPage]);
 
-  const [referenceRecipe, setReferenceRecipe] = useState({});
+  // handlie reference Recipe
+  const [referenceRecipe, setReferenceRecipe] = useState(null);
+  const onRecipeItemClicked = (recipe) => {
+    setReferenceRecipe(recipe);
+    setIsShowSearchDialog(false);
+  };
 
   const [content, setContent] = useState("");
 
@@ -86,10 +91,6 @@ const MyCookWriter = () => {
 
   const textHandler = (keyword) => {
     setContent(keyword);
-  };
-
-  const onRecipeItemClicked = (recipe) => {
-    setReferenceRecipe(recipe);
   };
 
   const validation = () => {
@@ -128,17 +129,13 @@ const MyCookWriter = () => {
     >
       {/* for image upload */}
       <MyCookWriteImageUploader imageFile={image} setImageFile={setImage} />
+
       {/* used recipe area */}
-      <TitleWithDivider
-        title={"사용된 레시피"}
-        textVariant="h6"
-        style={{ mt: 2 }}
-        icon={
-          <PostAddIcon sx={{ color: Palette.black3, fontSize: "1.9rem" }} />
-        }
+      <MyCookWriteReferenceRecipe
         onClick={() => {
           setIsShowSearchDialog(true);
         }}
+        referenceRecipe={referenceRecipe}
       />
 
       <RecipeSearchDialog
@@ -161,7 +158,6 @@ const MyCookWriter = () => {
             ))
           )}
         </Box>
-
         {/* for infinity scroll trigger */}
         <Container ref={ref}></Container>
       </RecipeSearchDialog>
