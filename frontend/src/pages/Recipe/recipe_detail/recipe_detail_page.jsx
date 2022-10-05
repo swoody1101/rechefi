@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import RecipeDetailContent from "./components/recipe_detail_content";
-import RecipedetailTitleArea from "./components/recipe_detail_title";
+import RecipeDetailContent from "./components/main_info/recipe_detail_content";
+import RecipedetailTitleArea from "./components/main_info/recipe_detail_title";
 
 import SpatialTrackingIcon from "@mui/icons-material/SpatialTracking";
 // import RecipeDeatilAIvoiceControll from "./AIvoice_controll";
 import Comments from "../../../common/components/comments/comments";
 import { useFetchDetail } from "../../../hooks/useFetch";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { useLike } from "../../../hooks/useLike";
@@ -18,18 +18,18 @@ import { aiReadingFormat } from "../../../store/module/AiReducer";
 import { useDispatch } from "react-redux";
 import ReponsiveContainer from "../../../common/components/responsive_container";
 import CommentContainer from "../../community/FreeBoard/Detail/components/free_board_detail_comments_container";
-import RecipeDetailIngredient from "./components/info/recipe_detail_ingredient";
 import RecipeDetailLikeBtn from "./components/recipe_detail_like_btn";
 import AlertSnackbar from "../../../common/components/alert_snackbar";
 import { Box, IconButton } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { Palette } from "../../../common/styles/palette";
 import RecipeDetailPopover from "./components/recipe_detail_popover";
-import RecipeListFilterTagChip from "../List/components/filter/tag/recipe_list_filter_tag_item";
-import RecipeDetailInfoContainer from "./components/info/recipe_detail info_container";
+import RecipeDetailInfoContainer from "./components/sub_info/recipe_detail info_container";
+import MyCookWriteBtn from "../../community/my_cook/components/write/components/my_cook_write_btn";
 
 const RecipeDetail = () => {
   const dispatch = useDispatch();
+  const navigator = useNavigate();
 
   // handling AI UI
   const [aiButton, setAiButton] = useState(false);
@@ -158,6 +158,16 @@ const RecipeDetail = () => {
         isLike={like}
         likes={data.data.like_users.length}
       />
+
+      {/* to list button */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+        <MyCookWriteBtn
+          onClick={() => {
+            navigator("/recipe");
+          }}
+          btnText={"목록"}
+        ></MyCookWriteBtn>
+      </Box>
 
       {/* comment area */}
       <CommentContainer>
