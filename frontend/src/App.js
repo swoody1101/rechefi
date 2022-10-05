@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainPage from "./pages/Main/main_page";
 import Layout from "./common/components/Main_layout";
 import MyCook from "./pages/community/my_cook/my_cook_container";
-import MyCookWriter from "./pages/community/my_cook/components/write/write";
+import MyCookWriter from "./pages/community/my_cook/components/write/my_cook_write_page";
 
 import RecipeList from "./pages/Recipe/List/recipe_list_page";
 import RecipeDetail from "./pages/Recipe/recipe_detail/recipe_detail_page";
