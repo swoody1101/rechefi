@@ -30,7 +30,7 @@ function RecipeSearchDialog({
   // enter event handling
   const onKeyUp = (e) => {
     if (e.keyCode === 13) {
-      search(keyword, ...filter);
+      search(keyword);
     }
   };
 

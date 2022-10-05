@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Backdrop } from "../../../../../common/styles/sidebar_styles";
 import {
   SelectReferenceRecipeDiv,
@@ -10,7 +10,6 @@ import {
   WriteButton,
   WriteWrapper,
 } from "../../styles/write/write_styles";
-import UploadImageArea from "./UploadImageArea";
 import RecipeModal from "./recipe_modal";
 import WriteTextArea from "./write_text";
 import { useNavigate } from "react-router-dom";
@@ -19,22 +18,69 @@ import { Confirm, Success } from "../../../../../common/components/sweatAlert";
 import WriteButtonBar from "./write_buttom_bar";
 import ReponsiveContainer from "../../../../../common/components/responsive_container";
 import TitleWithDivider from "../../../../../common/components/title_with_divider";
-import { Box, Button, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  Paper,
+  Typography,
+} from "@mui/material";
 import ArticleIcon from "@mui/icons-material/Article";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { Palette } from "../../../../../common/styles/palette";
+import { useInView } from "react-intersection-observer";
 import MyCookWriteImageUploader from "./components/my_cook_write_image_uploader";
+import PostAddIcon from "@mui/icons-material/PostAdd";
+import RecipeSearchDialog from "../../../../../common/components/header/main_header_search";
+import RecipeListLoadingSpinner from "../../../../Recipe/List/components/recipe_list_loading_spinner";
+import RecipeList from "../../../../Recipe/List/components/recipe_list";
+import useFetchList from "../../../../../hooks/useFetch";
+import { QueryClient, useQueryClient } from "react-query";
 
 const MyCookWriter = () => {
-  const [searchModal, setSearchModal] = useState(false);
+  // get Recipe from server
+  const QUERY_KEY = "SEARHCED_RECIPES";
+  const navigate = useNavigate();
 
   // uplaoded image
   const [image, setImage] = useState("");
 
-  const [content, setContent] = useState("");
+  // searched recipe modal
+  const [isShowSearchDialog, setIsShowSearchDialog] = useState(false);
+
+  // search recipes
+  const [query, setQuery] = useState("");
+  const { data, isLoading, fetchNextPage, hasNextPage, refetch } = useFetchList(
+    {
+      queryKey: QUERY_KEY,
+      articleId: 1,
+      uri: "/recipe/",
+      query: query,
+    }
+  );
+
+  // search
+  const handleSearch = (filter) => {
+    setQuery(makeRecipeListQuery(filter));
+  };
+
+  useEffect(() => {
+    // apply search result
+    refetch();
+  }, [query, refetch]);
+
+  // for infinity scroll trigger
+  const [ref, inView] = useInView();
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, inView, fetchNextPage]);
+
   const [referenceRecipe, setReferenceRecipe] = useState({});
 
-  const navigate = useNavigate();
+  const [content, setContent] = useState("");
 
   const { mutate } = useAddMyCook("myCookPosts");
 
@@ -44,15 +90,15 @@ const MyCookWriter = () => {
 
   const onRecipeItemClicked = (id, title) => {
     setReferenceRecipe({ id: id, title });
-    setSearchModal(false);
   };
 
-  const vali = () => {
+  const validation = () => {
     if (image.length > 0 && content.length > 0) {
       return false;
     }
     return true;
   };
+
   const nextPage = () => {
     navigate("/community/my-cook");
   };
@@ -77,72 +123,86 @@ const MyCookWriter = () => {
   };
 
   return (
-    <ReponsiveContainer style={{ display: "flex", flexDirection: "column" }}>
-      {searchModal && (
-        <div>
-          <RecipeModal onRecipeItemClicked={onRecipeItemClicked} />
-          <Backdrop
-            onClick={() => {
-              setSearchModal(false);
-            }}
-          />
-        </div>
-      )}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <Button
-          variant="outlined"
-          sx={{
-            p: 1,
-            borderColor: Palette.black2,
-            color: Palette.black2,
-            "&:focus, &:hover": {
-              color: Palette.white2,
-              backgroundColor: Palette.gray3,
-              borderColor: Palette.gray3,
-            },
-          }}
-        >
-          <AddPhotoAlternateIcon />
-          <Typography fontWeight={"bold"} sx={{ ml: 1 }}>
-            업로드
-          </Typography>
-        </Button>
-
-        <Button variant="outlined" sx={{ p: 1 }}>
-          <ArticleIcon />
-          <Typography fontWeight={"bold"} sx={{ ml: 1 }}>
-            레시피
-          </Typography>
-        </Button>
-      </Box>
-
+    <ReponsiveContainer
+      style={{ display: "flex", flexDirection: "column", px: 3 }}
+    >
+      {/* for image upload */}
       <MyCookWriteImageUploader imageFile={image} setImageFile={setImage} />
+      {/* used recipe area */}
+      <TitleWithDivider
+        title={"사용된 레시피"}
+        textVariant="h6"
+        style={{ mt: 2 }}
+        icon={
+          <PostAddIcon sx={{ color: Palette.black3, fontSize: "1.9rem" }} />
+        }
+        onClick={() => {
+          setIsShowSearchDialog(true);
+        }}
+      />
 
-      <RecipeListSearchWithResultDiv>
-        <RecipeListSearchResultButton
-          onClick={() => {
-            setSearchModal((prev) => {
-              return !prev;
-            });
-          }}
-        >
-          레시피 검색
-        </RecipeListSearchResultButton>
-        <SelectReferenceRecipeDiv>
-          {referenceRecipe.title}
-        </SelectReferenceRecipeDiv>
-      </RecipeListSearchWithResultDiv>
+      <RecipeSearchDialog
+        dialogOpen={isShowSearchDialog}
+        setDialogOpen={setIsShowSearchDialog}
+        handleSearch={handleSearch}
+      >
+        <Divider sx={{ my: 3 }} />
+        <Box>
+          {isLoading ? (
+            <RecipeListLoadingSpinner loading={isLoading} />
+          ) : (
+            data.pages.map((page, index) => (
+              <RecipeList
+                key={index}
+                recipes={page.result.data.post}
+                loading={isLoading}
+                onRecipeItemClicked={onRecipeItemClicked}
+              />
+            ))
+          )}
+        </Box>
+
+        {/* for infinity scroll trigger */}
+        <Container ref={ref}></Container>
+      </RecipeSearchDialog>
 
       <WriteAreaWrapper>
         <WriteTextArea textHandler={textHandler} />
       </WriteAreaWrapper>
       <WriteButtonBar
-        confirmDisabled={vali()}
+        confirmDisabled={validation()}
         onCancel={onCancel}
         onConfirm={onConfirm}
       />
     </ReponsiveContainer>
   );
 };
+
+// make request url query in recipe list
+function makeRecipeListQuery(filter) {
+  let query = "";
+  if (!!!filter) return query;
+
+  // handle title
+  if (filter.keyword) query += `title=${filter.keyword}&`;
+
+  // handle tags
+  if (filter.tags && filter.tags.length !== 0) {
+    query += "tag=";
+    filter.tags.forEach((tag, idx) => {
+      query += `${tag}${idx !== filter.tags.length - 1 ? "," : "&"}`;
+    });
+  }
+
+  // handle ingredient
+  if (filter.ingreds && filter.ingreds.length !== 0) {
+    query += "ingredient=";
+    filter.ingreds.forEach((ingred, idx) => {
+      query += `${ingred.name}${idx !== filter.ingreds.length - 1 ? "," : ""}`;
+    });
+  }
+
+  return query;
+}
 
 export default MyCookWriter;
