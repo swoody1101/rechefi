@@ -29,7 +29,7 @@ export const MyCookGridWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 15%;
+  margin-top: 5%;
 `;
 
 export const MyCookGridLi = styled.li`
