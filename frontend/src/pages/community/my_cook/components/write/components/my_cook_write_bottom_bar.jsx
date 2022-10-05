@@ -1,15 +1,15 @@
 import { Box } from "@mui/material";
-import { Palette } from "../../../../../common/styles/palette";
-import RecipeWriteBottombarButton from "../../../../Recipe/Write/components/bottombar/recipe_write_bottombar_btn";
+import { Palette } from "../../../../../../common/styles/palette";
+import RecipeWriteBottombarButton from "../../../../../Recipe/Write/components/bottombar/recipe_write_bottombar_btn";
 
 const WriteButtonBar = ({ onConfirm, onCancel, confirmDisabled }) => {
   return (
     <Box
       sx={{
-        width: "80%",
-        m: 3,
+        width: "100%",
         display: "flex",
         justifyContent: "space-between",
+        mb: 2,
       }}
     >
       <RecipeWriteBottombarButton
