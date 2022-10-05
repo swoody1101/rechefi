@@ -29,16 +29,25 @@ export const MyCookGridWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 15%;
+  margin-top: 3%;
 `;
 
 export const MyCookGridLi = styled.li`
   height: 10vh;
+
+  @media only screen and (min-width: 1025px) {
+    height: 20vh;
+  }
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    height: 15vh;
+  }
+
   flex-grow: 1;
   list-style-type: none;
 `;
 
 export const MyCookGridImage = styled.img`
+  padding: 2px;
   max-height: 100%;
   min-width: 100%;
   object-fit: cover;

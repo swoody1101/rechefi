@@ -1,26 +1,37 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { profileFollowThunk } from "../../../../store/module/accountReducer";
+import {
+  loadFollowerListThunk,
+  loadFollowingListThunk,
+  profileFollowThunk,
+} from "../../../../store/module/accountReducer";
 
 const ProfileFollowItem = (props) => {
-  const [follow, setfollow] = useState(props.isFollow);
-
+  const loginInfo = useSelector((store) => store.account);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [follow, setfollow] = useState();
+
+  useEffect(() => {
+    setfollow(props.isFollow);
+  }, []);
 
   const profileTransitionHandler = () => {
     navigate("/profile", { state: props.email });
   };
 
   const followHandler = () => {
+    setfollow(!follow);
     dispatch(profileFollowThunk(props.email))
       .unwrap()
       .then((res) => {
         alert(res.detail);
       });
-    setfollow(!follow);
+    dispatch(loadFollowerListThunk(props.email));
+    dispatch(loadFollowingListThunk(props.email));
   };
 
   return (
@@ -29,24 +40,70 @@ const ProfileFollowItem = (props) => {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        marginTop: "5px",
+        marginTop: "15px",
       }}
     >
       <Box
         sx={{
           display: "flex",
           flexDirection: "row",
+          paddingLeft: "20px",
         }}
       >
-        <Avatar sx={{ width: 40, height: 40 }}></Avatar>
-        <Typography onClick={profileTransitionHandler} sx={{ fontSize: 20 }}>
-          {props.email}
-        </Typography>
+        <Avatar
+          sx={{ width: 55, height: 55, marginRight: "10px" }}
+          src={props.imgUrl}
+        />
+        <Box>
+          <Typography
+            onClick={profileTransitionHandler}
+            sx={{ paddingTop: "5px", fontSize: 15 }}
+          >
+            {props.email}
+          </Typography>
+          <Typography sx={{ fontSize: 13 }}>{props.nickname}</Typography>
+        </Box>
       </Box>
-      {follow ? (
-        <Button onClick={followHandler}>팔로잉</Button>
+      {props.email === loginInfo.email ? (
+        <></>
       ) : (
-        <Button onClick={followHandler}>팔로우</Button>
+        <Box sx={{ "& button": { m: 2 } }}>
+          {follow ? (
+            <Button
+              variant="contained"
+              size="small"
+              sx={{
+                color: "white",
+                backgroundColor: "#E38B29",
+                "&:focus, &:hover": {
+                  backgroundColor: "#E38B29",
+                },
+              }}
+              onClick={() => {
+                followHandler();
+              }}
+            >
+              팔로잉
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              size="small"
+              sx={{
+                color: "white",
+                backgroundColor: "#E38B29",
+                "&:focus, &:hover": {
+                  backgroundColor: "#E38B29",
+                },
+              }}
+              onClick={() => {
+                followHandler();
+              }}
+            >
+              팔로우
+            </Button>
+          )}
+        </Box>
       )}
     </Box>
   );
