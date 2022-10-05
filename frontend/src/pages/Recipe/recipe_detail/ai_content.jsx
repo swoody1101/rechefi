@@ -44,6 +44,9 @@ const AiContent = ({ synth, recognition }) => {
 
   const prePlayHandler = async () => {
     await dispatch(aiReadingPushPreButton());
+    if (currentCur >= contentsLength) {
+      dispatch(aiReadEndAction());
+    }
     synth.cancel();
   };
 

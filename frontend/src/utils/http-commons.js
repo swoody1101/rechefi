@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "./JWT-token";
 
 const http = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "https://j7b303.p.ssafy.io/api",
   headers: {
     "content-type": "application/json; charset=UTF-8",
   },
