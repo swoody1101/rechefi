@@ -8,7 +8,6 @@ function CommentElementBtn({ children, onClick }) {
       sx={{
         px: 1,
         fontSize: "0.8rem",
-        textDecoration: "underline",
         color: Palette.mainColor5,
         borderColor: Palette.mainColor5,
         minWidth: 0,
