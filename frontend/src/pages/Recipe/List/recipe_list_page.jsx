@@ -63,9 +63,9 @@ function RecipeListPage() {
   }, [hasNextPage, inView, fetchNextPage]);
 
   // see recipe detail
-  const onRecipeItemClicked = (id, title) => {
+  const onRecipeItemClicked = (recipe) => {
     // const postId = id;
-    navigate(`/recipe/postId=` + id);
+    navigate(`/recipe/postId=` + recipe.id);
   };
 
   return (
