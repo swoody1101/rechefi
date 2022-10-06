@@ -14,7 +14,7 @@
 
 import csv
 import sys
-sys.path.insert(1, 'D:/server_real/KoreanSTT_DeepSpeech2')
+sys.path.insert(1, '/home/leehyeontae/Desktop/B303/S07P22B303/ai/KoreanSTT_DeepSpeech2')
 from __init__ import Vocabulary
 
 

@@ -19,7 +19,7 @@ import librosa.display
 from . import GetSpeech 
 from . import tools
 import sys
-sys.path.insert(0, "D:/server_real/KoreanSTT_DeepSpeech2/kospeech/vocabs")
+sys.path.insert(0, "/home/leehyeontae/Desktop/B303/S07P22B303/ai/KoreanSTT_DeepSpeech2/kospeech/vocabs")
 from ksponspeech import KsponSpeechVocabulary
 # from kospeech.models import DeepSpeech2
 
@@ -44,7 +44,7 @@ def stt_logic(file_path):
 
 
 # In[7]:
-    model_path = "./KoreanSTT_DeepSpeech2/model2.pt"
+    model_path = "./KoreanSTT_DeepSpeech2/model_s4.pt"
     device = "cpu"
 
     # Get Speech data
