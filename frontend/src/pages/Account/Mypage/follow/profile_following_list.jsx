@@ -21,7 +21,11 @@ const ProfileFollowingList = (props) => {
   }, []);
 
   const isFollowHandler = (prop) => {
-    if (loginInfo.followingList.includes(prop)) {
+    const following = loginInfo.followingList.filter(
+      (following) => following.nickname === prop.nickname
+    );
+
+    if (following.length) {
       return true;
     }
     return false;

@@ -5,6 +5,7 @@ import { Avatar, Box, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { profileFollowThunk } from "../../../../store/module/accountReducer";
 import { useEffect } from "react";
+import { Warn } from "../../../../common/components/sweatAlert";
 
 const ProfileIntroduce = (props) => {
   const loginInfo = useSelector((store) => store.account);
@@ -23,7 +24,7 @@ const ProfileIntroduce = (props) => {
     dispatch(profileFollowThunk(props.email))
       .unwrap()
       .then((res) => {
-        alert(res.detail);
+        Warn(res.detail);
       });
     setfollow(!follow);
   };

@@ -1,4 +1,4 @@
-import { Button, Container } from "@mui/material";
+import { Container } from "@mui/material";
 import React, { useState } from "react";
 import { useTitle } from "../../../../hooks/Recipe/write/useTitle";
 import RecipeWriteTitleInput from "../../../Recipe/Write/components/title/recipe_write_title_input";
@@ -6,11 +6,7 @@ import FreeBoardWriteEditorContainer from "./components/editor/free_board_write_
 import EditorWithImage from "./components/editor/free_board_write_editor_with_image";
 import WriteBottombar from "../../../Recipe/Write/components/bottombar/recipe_write_bottombar";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  Confirm,
-  Success,
-  Warn,
-} from "../../../../common/components/sweatAlert";
+import { Confirm, Success } from "../../../../common/components/sweatAlert";
 import { convertFromHTML, convertToHTML } from "draft-convert";
 import { usePost, usePut } from "../../../../hooks/useMutations";
 import FreeBoardWriteAdminCheckbox from "./components/free_board_write_admin_chkbox";

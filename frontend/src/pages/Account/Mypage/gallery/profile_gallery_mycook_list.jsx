@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { loadMyCookThunk } from "../../../../store/module/recipeReducer";
 import { MyCookDetail } from "../../../community/my_cook/components/detail/my_cook_detail_page";
 import { Backdrop } from "../../../../common/styles/sidebar_styles";
+import { Warn } from "../../../../common/components/sweatAlert";
 
 const ProfileGalleryMyCookList = (props) => {
   const dispatch = useDispatch();
@@ -43,7 +44,7 @@ const ProfileGalleryMyCookList = (props) => {
           });
         })
         .catch((err) => {
-          alert("잘못된 요청입니다.");
+          Warn("잘못된 요청입니다.");
           console.log(err);
         });
     }

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Warn } from "../../../../common/components/sweatAlert";
 import {
   loadFollowerListThunk,
   loadFollowingListThunk,
@@ -28,7 +29,7 @@ const ProfileFollowItem = (props) => {
     dispatch(profileFollowThunk(props.email))
       .unwrap()
       .then((res) => {
-        alert(res.detail);
+        Warn(res.detail);
       });
     dispatch(loadFollowerListThunk(props.email));
     dispatch(loadFollowingListThunk(props.email));

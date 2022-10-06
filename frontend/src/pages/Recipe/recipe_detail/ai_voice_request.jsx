@@ -3,11 +3,9 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { requestAiThunk } from "../../../store/module/AiReducer";
-import { getToken } from "../../../utils/JWT-token";
 import AiVoiceResult from "./ai_voice_result";
 
 const VoiceRequest = ({ audioFile, synth, toggleAI, recognition }) => {
-  const aiSpeech = window.speechSynthesis;
   const aiRequest = useSelector((store) => store.aiReducer.aiRequest);
   const [loading, setLoading] = useState(true);
   const sound = useState(
@@ -16,7 +14,6 @@ const VoiceRequest = ({ audioFile, synth, toggleAI, recognition }) => {
       type: "audio/wav",
     })
   );
-  console.log(sound);
   const dispatch = useDispatch();
   useEffect(() => {
     if (loading) {
