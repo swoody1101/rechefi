@@ -1,6 +1,6 @@
-import { Avatar, Box, Link, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import React from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Palette } from "../../../../../common/styles/palette";
 
 function FreeBoardDetailUserAvartar({ email, nickname, imageLink, style }) {

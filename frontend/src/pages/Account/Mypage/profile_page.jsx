@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import { useNavigate } from "react-router-dom";
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import ProfileIntroduce from "./introduce/profile_introduce";
 import ProfileFollowMenu from "./follow/profile_follow_menu";
 import ProfileGallery from "./gallery/profile_gallery";
