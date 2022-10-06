@@ -1,7 +1,4 @@
-import {
-  MyCookDetailContentWithCommentWrapper,
-  MyCookDetailListLoadingWrapper,
-} from "../../styles/list/list_style";
+import { MyCookDetailListLoadingWrapper } from "../../styles/list/list_style";
 import { useFetchDetail } from "../../../../../hooks/useFetch";
 import Comments from "../../../../../common/components/comments/comments";
 import RecipeListLoadingSpinner from "../../../../Recipe/List/components/recipe_list_loading_spinner";
@@ -14,14 +11,11 @@ import {
   CardContent,
   CardHeader,
   CardMedia,
-  IconButton,
   Modal,
-  Typography,
 } from "@mui/material";
 import ReadOnlyEditor from "../../../../../common/components/read_only_editor";
 import MyCookWriteBtn from "../write/components/my_cook_write_btn";
 import { Success } from "../../../../../common/components/sweatAlert";
-import TitleWithDivider from "../../../../../common/components/title_with_divider";
 import RecipeListItem from "../../../../Recipe/List/components/recipe_list_item";
 import CommentContainer from "../../../FreeBoard/Detail/components/free_board_detail_comments_container";
 import { useNavigate } from "react-router";

@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Avatar,
   Box,
   Card,
   CardMedia,
@@ -9,7 +8,6 @@ import {
   Typography,
 } from "@mui/material";
 import RecipeListItemLikeBtn from "./recipe_list_item_like_btn";
-import RestaurantIcon from "@mui/icons-material/Restaurant";
 
 function RecipeListItem({ recipe, onClick, style, isMyCook }) {
   return (

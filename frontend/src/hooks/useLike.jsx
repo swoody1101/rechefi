@@ -6,7 +6,6 @@ export function useLike(queryKey) {
   return useMutation(
     async ({ articleId, uri }) => {
       const response = await http.post(uri + articleId);
-      console.log(response.data);
       return response.data;
     },
     {

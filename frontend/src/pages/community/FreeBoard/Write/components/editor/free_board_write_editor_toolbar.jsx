@@ -16,10 +16,9 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import InputImage from "../../../../../../common/components/input_image";
 import { useRef } from "react";
-import { EditorState } from "draft-js";
 import { useState } from "react";
 
-function FreeBoardWriteEditorToolbar({ onUploadImage, editorState, on }) {
+function FreeBoardWriteEditorToolbar({ onUploadImage, editorState }) {
   const HEADER_TYPES = [
     { label: "(None)", style: "unstyled" },
     { label: "H1", style: "header-one" },
