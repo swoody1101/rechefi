@@ -4,12 +4,19 @@ import React from "react";
 import DefaultInputElement from "./default_input_element";
 import regex from "../../../utils/regex";
 
-const PasswordInputElement = () => {
+const PasswordInputElement = (props) => {
   const EMPTY_PASSWORD = "비밀번호를 입력해주세요.";
   const VAILD_PASSWORD = "";
   const WRONG_PASSWORD = "사용 불가능한 비밀번호입니다.";
 
+  const accessEmpty = true;
+  const password = props.value;
+  const setPassword = props.setValue;
+
   const passwordValidation = (props) => {
+    if (props === "") {
+      return true;
+    }
     const regexCheck = regex.password;
     if (regexCheck.test(props)) {
       return true;
@@ -22,7 +29,9 @@ const PasswordInputElement = () => {
       <DefaultInputElement
         label="비밀번호"
         type="password"
-        value=""
+        accessEmpty={accessEmpty}
+        value={password}
+        setValue={setPassword}
         emptyValueText={EMPTY_PASSWORD}
         validValueText={VAILD_PASSWORD}
         wrongValueText={WRONG_PASSWORD}
