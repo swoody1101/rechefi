@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "./JWT-token";
 
 const http = axios.create({
-  baseURL: "https://j7b303.p.ssafy.io/api",
+  baseURL: process.env.REACT_APP_BACKEND_URL,
   headers: {
     "content-type": "application/json; charset=UTF-8",
   },

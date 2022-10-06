@@ -82,7 +82,6 @@ function App() {
             </Routes>
           </Layout>
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </div>
   );
