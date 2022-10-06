@@ -1,40 +1,45 @@
-from fastapi import APIRouter, Response, status, Header, Depends
-from app.models.recipes import Recipe
+from pytz import timezone
+from datetime import datetime
 
-from app.schemas.recipes import RecipeList
+from app.models.recipes import Recipe
+from app.schemas.accounts import CurrentUser
+from app.schemas.recipes import IncompleteRecipeList, BestRecipeResponse
 from app.schemas.common import *
 
-from datetime import datetime
-from pytz import timezone
-from pypika.functions import Count
+from fastapi import APIRouter
+
 
 router = APIRouter(prefix="", tags=["main"])
 
 
-@router.get("/main/monthly-recipe", description="월간 레시피 목록 조회")
+@router.get("/main/monthly-recipe", description="월간 레시피 목록 조회", response_model=BestRecipeResponse)
 async def get_monthly_recipe():
     now = datetime.now()
     recipes = await Recipe.filter(
         created_at__gte=datetime(now.year, now.month, 1, tzinfo=timezone('Asia/Seoul'))
-    ).prefetch_related('comments').select_related('like_users', 'user').annotate(likes=Count('like_users')).order_by('-likes').limit(10)
-    data = [RecipeList(
-        nickname=recipe.user.nickname,
-        likes=recipe.likes,
+    ).select_related('user')
+    data = [IncompleteRecipeList(
+        user=CurrentUser(**dict(recipe.user)),
+        likes=await recipe.like_users.all().count(),
         tags=await recipe.tags,
-        comment_count=len(recipe.comments),
+        comments_count=len(await recipe.comments),
         **dict(recipe))
         for recipe in recipes]
-    return MultipleObjectResponse(data=data)
+    data.sort(key=lambda x: x.likes, reverse=True)
+    data = data[:10]
+    return BestRecipeResponse(data=data)
 
 
-@router.get("/main/best-recipe", description="최고의 레시피 목록 조회")
+@router.get("/main/best-recipe", description="최고의 레시피 목록 조회", response_model=BestRecipeResponse)
 async def get_best_recipe():
-    recipes = await Recipe.all().prefetch_related('comments').select_related('like_users', 'user').annotate(likes=Count('like_users')).order_by('-likes').limit(10)
-    data = [RecipeList(
-        nickname=recipe.user.nickname,
-        likes=recipe.likes,
+    recipes = await Recipe.all().select_related('user')
+    data = [IncompleteRecipeList(
+        user=CurrentUser(**dict(recipe.user)),
+        likes=await recipe.like_users.all().count(),
         tags=await recipe.tags,
-        comment_count=len(recipe.comments),
+        comments_count=len(await recipe.comments),
         **dict(recipe))
         for recipe in recipes]
-    return MultipleObjectResponse(data=data)
+    data.sort(key=lambda x: x.likes, reverse=True)
+    data = data[:10]
+    return BestRecipeResponse(data=data)
