@@ -197,7 +197,7 @@ async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
 @router.get("/search-by-id/{page}", description="유저 id로 작성한 레시피 목록 조회", response_model=RecipeListResponse)
 async def get_recipe_list_by_id(page: int, mid: int):
     filtered_recipes = list(await Recipe.filter(user_id=mid).prefetch_related('tags', 'ingredients').select_related('user').order_by('-id'))
-    total_pages = 1 + len(filtered_recipes)//15
+    total_pages = 1 + max(len(filtered_recipes)-1, 0)//15
     current_page = page
     if 1 <= current_page <= total_pages:
         recipes = filtered_recipes[(current_page - 1) * 15:current_page * 15]
@@ -232,7 +232,7 @@ async def get_recipe_list(page: int,
         ingredients = set(ingredient.split(','))
         filtered_recipes = [recipe for recipe in filtered_recipes
                             if ingredients.issubset(await recipe.ingredients.all().values_list("name", flat=True))]
-    total_pages = 1 + len(filtered_recipes)//10
+    total_pages = 1 + max(len(filtered_recipes)-1, 0)//10
     current_page = page
     if 1 <= current_page <= total_pages:
         recipes = filtered_recipes[(current_page - 1) * 10:current_page * 10]
