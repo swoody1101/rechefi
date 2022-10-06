@@ -19,10 +19,13 @@ import { Success } from "../../../../../common/components/sweatAlert";
 import RecipeListItem from "../../../../Recipe/List/components/recipe_list_item";
 import CommentContainer from "../../../FreeBoard/Detail/components/free_board_detail_comments_container";
 import { useNavigate } from "react-router";
+import useWidthQuery from "../../../../../hooks/Main/useWidthQuery";
 
 export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
   const navigate = useNavigate();
   const userInfo = useSelector((store) => store.account);
+
+  const [sm, m, xl] = useWidthQuery();
 
   const { isLoading, isError, data, error } = useFetchDetail({
     queryKey: "myCookDetail",
@@ -96,15 +99,37 @@ export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
                 }}
               />
             }
+            sx={{ p: 0 }}
             title={data.data.user.nickname}
             subheader={new Date(data.data.created_at).toLocaleString()}
           />
 
           {/* referenced recipe */}
+          {sm && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: sm ? "center" : "flex-start",
+              }}
+            >
+              {data.data.recipe && (
+                <RecipeListItem
+                  isMyCook={true}
+                  recipe={data.data.recipe}
+                  onClick={() => {
+                    navigate(`/recipe/postId=${data.data.recipe.id}`);
+                  }}
+                />
+              )}
+            </Box>
+          )}
+        </Box>
+
+        {!sm && (
           <Box
             sx={{
+              mt: 2,
               display: "flex",
-              justifyContent: "center",
               flexDirection: "column",
             }}
           >
@@ -118,7 +143,7 @@ export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
               />
             )}
           </Box>
-        </Box>
+        )}
 
         <CardMedia
           component="img"
