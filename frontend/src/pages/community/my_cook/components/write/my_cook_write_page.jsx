@@ -45,7 +45,7 @@ const MyCookWriter = () => {
         sendData: {
           content: convertToHTML(editorState.getCurrentContent()),
           image: image,
-          recipe_id: referenceRecipe.id,
+          recipe: referenceRecipe,
         },
       },
       {
