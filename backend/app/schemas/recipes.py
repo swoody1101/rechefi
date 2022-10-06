@@ -1,5 +1,4 @@
-import typing
-from typing import List, Union, Any
+from typing import List, Union
 from datetime import datetime
 
 from app.schemas.accounts import CurrentUser
@@ -56,6 +55,12 @@ class RecipeList(SimpleRecipeList):
     img_url: str = Field(nullable=True)
     created_at: datetime
     updated_at: datetime
+
+
+class ReferencedRecipe(RecipeList):
+    likes: int
+    user: CurrentUser
+    comments_count: int
 
 
 class IncompleteRecipeList(RecipeList):
