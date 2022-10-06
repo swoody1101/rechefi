@@ -1,22 +1,22 @@
-from fastapi import APIRouter, Response, Depends
 from typing import Union
 
-from starlette.responses import JSONResponse
-
 from app.routers.accounts import get_current_user
-
 from app.models.community import *
 from app.models.accounts import User
 from app.schemas.accounts import CurrentUser
-
 from app.schemas.community import *
 from app.schemas.common import *
+
+from fastapi import APIRouter, Response, Depends
+from starlette.responses import JSONResponse
 
 router = APIRouter(prefix="/community", tags=["community"])
 
 
 @router.post("/notice-board", description="공지사항 작성", response_model=CommonResponse, status_code=201)
 async def create_notice(req: ArticleCreateForm, user: User = Depends(get_current_user)):
+    if user.is_admin is False:
+        return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
     await Notice.create(user_id=user.id, **req.dict())
     return CommonResponse()
 
@@ -48,7 +48,7 @@ async def edit_notice(article_id: int, req: ArticleCreateForm, user: User = Depe
 @router.delete("/notice-board/{article_id}", description="공지사항 삭제", response_model=CommonResponse)
 async def delete_notice(article_id: int, user: User = Depends(get_current_user)):
     article = await Notice.get_or_none(id=article_id)
-    if article is not None and user.id == article.user_id:
+    if article is not None and user.is_admin is True:
         await Article.filter(id=article_id).delete()
     else:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
@@ -114,7 +114,7 @@ async def delete_article_comment(comment_id: int, user: User = Depends(get_curre
     comment = await ArticleComment.get_or_none(id=comment_id)
     if comment is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 댓글입니다.").dict())
-    if user.id != comment.user_id:
+    if user.id != comment.user_id and user.is_admin is False:
         return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
     if comment.group >= 0:
         comment.group = -(comment.group + 1)
@@ -155,8 +155,10 @@ async def edit_article(article_id: int, req: ArticleCreateForm, user: User = Dep
 @router.delete("/free-board/{article_id}", description="게시물 삭제", response_model=CommonResponse)
 async def delete_article(article_id: int, user: User = Depends(get_current_user)):
     article = await Article.get_or_none(id=article_id, user_id=user.pk)
-    if article is None:
+    if article is None and user.is_admin is False:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
+    if article is None and user.is_admin:
+        await Article.filter(id=article_id).delete()
     await article.delete()
     return CommonResponse()
 
@@ -219,7 +221,7 @@ async def delete_cooking_comment(comment_id: int, user: User = Depends(get_curre
     comment = await CookingComment.get_or_none(id=comment_id)
     if comment is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 댓글입니다.").dict())
-    if user.id != comment.user_id:
+    if user.id != comment.user_id and user.is_admin is False:
         return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
     if comment.group >= 0:
         comment.group = -(comment.group + 1)
@@ -260,13 +262,14 @@ async def edit_cooking(article_id: int, req: CookingCreateForm, user: User = Dep
 @router.delete("/gallery/{article_id}", description="게시물 삭제", response_model=CommonResponse)
 async def delete_cooking(article_id: int, user: User = Depends(get_current_user)):
     article = await Cooking.get_or_none(id=article_id)
-    if article is not None and user.id == article.user_id:
+    if article is None:
+        return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
+    if user.id == article.user_id or user.is_admin:
         await article.delete()
-        return CommonResponse()
-    return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
+    return CommonResponse()
 
 
-@router.get("/free-board/{page}", description="게시물 목록 조회", response_model=ObjectResponse)
+@router.get("/free-board/{page}", description="게시물 목록 조회", response_model=ArticleListResponse)
 async def get_article_list(page: int, q: Union[str, None] = None, opt: Union[str, None] = None):
     query = Article.all().select_related('user').order_by('-id')
     if opt == "title":
@@ -293,7 +296,7 @@ async def get_article_list(page: int, q: Union[str, None] = None, opt: Union[str
     return ArticleListResponse(data=ArticleListPagination(posts=post, total_pages=pages, current_page=current_page))
 
 
-@router.get("/notice-board/{page}", description="공지사항 목록 조회", response_model=ObjectResponse)
+@router.get("/notice-board/{page}", description="공지사항 목록 조회", response_model=ArticleListResponse)
 async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str, None] = None):
     query = Notice.all().select_related('user').order_by('-id')
     if opt == "title":
@@ -312,7 +315,7 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
     return ArticleListResponse(data=ArticleListPagination(posts=post, total_pages=pages, current_page=current_page))
 
 
-@router.get("/gallery/search-by-id/{page}", description="유저 id로 작성된 요리자랑 목록 조회", response_model=ObjectResponse)
+@router.get("/gallery/search-by-id/{page}", description="유저 id로 작성된 요리자랑 목록 조회", response_model=ArticleListResponse)
 async def get_cooking_list_by_id(page: int, mid: int):
     cooking = await Cooking.filter(user_id=mid).select_related('user').order_by('-id')
     pages = 1 + len(cooking)//15
@@ -326,7 +329,7 @@ async def get_cooking_list_by_id(page: int, mid: int):
     return ArticleListResponse(data=ArticleListPagination(posts=post, total_pages=pages, current_page=current_page))
 
 
-@router.get("/gallery/{page}", description="갤러리 목록 조회", response_model=ObjectResponse)
+@router.get("/gallery/{page}", description="갤러리 목록 조회", response_model=ArticleListResponse)
 async def get_cooking_list(page: int, q: Union[str, None] = None, opt: Union[str, None] = None):
     query = Cooking.all().select_related('user').order_by('-id')
     if opt == "title":
