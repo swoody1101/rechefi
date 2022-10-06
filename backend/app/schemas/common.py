@@ -1,6 +1,8 @@
 from typing import List
 from datetime import datetime
+
 from app.schemas.accounts import CurrentUser
+
 from pydantic import BaseModel, Field, validator
 
 
