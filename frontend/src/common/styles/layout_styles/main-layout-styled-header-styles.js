@@ -19,7 +19,9 @@ export const LayoutStyledHeader = styled.header`
   }
 `;
 
-export const LayoutStyledMain = styled.main``;
+export const LayoutStyledMain = styled.main`
+  margin-top: 68px;
+`;
 
 export const LayoutSearchParent = styled.div`
   display: flex;
