@@ -6,6 +6,8 @@ from app.schemas.common import CommonResponse
 
 from pydantic import BaseModel, Field
 
+from app.schemas.recipes import ReferencedRecipe
+
 
 class ArticleCreateForm(BaseModel):
     title: str
@@ -41,7 +43,7 @@ class ArticleDetail(NoticeDetail):
 
 
 class CookingDetail(ArticleDetail):
-    recipe_id: int = Field(Nullable=True)
+    recipe: Union[ReferencedRecipe, None] = None
 
 
 class ArticleDetailResponse(CommonResponse):
