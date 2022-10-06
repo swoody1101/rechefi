@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import useDeleteMyCook from "../../../../../hooks/my_cook/useDeleteMyCook";
 import {
   Avatar,
+  Box,
   Card,
   CardContent,
   CardHeader,
@@ -17,9 +18,16 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
-import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import ReadOnlyEditor from "../../../../../common/components/read_only_editor";
+import MyCookWriteBtn from "../write/components/my_cook_write_btn";
+import { Success } from "../../../../../common/components/sweatAlert";
+import TitleWithDivider from "../../../../../common/components/title_with_divider";
+import RecipeListItem from "../../../../Recipe/List/components/recipe_list_item";
+import CommentContainer from "../../../FreeBoard/Detail/components/free_board_detail_comments_container";
+import { useNavigate } from "react-router";
 
 export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
+  const navigate = useNavigate();
   const userInfo = useSelector((store) => store.account);
 
   const { isLoading, isError, data, error } = useFetchDetail({
@@ -27,6 +35,8 @@ export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
     articleId: postId,
     uri: "/community/gallery/detail/",
   });
+
+  console.log(data);
 
   const { mutate } = useDeleteMyCook("myCookPosts");
 
@@ -64,64 +74,92 @@ export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        maxWidth: "960px",
+        mx: "auto",
       }}
     >
       <Card
         sx={{
           ...style,
+          p: 3,
         }}
       >
-        <CardHeader
-          avatar={
-            <Avatar
-              src={data.data.user.img_url}
-              sx={{
-                width: 60,
-                height: 60,
-                border: "2px solid #E38B29",
-              }}
-            />
-          }
-          title={data.data.user.nickname}
-          subheader={data.data.created_at}
-          action={
-            <IconButton aria-label="settings">
-              {userInfo.auth && (
-                <DeleteForeverOutlinedIcon
-                  onClick={() => {
-                    mutate(
-                      { uri: "/community/gallery/", article_id: postId },
-                      {
-                        onSuccess: () => {
-                          modalClose();
-                        },
-                      }
-                    );
-                  }}
-                />
-              )}
-            </IconButton>
-          }
-        />
+        {/* writer and post date */}
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <CardHeader
+            avatar={
+              <Avatar
+                src={data.data.user.img_url}
+                sx={{
+                  width: 60,
+                  height: 60,
+                  border: "2px solid #E38B29",
+                }}
+              />
+            }
+            title={data.data.user.nickname}
+            subheader={new Date(data.data.created_at).toLocaleString()}
+          />
+
+          {/* referenced recipe */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+          >
+            {data.data.recipe && (
+              <RecipeListItem
+                isMyCook={true}
+                recipe={data.data.recipe}
+                onClick={() => {
+                  navigate(`/recipe/postId=${data.data.recipe.id}`);
+                }}
+              />
+            )}
+          </Box>
+        </Box>
+
         <CardMedia
           component="img"
           height="50%"
           image={data.data.img_url}
           alt="이미지"
+          sx={{ mt: 2 }}
         />
+
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            {data.data.content}
-          </Typography>
+          <ReadOnlyEditor HTML={data.data.content}></ReadOnlyEditor>
         </CardContent>
-        <MyCookDetailContentWithCommentWrapper>
+
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          {userInfo.email === data.data.user.email && (
+            <MyCookWriteBtn
+              btnText={"삭제"}
+              onClick={() => {
+                mutate(
+                  { uri: "/community/gallery/", article_id: postId },
+                  {
+                    onSuccess: () => {
+                      Success("삭제가 완료되었습니다");
+                      modalClose();
+                    },
+                  }
+                );
+              }}
+            />
+          )}
+        </Box>
+
+        <CommentContainer>
           <Comments
             aiButton={false}
             postId={postId}
             uri={"community/gallery/comment/"}
             queryKey="myCookComments"
           />
-        </MyCookDetailContentWithCommentWrapper>
+        </CommentContainer>
       </Card>
     </Modal>
   );

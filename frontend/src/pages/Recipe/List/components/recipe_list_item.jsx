@@ -11,13 +11,14 @@ import {
 import RecipeListItemLikeBtn from "./recipe_list_item_like_btn";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 
-function RecipeListItem({ recipe, onClick }) {
+function RecipeListItem({ recipe, onClick, style, isMyCook }) {
   return (
     <Card
       sx={{
         display: "flex",
         // height: "32%",
         mb: 1.5,
+        ...style,
       }}
     >
       <CardActionArea
@@ -30,21 +31,23 @@ function RecipeListItem({ recipe, onClick }) {
         }}
       >
         {/* thumbnail */}
-        <CardMedia
-          component="img"
-          src={
-            recipe.img_url
-              ? recipe.img_url
-              : // default image
-                require("../../../../assets/img/default_food.png")
-          }
-          alt={recipe.title + "_img"}
-          sx={{
-            maxHeight: "120px",
-            objectFit: "cover",
-            alignSelf: "center",
-          }}
-        />
+        {!isMyCook && (
+          <CardMedia
+            component="img"
+            src={
+              recipe.img_url
+                ? recipe.img_url
+                : // default image
+                  require("../../../../assets/img/default_food.png")
+            }
+            alt={recipe.title + "_img"}
+            sx={{
+              maxHeight: "120px",
+              objectFit: "cover",
+              alignSelf: "center",
+            }}
+          />
+        )}
         <CardContent
           sx={{
             width: "100%",
@@ -84,18 +87,21 @@ function RecipeListItem({ recipe, onClick }) {
           </Box>
 
           {/* views and like */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="caption">
-              조회수 :{" " + (recipe.views ? recipe.views.toLocaleString() : 0)}
-            </Typography>
-            <RecipeListItemLikeBtn likes={recipe.likes} />
-          </Box>
+          {!isMyCook && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="caption">
+                조회수 :
+                {" " + (recipe.views ? recipe.views.toLocaleString() : 0)}
+              </Typography>
+              <RecipeListItemLikeBtn likes={recipe.likes} />
+            </Box>
+          )}
         </CardContent>
       </CardActionArea>
     </Card>
