@@ -1,9 +1,4 @@
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import {
-  TagElementButton,
-  TagFoodImg,
-  TagListDiv,
-} from "../styles/tag_list_styles";
+import { TagFoodImg } from "../styles/tag_list_styles";
 import { useNavigate } from "react-router-dom";
 import { Box, Paper, Typography } from "@mui/material";
 
