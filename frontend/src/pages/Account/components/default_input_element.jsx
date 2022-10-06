@@ -13,7 +13,9 @@ const DefaultInputElement = (props) => {
 
   const inputValidation = props.inputValidation;
 
-  const [value, setValue] = useState(props.value);
+  const value = props.value;
+  const setValue = props.setValue;
+
   const [isValue, setIsValue] = useState();
   const [helperText, setHelperText] = useState("");
 
