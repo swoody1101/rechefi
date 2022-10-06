@@ -12,6 +12,7 @@ import {
 } from "../../../store/module/accountReducer";
 import { getToken } from "../../../utils/JWT-token";
 import ReponsiveContainer from "../../../common/components/responsive_container";
+import { Warn } from "../../../common/components/sweatAlert";
 
 const ProfilePage = () => {
   const loginInfo = useSelector((store) => store.account);
@@ -41,7 +42,7 @@ const ProfilePage = () => {
           setFollowing(res.following);
         })
         .catch((err) => {
-          alert("잘못된 요청입니다.");
+          Warn("잘못된 요청입니다.");
           console.log(err);
         });
     } else {
@@ -58,18 +59,22 @@ const ProfilePage = () => {
             setFollowing(res.following);
           })
           .catch((err) => {
-            alert("잘못된 요청입니다.");
+            Warn("잘못된 요청입니다.");
             console.log(err);
           });
       } else {
-        alert("로그인 후 접근해 주세요");
+        Warn("로그인 후 접근해 주세요");
         navigate("/login");
       }
     }
   }, [state]);
 
   const isFollowHandler = (prop) => {
-    if (loginInfo.followingList.includes(prop)) {
+    const following = loginInfo.followingList.filter(
+      (following) => following.email === prop
+    );
+
+    if (following.length) {
       return true;
     }
     return false;

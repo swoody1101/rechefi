@@ -30,7 +30,9 @@ export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
     uri: "/community/gallery/detail/",
   });
 
-  console.log(data);
+  const profileTransitionHandler = () => {
+    navigate("/profile", { state: data.data.user.email });
+  };
 
   const { mutate } = useDeleteMyCook("myCookPosts");
 
@@ -79,7 +81,10 @@ export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
         }}
       >
         {/* writer and post date */}
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box
+          sx={{ display: "flex", justifyContent: "space-between" }}
+          onClick={profileTransitionHandler}
+        >
           <CardHeader
             avatar={
               <Avatar

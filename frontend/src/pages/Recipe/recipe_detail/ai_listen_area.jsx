@@ -2,7 +2,6 @@ import { createPortal } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AiAreaListenBackDrop,
-  AiAreaListenButton,
   AiAreaListenWrapper,
 } from "../styles/recipe_ai_styles";
 import {

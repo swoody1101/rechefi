@@ -1,12 +1,5 @@
-import { useRef, useState } from "react";
-import {
-  ImageArea,
-  ImageUploadArea,
-  ImageUploadButton,
-  ImageUploadText,
-  ImageUploadWrapper,
-  UploadImageImg,
-} from "../../../styles/write/write_page_styles";
+import { useRef } from "react";
+import { UploadImageImg } from "../../../styles/write/write_page_styles";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import InputImage from "../../../../../../common/components/input_image";
 import TitleWithDivider from "../../../../../../common/components/title_with_divider";

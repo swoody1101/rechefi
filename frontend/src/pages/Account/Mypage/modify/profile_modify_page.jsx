@@ -19,6 +19,7 @@ import {
   porfileModifyThunk,
 } from "../../../../store/module/accountReducer";
 import InputImage from "../../../../common/components/input_image";
+import { Warn } from "../../../../common/components/sweatAlert";
 
 const ProfileModifyPage = () => {
   const loginInfo = useSelector((store) => store.account);
@@ -43,7 +44,7 @@ const ProfileModifyPage = () => {
       return true;
     }
     if (nickname === "") {
-      alert("닉네임을 입력해주세요.");
+      Warn("닉네임을 입력해주세요.");
       return false;
     }
     if (!checkNicknameThunk(nickname)) {
@@ -56,14 +57,14 @@ const ProfileModifyPage = () => {
     event.preventDefault();
 
     if (password !== rePassword) {
-      alert("비밀번호가 일치하지 않습니다.");
+      Warn("비밀번호가 일치하지 않습니다.");
       setPassword("");
       setRePassword("");
       return;
     }
 
     if (!nicknameCheck()) {
-      alert("사용 불가능한 닉네임입니다.");
+      Warn("사용 불가능한 닉네임입니다.");
       setNickname(loginInfo.nickname);
       return;
     }

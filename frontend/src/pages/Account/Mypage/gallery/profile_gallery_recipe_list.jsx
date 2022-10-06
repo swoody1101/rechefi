@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Warn } from "../../../../common/components/sweatAlert";
 import { loadRecipeThunk } from "../../../../store/module/recipeReducer";
 
 const ProfileGalleryRecipeList = (props) => {
@@ -47,7 +48,7 @@ const ProfileGalleryRecipeList = (props) => {
           });
         })
         .catch((err) => {
-          alert("잘못된 요청입니다.");
+          Warn("잘못된 요청입니다.");
           console.log(err);
         });
     }
