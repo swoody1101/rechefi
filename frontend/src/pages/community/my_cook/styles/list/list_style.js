@@ -90,8 +90,6 @@ export const MyCookDetailContent = styled.div`
 
 export const MyCookDetailContentWithCommentWrapper = styled.div`
   bottom: 3px;
-  margin-top: 1%;
-
   width: 100%;
 `;
 

@@ -3,6 +3,7 @@ import ProfileFollowMenu from "./profile_follow_menu";
 import ProfileFollowerList from "./profile_follower_list";
 import ProfileFollowingList from "./profile_following_list";
 import { useLocation } from "react-router-dom";
+import ReponsiveContainer from "../../../../common/components/responsive_container";
 
 const ProfileFollowPage = () => {
   const { state } = useLocation();
@@ -16,7 +17,7 @@ const ProfileFollowPage = () => {
   }, [state.isFollower]);
 
   return (
-    <>
+    <ReponsiveContainer>
       <ProfileFollowMenu
         follower={follower}
         following={following}
@@ -28,7 +29,7 @@ const ProfileFollowPage = () => {
         <ProfileFollowingList email={email} />
       )}
       <></>
-    </>
+    </ReponsiveContainer>
   );
 };
 
