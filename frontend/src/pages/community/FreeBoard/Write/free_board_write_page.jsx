@@ -43,7 +43,7 @@ function FreeBoardWritePage() {
   // get and handle Administrator info
   const login_info = useSelector((store) => store.account);
   const isAdmin = login_info.admin || false;
-  const userId = login_info.user_id || -2;
+  const userId = login_info.id || -2;
   const [checked, setChekced] = useState(false);
 
   // for delete and modify authority
