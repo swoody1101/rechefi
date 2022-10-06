@@ -1,9 +1,12 @@
-from pydantic import BaseModel, Field
 from typing import List, Union
 from datetime import datetime
 
 from app.schemas.accounts import CurrentUser
 from app.schemas.common import CommonResponse
+
+from pydantic import BaseModel, Field
+
+from app.schemas.recipes import ReferencedRecipe
 
 
 class ArticleCreateForm(BaseModel):
@@ -40,7 +43,7 @@ class ArticleDetail(NoticeDetail):
 
 
 class CookingDetail(ArticleDetail):
-    recipe_id: int = Field(Nullable=True)
+    recipe: Union[ReferencedRecipe, None] = None
 
 
 class ArticleDetailResponse(CommonResponse):
