@@ -38,8 +38,8 @@ function FreeBoardDetailPage() {
   // get user info from store
   const login_info = useSelector((store) => store.account);
   const isAdmin = login_info.admin || false;
-  const userId = login_info.user_id || -2;
-  const writerId = data ? data.user_id : -1;
+  const userId = login_info.id || -2;
+  const writerId = data ? data.user.id : -1;
 
   // for delete and modify authority
   const hasAuth = () => {

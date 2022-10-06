@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export function useTitle() {
   // control title data
-  const [title, setTitle] = useState(null);
+  const [title, setTitle] = useState("");
 
   // for helper message
   const titleValidation = () => {
