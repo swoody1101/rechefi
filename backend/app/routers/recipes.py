@@ -1,21 +1,19 @@
-from fastapi import APIRouter, Response, Depends, UploadFile, Request, File
-from typing import Union
-import asyncio
-from starlette.responses import JSONResponse
-from tortoise.expressions import F
+import random
 
 from app.routers.accounts import get_current_user
-
 from app.models.recipes import Recipe, Tag, Ingredient, RecipeComment, LikeRecipe, RecipeIngredient
 from app.models.accounts import User
 from app.schemas.accounts import CurrentUser
-
 from app.schemas.recipes import *
 from app.schemas.common import *
 from app.config import settings
-from httpx import AsyncClient
 
-import random
+from fastapi import APIRouter, Response, Depends, UploadFile, Request, File
+from starlette.responses import JSONResponse
+from httpx import AsyncClient
+import asyncio
+
+
 
 
 router = APIRouter(prefix="/recipe", tags=["recipe"])
@@ -23,11 +21,11 @@ router = APIRouter(prefix="/recipe", tags=["recipe"])
 
 @router.post("/tag", description="레시피 태그 생성", response_model=CommonResponse)
 async def create_tag(req: TagForm, user: User = Depends(get_current_user)):
-    # if user.is_admin is True:
-    if user is not None:
-        await Tag.get_or_create(**req.dict())
-    else:
+    if user is None:
         return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    if user.is_admin is False:
+        return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    await Tag.get_or_create(**req.dict())
     return CommonResponse()
 
 
@@ -46,11 +44,11 @@ async def get_ingredient_list(name: Union[str, None] = None):
 
 @router.post("/ingredient", description="레시피 재료 생성", response_model=CommonResponse)
 async def create_ingredient(req: IngredientForm, user: User = Depends(get_current_user)):
-    # if user.is_admin is True:
-    if user is not None:
-        await Ingredient.get_or_create(**req.dict())
-    else:
+    if user is None:
         return JSONResponse(status_code=401, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    if user.is_admin is False:
+        return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
+    await Ingredient.get_or_create(**req.dict())
     return CommonResponse()
 
 
@@ -148,7 +146,7 @@ async def delete_comment(comment_id: int, user: User = Depends(get_current_user)
     comment = await RecipeComment.get_or_none(id=comment_id)
     if comment is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 댓글입니다.").dict())
-    if user.id != comment.user_id:
+    if user.id != comment.user_id and user.is_admin is False:
         return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
     if comment.group >= 0:
         comment.group = -(comment.group+1)
@@ -189,10 +187,10 @@ async def edit_recipe(recipe_id: int, req: RecipeCreateForm, user: User = Depend
 @router.delete("/{recipe_id}", description="레시피 삭제", response_model=CommonResponse)
 async def delete_recipe(recipe_id: int, user: User = Depends(get_current_user)):
     recipe = await Recipe.get_or_none(id=recipe_id)
-    if recipe is not None and user.id == recipe.user_id:
-        await Recipe.filter(id=recipe_id).delete()
-    else:
+    if recipe is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 레시피입니다.").dict())
+    if user.id == recipe.user_id or user.is_admin:
+        await Recipe.filter(id=recipe_id).delete()
     return CommonResponse()
 
 
