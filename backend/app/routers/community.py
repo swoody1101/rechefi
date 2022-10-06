@@ -1,5 +1,6 @@
 from typing import Union
 
+from app.models.recipes import RecipeComment
 from app.routers.accounts import get_current_user
 from app.models.community import *
 from app.models.accounts import User
@@ -9,6 +10,8 @@ from app.schemas.common import *
 
 from fastapi import APIRouter, Response, Depends
 from starlette.responses import JSONResponse
+
+from app.schemas.recipes import ReferencedRecipe
 
 router = APIRouter(prefix="/community", tags=["community"])
 
@@ -176,9 +179,15 @@ async def cooking_detail(article_id: int):
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
     article.views += 1
     await article.save()
+    print(article.recipe)
     data = CookingDetail(
         user=CurrentUser(**dict(article.user)),
         like_users=await article.like_users.all().values("id", "nickname"),
+        recipe=ReferencedRecipe(**dict(article.recipe),
+                                user=await article.recipe.user,
+                                likes=len(await article.recipe.like_users.all()),
+                                comments_count=len(await RecipeComment.filter(recipe_id=article.recipe.id))
+                                ) if article.recipe is not None else None,
         **dict(article)
     )
     return ArticleDetailResponse(data=data)

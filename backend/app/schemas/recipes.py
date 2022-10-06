@@ -57,6 +57,12 @@ class RecipeList(SimpleRecipeList):
     updated_at: datetime
 
 
+class ReferencedRecipe(RecipeList):
+    likes: int
+    user: CurrentUser
+    comments_count: int
+
+
 class IncompleteRecipeList(RecipeList):
     likes: int
     user: CurrentUser
