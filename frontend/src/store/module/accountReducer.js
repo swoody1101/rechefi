@@ -226,6 +226,7 @@ export const authSlice = createSlice({
         state.imgUrl = payload.data.img_url;
         state.introduce = payload.data.about_me;
         state.follower = payload.data.follower;
+        state.admin = payload.data.is_admin;
         state.following = payload.data.following;
       }
     },
