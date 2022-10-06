@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 
 import regex from "../../../utils/regex";
+import { Warn } from "../../../common/components/sweatAlert";
 
 const NewPassword = () => {
   const [email, setEmail] = useState("");
@@ -29,7 +30,7 @@ const NewPassword = () => {
     const regexCheck = regex.email;
     if (regexCheck.test(email)) {
     } else {
-      alert("이메일 형식으로 입력해주세요.");
+      Warn("이메일 형식으로 입력해주세요.");
     }
     setEmail("");
   };

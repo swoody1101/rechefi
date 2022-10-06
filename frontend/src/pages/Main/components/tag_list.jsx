@@ -1,53 +1,61 @@
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { TagElementButton, TagListDiv } from "../styles/tag_list_styles";
-import { useState } from "react";
+import { TagFoodImg } from "../styles/tag_list_styles";
 import { useNavigate } from "react-router-dom";
+import { Box, Paper, Typography } from "@mui/material";
 
 const TagList = () => {
   const navigate = useNavigate();
-  const [selectTag, setSelectTag] = useState("");
+
   const tags = [
-    { cookName: "치킨" },
-    { cookName: "햄버거" },
-    { cookName: "한식" },
-    { cookName: "일식" },
-    { cookName: "족발/보쌈" },
-    { cookName: "중국집" },
-    { cookName: "분식" },
-    { cookName: "아시안" },
-    { cookName: "양식" },
-    { cookName: "디저트" },
-    { cookName: "샐러드" },
-    { cookName: "도시락" },
-    { cookName: "야식" },
-    { cookName: "찜/탕" },
-    { cookName: "고기/구이" },
-    { cookName: "샌드위치" },
-    { cookName: "기타" },
+    { id: 1, name: "한식" },
+    { id: 2, name: "양식" },
+    { id: 3, name: "일식" },
+    { id: 4, name: "중식" },
+    { id: 5, name: "퓨전" },
+    { id: 6, name: "집밥" },
+    { id: 7, name: "디저트" },
+    { id: 8, name: "빵/과자" },
+    { id: 9, name: "음료" },
+    { id: 10, name: "밑반찬" },
+    { id: 11, name: "메인디쉬" },
+    { id: 12, name: "기타" },
   ];
   return (
-    <TagListDiv>
-      {Object.keys(tags).map((el, i) => (
-        <TagElementButton
+    <Box
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        mt: 2,
+        justifyContent: "center",
+      }}
+    >
+      {tags.map((el, i) => (
+        <Paper
           key={i}
+          sx={{
+            width: "28%",
+            height: "12%",
+            p: 2,
+            m: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
           onClick={() => {
-            setSelectTag(tags[el].cookName);
             navigate("/recipe", {
               state: {
                 keyword: "",
-                searchTag: tags[el].cookName,
+                tags: [el.id],
               },
             });
           }}
         >
-          <div>
-            <AccountCircleIcon />
-          </div>
-          <div>{tags[el].cookName}</div>
-        </TagElementButton>
+          <TagFoodImg src={`/img/icon/${el.id}.png`} alt="아이콘" />
+          <Typography fontSize={"1.05rem"} fontWeight={"bold"} sx={{ mt: 0.5 }}>
+            {el.name}
+          </Typography>
+        </Paper>
       ))}
-      <div>{selectTag}</div>
-    </TagListDiv>
+    </Box>
   );
 };
 

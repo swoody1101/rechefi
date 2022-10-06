@@ -1,195 +1,106 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useEffect, useState } from "react";
 import RecipeListBests from "./components/bests/recipe_list_bests";
 import RecipeList from "./components/recipe_list";
 import RecipeListFab from "./components/recipe_list_fab";
+import useFetchList from "../../../hooks/useFetch";
 import { Container } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useBestRecipes } from "../../../hooks/Recipe/list/useBestRecipes";
+import { getToken } from "../../../utils/JWT-token";
+import { useInView } from "react-intersection-observer";
+import RecipeListLoadingSpinner from "./components/recipe_list_loading_spinner";
+import ReponsiveContainer from "../../../common/components/responsive_container";
 
-function RecipeListView() {
-  // DEBUG
-  const data = useMemo(
-    () => [
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 1,
-        tags: [{ id: 1 }, { id: 2 }],
-        ingredients: [{ name: "파" }, { name: "양파" }],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 2,
-        tags: [{ id: 2 }],
-        ingredients: [{ name: "양파" }],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 3,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 4,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 5,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 11,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는 탕수육",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 12,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 13,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 14,
-        tags: [],
-        ingredients: [],
-      },
-      {
-        img: "../../../../assets/img/food_example_1.jpg",
-        title: "자취생도 만들 수 있는",
-        author: "조보아씨 일루와봐유",
-        views: 1576,
-        likes: 30,
-        id: 15,
-        tags: [],
-        ingredients: [],
-      },
-    ],
-    []
-  );
+function RecipeListPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state;
 
-  const [loading, setLoading] = useState(false);
-  const [recipes, setRecipes] = useState([]);
-  const [bestRecipes, setBestRecipes] = useState([]);
-
-  /**
-   * add recipe list item
-   * @param {Integer} nAddedRecipes number of added recipes
-   */
-  const addRecipesBeingShown = useCallback(
-    async (nAddedRecipes) => {
-      // for spinner UI
-      setLoading(true);
-
-      if (recipes.length + nAddedRecipes <= data.length) {
-        await setTimeout(() => {
-          setRecipes(
-            recipes.concat(
-              data.slice(
-                recipes.length,
-                recipes.length + nAddedRecipes
-              )
-            )
-          );
-        }, 1000);
+  // get search keywords
+  let query = "";
+  if (state) {
+    if (state.keyword) query += `title=${state.keyword}&`;
+    if (state.tags) {
+      if (state.tags.length !== 0) {
+        query += "tag=";
+        state.tags.forEach((tag, idx) => {
+          query += `${tag}${idx !== state.tags.length - 1 ? "," : "&"}`;
+        });
       }
-
-      setLoading(false);
-    },
-    [recipes, setLoading, data]
-  );
-
-  let ticking = false;
-  const onScroll = useCallback(() => {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        let documentScrollPos =
-          window.scrollY + window.innerHeight;
-
-        // if scroll end
-        if (
-          documentScrollPos <=
-          document.documentElement.scrollHeight - 20
-        ) {
-          addRecipesBeingShown(5);
-        }
-
-        ticking = false;
-      });
-      ticking = true;
     }
-  }, [addRecipesBeingShown]);
 
-  // attach on Scroll event
-  useEffect(() => {
-    window.addEventListener("scroll", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, [onScroll]);
+    if (state.ingreds) {
+      if (state.ingreds && state.ingreds.length !== 0) {
+        query += "ingredient=";
+        state.ingreds.forEach((ingred, idx) => {
+          query += `${ingred.name}${
+            idx !== state.ingreds.length - 1 ? "," : ""
+          }`;
+        });
+      }
+    }
+  }
 
-  // list Value init
+  // loading best Recipe
+  const [bestRecipes] = useBestRecipes([]);
+
+  // recipe List loading
+  const { data, isLoading, fetchNextPage, hasNextPage } = useFetchList({
+    queryKey: "RECIPES",
+    articleId: 1,
+    uri: "/recipe/",
+    query: query,
+  });
+
+  // for infinity scroll trigger
+  const [ref, inView] = useInView();
+
+  // loading scroll
   useEffect(() => {
-    setRecipes(data.slice(0, 5));
-    setBestRecipes(data.slice(0, 5));
-  }, [data]);
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, inView, fetchNextPage]);
+
+  // see recipe detail
+  const onRecipeItemClicked = (recipe) => {
+    // const postId = id;
+    navigate(`/recipe/postId=` + recipe.id);
+  };
 
   return (
-    <Container sx={{ p: 1 }}>
+    <ReponsiveContainer style={{ pt: 2, px: 1, pb: 1 }}>
       <RecipeListBests bestRecipes={bestRecipes} />
-      <RecipeList recipes={recipes} loading={loading} />
-      <RecipeListFab />
-    </Container>
+      <Container sx={{ mt: 2 }}>
+        {isLoading ? (
+          <RecipeListLoadingSpinner loading={isLoading} />
+        ) : (
+          data.pages.map((page, index) => (
+            <RecipeList
+              key={index}
+              recipes={page.result.data.post}
+              loading={isLoading}
+              onRecipeItemClicked={onRecipeItemClicked}
+            />
+          ))
+        )}
+      </Container>
+
+      {/* for infinity scroll trigger */}
+      <Container ref={ref}></Container>
+
+      {/* show write btn when login */}
+      {getToken() ? (
+        <RecipeListFab
+          onClick={() => {
+            navigate("/recipe/write");
+          }}
+        />
+      ) : (
+        ""
+      )}
+    </ReponsiveContainer>
   );
 }
 
-export default RecipeListView;
+export default RecipeListPage;

@@ -150,7 +150,7 @@ async def delete_comment(comment_id: int, user: User = Depends(get_current_user)
         return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
     if comment.group >= 0:
         comment.group = -(comment.group+1)
-    if comment.group < 0 and user.is_admin:
+    elif comment.group < 0 and user.is_admin:
         comment.group = -(comment.group+1)
     await comment.save(update_fields=("group",))
     return CommonResponse()
