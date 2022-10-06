@@ -11,6 +11,7 @@ import {
   loadProfileThunk,
 } from "../../../store/module/accountReducer";
 import { getToken } from "../../../utils/JWT-token";
+import ReponsiveContainer from "../../../common/components/responsive_container";
 
 const ProfilePage = () => {
   const loginInfo = useSelector((store) => store.account);
@@ -75,13 +76,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <Container
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        marginTop: "20px",
-      }}
-    >
+    <ReponsiveContainer style={{ mt: 2 }}>
       <Box sx={{ width: "100%" }}>
         <ProfileIntroduce
           imgUrl={imgUrl}
@@ -97,7 +92,7 @@ const ProfilePage = () => {
         />
         <ProfileGallery userId={id} />
       </Box>
-    </Container>
+    </ReponsiveContainer>
   );
 };
 
