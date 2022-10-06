@@ -68,7 +68,6 @@ const ProfileModifyPage = () => {
       setNickname(loginInfo.nickname);
       return;
     }
-
     const profileInfo = {
       nickname: nickname,
       about_me: introduce,
