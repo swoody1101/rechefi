@@ -1,9 +1,10 @@
-from pydantic import BaseModel, Field
 from typing import List, Union
 from datetime import datetime
 
 from app.schemas.accounts import CurrentUser
 from app.schemas.common import CommonResponse
+
+from pydantic import BaseModel, Field
 
 
 class ArticleCreateForm(BaseModel):
