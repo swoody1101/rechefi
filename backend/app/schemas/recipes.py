@@ -1,5 +1,4 @@
-import typing
-from typing import List, Union, Any
+from typing import List, Union
 from datetime import datetime
 
 from app.schemas.accounts import CurrentUser
