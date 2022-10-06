@@ -1,25 +1,10 @@
 from typing import List, Union
+from datetime import datetime
+
+from app.schemas.accounts import CurrentUser
+from app.schemas.common import CommonResponse, CommonArticleDetail
 
 from pydantic import BaseModel, Field
-
-from datetime import datetime
-# from app.schemas.accounts import *
-# from ..models.recipes import *
-# from tortoise.contrib.pydantic import pydantic_model_creator
-#
-# Recipe_Pydantic = pydantic_model_creator(Recipe)
-
-
-class RecipeCommentForm(BaseModel):
-    content: str
-    root: int
-    group: int
-    sequence: int
-
-
-class RecipeCommentList(RecipeCommentForm):
-    user_id: int
-    nickname: str
 
 
 class TagForm(BaseModel):
@@ -32,6 +17,10 @@ class TagList(TagForm):
 
 class IngredientForm(BaseModel):
     name: str = Field()
+
+
+class IngredientList(IngredientForm):
+    id: int
 
 
 class IngredientRecipeForm(IngredientForm):
@@ -47,24 +36,65 @@ class RecipeCreateForm(BaseModel):
 
 
 class RecipeLikeUser(BaseModel):
-    user_id: int
+    id: int
 
 
-class RecipeList(BaseModel):
-    user_id: int
+class RecipeLikeUserNickname(RecipeLikeUser):
     nickname: str
+
+
+class SimpleRecipeList(BaseModel):
+    user_id: int
+    id: int
     title: str
-    content: str
+    views: int
     img_url: str = Field(nullable=True)
-    tags: List[TagList]
-    # ingredients: List[IngredientRecipeForm]
-    likes: int
-    comment_count: int
+
+
+class RecipeList(SimpleRecipeList):
+    img_url: str = Field(nullable=True)
     created_at: datetime
     updated_at: datetime
 
 
-class SearchRecipeQeury(BaseModel):
-    tags: List[int]
-    ingredients: List[str]
+class ReferencedRecipe(RecipeList):
+    likes: int
+    user: CurrentUser
+    comments_count: int
 
+
+class IncompleteRecipeList(RecipeList):
+    likes: int
+    user: CurrentUser
+    comments_count: int
+    tags: List[TagList]
+
+
+class CompleteRecipeList(IncompleteRecipeList):
+    ingredients: List[IngredientList]
+
+
+class RecipeListPagination(BaseModel):
+    post: List[Union[CompleteRecipeList, IncompleteRecipeList, RecipeList, SimpleRecipeList]]
+    total_pages: int
+    current_page: int
+
+
+class RecipeListResponse(CommonResponse):
+    data: RecipeListPagination
+
+
+class RecipeDetail(BaseModel):
+    recipe: CommonArticleDetail
+    user: CurrentUser
+    tags: List[TagList]
+    ingredients: List[IngredientRecipeForm]
+    like_users: List[RecipeLikeUserNickname]
+
+
+class RecipeDetailResponse(CommonResponse):
+    data: RecipeDetail
+
+
+class BestRecipeResponse(CommonResponse):
+    data: List[IncompleteRecipeList]

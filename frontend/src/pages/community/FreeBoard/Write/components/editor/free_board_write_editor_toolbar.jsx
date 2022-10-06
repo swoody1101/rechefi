@@ -18,7 +18,7 @@ import InputImage from "../../../../../../common/components/input_image";
 import { useRef } from "react";
 import { useState } from "react";
 
-function FreeBoardWriteEditorToolbar({ onUploadImage, editorState }) {
+function FreeBoardWriteEditorToolbar({ onUploadImage, editorState, on }) {
   const HEADER_TYPES = [
     { label: "(None)", style: "unstyled" },
     { label: "H1", style: "header-one" },

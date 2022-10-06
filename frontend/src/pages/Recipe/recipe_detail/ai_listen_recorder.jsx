@@ -18,10 +18,7 @@ const AiListenRecorder = () => {
 
   useEffect(() => {
     if (audioContext) {
-      setRecorder(
-        new Recorder(audioContext, {
-        })
-      );
+      setRecorder(new Recorder(audioContext, {}));
     }
   }, [audioContext]);
   useEffect(() => {
@@ -48,7 +45,6 @@ const AiListenRecorder = () => {
           lastModified: new Date().getTime(),
           type: "audio/wav",
         });
-        console.log(sound);
         dispatch(requestAiThunk(sound));
       });
     }
@@ -59,14 +55,10 @@ const AiListenRecorder = () => {
   }
 
   function exportWavTest() {
-    console.log(exblob);
-    console.log(recorder);
     recorder &&
       recorder.exportWAV((exblob) => {
-        console.log(exblob);
         const url = URL.createObjectURL(exblob);
         const filename = new Date().toISOString();
-        console.log(url);
       }, "audio/wav");
   }
 

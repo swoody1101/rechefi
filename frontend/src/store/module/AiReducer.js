@@ -36,7 +36,6 @@ export const requestAiThunk = createAsyncThunk(
           Authorization: `Bearer ${loginToken}`,
         },
       });
-      console.log(response);
       return response.data;
     } catch (error) {
       return error.response;
