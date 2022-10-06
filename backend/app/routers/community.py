@@ -286,7 +286,7 @@ async def get_article_list(page: int, q: Union[str, None] = None, opt: Union[str
     elif opt == "author":
         query = query.filter(user__nickname__contains=q)
     articles = await query
-    pages = 1 + len(articles) // 10
+    pages = 1 + max(len(articles)-1,0) // 10
     current_page = page
     if 1 <= page <= pages:
         articles = articles[(page - 1) * 10:page * 10]
@@ -313,7 +313,7 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
     elif opt == "author":
         query = query.filter(user__nickname__contains=q)
     articles = await query
-    pages = 1 + len(articles) // 10
+    pages = 1 + max(len(articles)-1, 0) // 10
     current_page = page
     if 1 <= page <= pages:
         articles = articles[(page - 1) * 10:page * 10]
@@ -327,7 +327,7 @@ async def get_notice_list(page: int, q: Union[str, None] = None, opt: Union[str,
 @router.get("/gallery/search-by-id/{page}", description="유저 id로 작성된 요리자랑 목록 조회", response_model=ArticleListResponse)
 async def get_cooking_list_by_id(page: int, mid: int):
     cooking = await Cooking.filter(user_id=mid).select_related('user').order_by('-id')
-    pages = 1 + len(cooking)//15
+    pages = 1 + max(len(cooking)-1, 0)//15
     current_page = page
     if 1 <= page <= pages:
         cooking = cooking[(page-1)*15:page*15]
@@ -346,7 +346,7 @@ async def get_cooking_list(page: int, q: Union[str, None] = None, opt: Union[str
     elif opt == "author":
         query = query.filter(user__nickname__contains=q)
     cooking = await query
-    pages = 1 + len(cooking)//20
+    pages = 1 + max(len(cooking)-1, 0)//20
     current_page = page
     if 1 <= page <= pages:
         cooking = cooking[(page-1)*20:page*20]
