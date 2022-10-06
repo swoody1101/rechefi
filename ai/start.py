@@ -25,7 +25,7 @@ async def index():
     return {"message": "Hello Test World"}
 
 @app.post('/stt')
-async def result(request: Request, file: UploadFile = File(...)):
+def result(request: Request, file: UploadFile = File(...)):
     start = time.time()
     path = "."
     new_file = open(f'{path}/{file.filename}', 'wb+')
@@ -42,49 +42,21 @@ async def result(request: Request, file: UploadFile = File(...)):
         name_char_list.append(file_name[i])
     only_file_name = "".join(name_char_list)
     
-# ###################################################################################    
-#     # 들여온 파일 경로, sample rate 16000,  noise-reduction 거친 파일 경로
-#     file_path_normal = file_path + '/' + file_name
-#     file_path_16k = file_path + '/' + only_file_name + '_16k.wav'
-#     file_path_reduc = file_path + '/' + only_file_name + '_16k_reduc.wav'
-    
-#     # 메인 로직
-#     ## 1. 파일 sample rate 구하기
-#     ## 2. sample rate 16000으로 바꾸기
-#     ## 3. noise-reduction
-#     ## 4. STT
-#     ## 5. 결괏값 토대로 갈무리
-    
-#     rate = wavfile.read(f"{file_path_normal}")
-#     file_sample_rate = rate[0]
-   
-#     change_sr.down_sample(file_path_normal, file_sample_rate, 16000, only_file_name)
-#     noise_reduction.noise_reduction(file_path_16k)
-# #######################################################################################       
     
 ###########################################################################################    
     # 들여온 파일 경로, sample rate 16000,  noise-reduction 거친 파일 경로
     file_path_normal = file_path + '/' + file_name
-    file_path_16k = file_path + '/' + only_file_name + '_mono_reduc_16k.wav'
-    file_path_reduc = file_path + '/' + only_file_name + '_mono_reduc.wav'
     file_path_mono = file_path + '/' + only_file_name + '_mono.wav'
+    file_path_reduc = file_path + '/' + only_file_name + '_mono_reduc.wav'
+    file_path_16k = file_path + '/' + only_file_name + '_mono_reduc_16k.wav'
 ############################################################################################
-
-# ############################################################################################
-#     # 들여온 파일 경로, sample rate 16000,  noise-reduction 거친 파일 경로
-#     file_path_normal = file_path + '/' + file_name
-#     file_path_16k = file_path + '/' + only_file_name + '_reduc_16k.wav'
-#     file_path_reduc = file_path + '/' + only_file_name + '_reduc.wav'
-#     # file_path_mono = file_path + '/' + only_file_name + '_mono.wav'
-    
-# ##############################################################################################33
-
     # 메인 로직
     ## 1. 파일 sample rate 구하기
-    ## 2. sample rate 16000으로 바꾸기
-    ## 3. noise-reduction
-    ## 4. STT
-    ## 5. 결괏값 토대로 갈무리
+    ## 2. stereo --> mono
+    ## 3. sample rate 16000으로 바꾸기
+    ## 4. noise-reduction
+    ## 5. STT
+    ## 6. 결괏값 토대로 갈무리
     
     rate = wavfile.read(f"{file_path_normal}")
     file_sample_rate = rate[0]
@@ -101,10 +73,13 @@ async def result(request: Request, file: UploadFile = File(...)):
     
     # 끝나고 후처리: 파일 삭제 및 시간 측정
     # os.remove(file_path_normal)
-    # os.remove(file_path_mono)
-    # os.remove(file_path_reduc)
-    # os.remove(file_path_16k)
+    os.remove(file_path_mono)
+    os.remove(file_path_reduc)
+    os.remove(file_path_16k)
     end = time.time()
     print(f'time taken: {end - start}')
-    return response
+    return {
+        "message": "success",
+        "data": f'"{response}"'
+    }
 
