@@ -26,6 +26,7 @@ import { Palette } from "../../../common/styles/palette";
 import RecipeDetailPopover from "./components/recipe_detail_popover";
 import RecipeDetailInfoContainer from "./components/sub_info/recipe_detail info_container";
 import MyCookWriteBtn from "../../community/my_cook/components/write/components/my_cook_write_btn";
+import { Warn } from "../../../common/components/sweatAlert";
 
 const RecipeDetail = () => {
   const dispatch = useDispatch();
@@ -34,15 +35,19 @@ const RecipeDetail = () => {
   // handling AI UI
   const [aiButton, setAiButton] = useState(false);
   const toggleAI = () => {
-    dispatch(aiReadingFormat());
-    setAiButton((prev) => {
-      return !prev;
-    });
+    if (userInfo.auth) {
+      dispatch(aiReadingFormat());
+      setAiButton((prev) => {
+        return !prev;
+      });
+    } else {
+      Warn("로그인 후 이용 가능합니다.");
+    }
   };
 
   useEffect(() => {
     dispatch(aiReadingFormat());
-  }, []);
+  }, [dispatch]);
 
   // for getting Recipe data
   const { detail } = useParams();
