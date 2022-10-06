@@ -13,4 +13,8 @@ export const Reset = css`
     width: 100vw;
     max-height: 100vh;
   }
+
+  .swal2-container {
+    z-index: 300000;
+  }
 `;
