@@ -1,6 +1,7 @@
 from pydantic import BaseSettings
 import redis
 
+
 class Settings(BaseSettings):
     # Main DB(Mysql)
     DB_URL : str = ""
