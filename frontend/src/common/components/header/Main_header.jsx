@@ -43,7 +43,7 @@ const Header = ({ sidebarHandler }) => {
   };
 
   return (
-    <AppBar position="static" sx={{ background: Palette.mainColor4 }}>
+    <AppBar position="fixed" sx={{ background: Palette.mainColor4 }}>
       <Toolbar
         sx={{
           px: 1,
