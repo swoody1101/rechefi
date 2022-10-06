@@ -11,6 +11,7 @@ const RecipedetailTitleArea = ({ post }) => {
       <DetailPostInfo
         userNickname={post.user.nickname}
         userEmail={post.user.email}
+        userImage={post.user.img_url}
         postDate={post.recipe.created_at}
         postViews={post.recipe.views}
         style={{ display: "flex", justifyContent: "space-between" }}

@@ -1,9 +1,11 @@
-import { Avatar, Box, Link } from "@mui/material";
+import { Avatar, Box, Link, Typography } from "@mui/material";
 import React from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { Palette } from "../../../../../common/styles/palette";
 
 function FreeBoardDetailUserAvartar({ email, nickname, imageLink, style }) {
+  const navigate = useNavigate();
+
   return (
     <Box
       sx={{
@@ -17,22 +19,18 @@ function FreeBoardDetailUserAvartar({ email, nickname, imageLink, style }) {
       <Avatar
         alt={nickname}
         src={imageLink}
-        sx={{ width: 32, height: 32, mr: 1 }}
+        sx={{ width: 36, height: 36, mr: 1 }}
       />
-      <Link
+      <Typography
         color={Palette.black3}
         fontSize={"1.1rem"}
-        underline="hover"
-        component={RouterLink}
         sx={{ pb: 0.1 }}
-        // TODO : change with match implemented
-        to={`/profile`}
-        state={{
-          email,
+        onClick={() => {
+          navigate("/profile", { state: email });
         }}
       >
         {nickname}
-      </Link>
+      </Typography>
     </Box>
   );
 }
