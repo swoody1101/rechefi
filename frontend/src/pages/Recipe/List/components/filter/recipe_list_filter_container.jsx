@@ -1,55 +1,26 @@
-import {
-  Accordion,
-  AccordionSummary,
-  Button,
-  Paper,
-} from "@mui/material";
-import React, { useState } from "react";
+import { Accordion, AccordionSummary, Paper } from "@mui/material";
+import React from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import RecipeListFilterTags from "./tag/recipe_list_filter_tags";
 import RecipeListFilterIngredients from "./ingredient/recipe_list_filter_ingredient";
+import { useSelectedTag } from "../../../../../hooks/Recipe/tag/useSelectedTags";
+import { useSelectedIngreds } from "../../../../../hooks/Recipe/ingredient/useSelectedIngreds";
+import { useEffect } from "react";
 
 function RecipeListFilterContainer({ onFilterApplied }) {
   // handle tag information
-  const [selectedTags, setSelectedTags] = useState([]);
-
-  const addTag = (tag_id) => {
-    setSelectedTags([...selectedTags, tag_id]);
-  };
-
-  const deleteTag = (tag_id) => {
-    setSelectedTags(
-      selectedTags.filter((tag) => tag !== tag_id)
-    );
-  };
+  const [selectedTags, addTag, deleteTag] = useSelectedTag();
 
   // handle ingred info
-  const [selectedIngreds, setSelectedIngred] = useState([]);
+  const [selectedIngreds, addIngred, deleteIngred, changeIngred] =
+    useSelectedIngreds();
 
-  const addIngred = (ingred) => {
-    setSelectedIngred([
-      ...selectedIngreds,
-      { ...ingred, include: true },
-    ]);
-  };
-
-  const deleteIngred = (ingred_id) => {
-    setSelectedIngred(
-      selectedIngreds.filter(
-        (ingred) => ingred.id !== ingred_id
-      )
-    );
-  };
-
-  const changeIngred = (ingred_id, flag) => {
-    setSelectedIngred(
-      selectedIngreds.map((ingred) =>
-        ingred.id === ingred_id
-          ? { ...ingred, include: flag }
-          : ingred
-      )
-    );
-  };
+  useEffect(() => {
+    onFilterApplied({
+      tags: selectedTags,
+      ingreds: selectedIngreds,
+    });
+  }, [selectedIngreds, selectedTags, onFilterApplied]);
 
   return (
     <Accordion
@@ -57,6 +28,7 @@ function RecipeListFilterContainer({ onFilterApplied }) {
         border: 0,
         elevation: 0,
         boxShadow: "none",
+        m: 0,
       }}
     >
       {/* set expand event only icon */}
@@ -84,28 +56,13 @@ function RecipeListFilterContainer({ onFilterApplied }) {
           flexDirection: "column",
         }}
       >
-        <RecipeListFilterTags
-          onTagAdded={addTag}
-          onTagDeleted={deleteTag}
-        />
+        <RecipeListFilterTags onTagAdded={addTag} onTagDeleted={deleteTag} />
         <RecipeListFilterIngredients
-          onIngredAdded={addIngred}
-          onIngredDeleted={deleteIngred}
-          onIngredChanged={changeIngred}
+          onSelectedIngredAdded={addIngred}
+          onSelectedIngredDeleted={deleteIngred}
+          onSelectedIngredChanged={changeIngred}
           selectedIngred={selectedIngreds}
         />
-        <Button
-          variant="contained"
-          onClick={() =>
-            onFilterApplied({
-              tags: selectedTags,
-              ingreds: selectedIngreds,
-            })
-          }
-          sx={{ m: 1 }}
-        >
-          적용
-        </Button>
       </Paper>
     </Accordion>
   );

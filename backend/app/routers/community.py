@@ -121,7 +121,7 @@ async def delete_article_comment(comment_id: int, user: User = Depends(get_curre
         return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
     if comment.group >= 0:
         comment.group = -(comment.group + 1)
-    if comment.group < 0 and user.is_admin:
+    elif comment.group < 0 and user.is_admin:
         comment.group = -(comment.group + 1)
     await comment.save(update_fields=("group",))
     return CommonResponse()
@@ -157,13 +157,13 @@ async def edit_article(article_id: int, req: ArticleCreateForm, user: User = Dep
 
 @router.delete("/free-board/{article_id}", description="게시물 삭제", response_model=CommonResponse)
 async def delete_article(article_id: int, user: User = Depends(get_current_user)):
-    article = await Article.get_or_none(id=article_id, user_id=user.pk)
-    if article is None and user.is_admin is False:
+    article = await Article.get_or_none(id=article_id)
+    if article is None:
         return JSONResponse(status_code=404, content=CommonFailedResponse(detail="없는 게시물입니다.").dict())
-    if article is None and user.is_admin:
-        await Article.filter(id=article_id).delete()
-    await article.delete()
+    if user.id == article.user_id or user.is_admin:
+        await article.delete()
     return CommonResponse()
+
 
 
 @router.post("/gallery", description="게시물 작성", response_model=CommonResponse, status_code=201)
@@ -234,7 +234,7 @@ async def delete_cooking_comment(comment_id: int, user: User = Depends(get_curre
         return JSONResponse(status_code=403, content=CommonFailedResponse(detail="권한이 없습니다.").dict())
     if comment.group >= 0:
         comment.group = -(comment.group + 1)
-    if comment.group < 0 and user.is_admin:
+    elif comment.group < 0 and user.is_admin:
         comment.group = -(comment.group + 1)
     await comment.save(update_fields=("group",))
     return CommonResponse()
