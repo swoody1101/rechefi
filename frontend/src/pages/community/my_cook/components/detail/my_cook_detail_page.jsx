@@ -84,10 +84,7 @@ export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
         }}
       >
         {/* writer and post date */}
-        <Box
-          sx={{ display: "flex", justifyContent: "space-between" }}
-          onClick={profileTransitionHandler}
-        >
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <CardHeader
             avatar={
               <Avatar
@@ -101,6 +98,7 @@ export const MyCookDetail = ({ postId, openDetail, modalClose }) => {
             }
             sx={{ p: 0 }}
             title={data.data.user.nickname}
+            onClick={profileTransitionHandler}
             subheader={new Date(data.data.created_at).toLocaleString()}
           />
 
