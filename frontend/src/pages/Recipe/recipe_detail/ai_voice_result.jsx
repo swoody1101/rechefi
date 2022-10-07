@@ -28,8 +28,6 @@ const AiVoiceResult = ({ data, synth, toggleAI, recognition }) => {
         aiResult.play();
       } else if (data.data === `"멈춰"`) {
         aiResult.play();
-      } else if (data.data === `"중지"`) {
-        aiResult.play();
       } else if (data.data === `"일시정지"`) {
         aiResult.play();
       } else if (data.data === `"계속읽어줘"`) {
@@ -57,11 +55,6 @@ const AiVoiceResult = ({ data, synth, toggleAI, recognition }) => {
         recognition.start();
         aiResult.pause();
         dispatch(aiListenEndAction());
-      } else if (data.data === `"중지"`) {
-        aiResult.pause();
-        synth.cancel();
-        recognition.start();
-        toggleAI();
       } else if (data.data === `"일시정지"`) {
         aiResult.pause();
         dispatch(aiReadingNowPlaying());
