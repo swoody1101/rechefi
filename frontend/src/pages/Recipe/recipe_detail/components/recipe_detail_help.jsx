@@ -48,7 +48,7 @@ function RecipeDetailHelp() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography fontSize={"0.9rem"}>
-            멈춰, 중지, 다음 단계, 이전 단계
+            멈춰, 일시 정지, 다음 단계, 이전 단계, 계속 읽어줘
           </Typography>
         </AccordionDetails>
       </Accordion>
