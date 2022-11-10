@@ -21,7 +21,7 @@
 
 정진(Project Leader) [📧](mailto:yunji4452@gmail.com)
 
-이상우 [📧](mailto:swoody1101@gmail.com)
+[이상우](https://github.com/swoody1101) [📧](mailto:swoody1101@gmail.com)
 
 [우상욱(FE design)](https://github.com/YeoUlFox) [📧](mailto:wsu223@gmail.com)
 
